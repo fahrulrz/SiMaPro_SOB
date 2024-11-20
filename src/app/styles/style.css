@@ -1,0 +1,18 @@
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+    --primary : #92C7CF;
+    --hint : #92c7cfa1;
+    --border : #538086;
+    --mainBackground: #E5E1DA;
+}
+
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

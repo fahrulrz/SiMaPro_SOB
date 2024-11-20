@@ -6,7 +6,6 @@ import { faUser, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 
-
 interface CommentProps {
   id: number;
   isi_komen: string;
@@ -19,6 +18,7 @@ const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
   const handleOtherSetting = () => {
     setIsOtherSetting(!isOtherSetting);
   };
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

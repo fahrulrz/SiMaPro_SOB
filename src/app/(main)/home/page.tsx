@@ -91,6 +91,36 @@ export default function Dashboard() {
   const [filterPad, setFilterPad] = useState(false);
 
   const menuRefPad = useRef<HTMLDivElement>(null);
+  const menuRefFilter = useRef<HTMLDivElement>(null);
+
+  const [clickFilter, setClickFilter] = useState(false);
+
+  const handleClickFilter = () => {
+    setClickFilter(!clickFilter);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Jika klik terjadi di luar elemen menuRef
+      if (
+        menuRefFilter.current &&
+        !menuRefFilter.current.contains(event.target as Node)
+      ) {
+        setClickFilter(false);
+      }
+    };
+
+    if (clickFilter) {
+      window.addEventListener("click", handleClickOutside);
+    } else {
+      window.removeEventListener("click", handleClickOutside);
+    }
+
+    // Bersihkan event listener saat komponen di-unmount
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [clickFilter]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -153,7 +183,7 @@ export default function Dashboard() {
       });
   }, []);
 
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+  // const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const toggleFilterPad = () => {
     setFilterPad(!filterPad);
@@ -170,199 +200,435 @@ export default function Dashboard() {
     <div className="flex flex-col w-full h-full bg-[#E5E1DA] no-scrollbar mb-20">
       <div className="flex w-full h-full text-black">
         <div className="flex w-full flex-col h-full">
-          <div className="items-center w-full h-[42rem] justify-center">
+          <div className="items-center w-full h-[42rem] justify-center max-sm:h-[20rem]">
             <Carousel />
           </div>
 
-          <div className="flex flex-col w-full h-fit px-28 mt-10">
-            <div className="flex h-20 w-full gap-6 ps-12">
+          <div className="flex flex-col w-full h-fit px-28 max-sm:px-4 mt-10">
+            {/* menampung button diatas */}
+            <div className="flex h-20 w-full gap-6 max-sm:h-10 ps-12 max-sm:flex-col max-sm:ps-0 max-sm:relative">
               {/* dropdown filter pad */}
-
               <div
-                ref={menuRefPad}
-                className="relative inline-block w-44 text-left cursor-pointer">
-                <div data-aos="fade-up" data-aos-duration="700">
-                  <div
-                    className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
-                    onClick={toggleFilterPad}>
-                    <FontAwesomeIcon
-                      icon={faFilter}
-                      style={{ fontSize: "1.2rem" }}
-                      className="me-2"
-                    />
-                    Pilih PAD
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      style={{ fontSize: "1.2rem" }}
-                      className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300`}
-                    />
-                  </div>
+                ref={menuRefFilter}
+                className="sm:hidden w-60 h-full flex max-sm:relative gap-4">
+                <div
+                  className="btn bg-primary h-ful w-full flex justify-center items-center text-white rounded-[5px]"
+                  onClick={handleClickFilter}>
+                  Filter
                 </div>
 
-                {filterPad && (
-                  <div className="absolute left-0 z-30 mt-2 w-full origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
-                    <div>
-                      <form action="#">
-                        <div className="py-1">
+                {/* mobile */}
+                {clickFilter && (
+                  <div
+                    className={`flex max-sm:flex-col w-full sm:hidden max-sm:gap-1 gap-4 max-sm:absolute z-20 mt-11`}>
+                    <div
+                      ref={menuRefPad}
+                      className="relative inline-flex w-full text-left cursor-pointer">
+                      <div
+                        data-aos="fade-up"
+                        data-aos-duration="700"
+                        className="flex w-full flex-col">
+                        <div
+                          className="inline-flex w-full hover:bg-white hover:text-primary h-10  items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
+                          onClick={toggleFilterPad}>
+                          <FontAwesomeIcon
+                            icon={faFilter}
+                            style={{ fontSize: "1rem" }}
+                            className="me-2"
+                          />
+                          Pilih PAD
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
+                            style={{ fontSize: "1rem" }}
+                            className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300`}
+                          />
+                        </div>
+                      </div>
+
+                      {filterPad && (
+                        <div className="absolute left-full w-24 z-30 ms-2 origin-top-right rounded-md bg-primary text-sm shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
                           <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="pad1">PAD 1</label>
-                              <input type="checkbox" name="pad1" id="pad1" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="">PAD 2</label>
-                              <input type="checkbox" />
-                            </div>
+                            <form action="#">
+                              <div className="py-1">
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="pad1">PAD 1</label>
+                                    <input
+                                      type="checkbox"
+                                      name="pad1"
+                                      id="pad1"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="">PAD 2</label>
+                                    <input type="checkbox" />
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
                           </div>
                         </div>
-                      </form>
+                      )}
+                    </div>
+                    {/* dropdown Filter pad end */}
+
+                    {/* dropdown filter tahun */}
+
+                    <div
+                      ref={menuRefYear}
+                      className="relative inline-flex w-full text-left cursor-pointer">
+                      <div
+                        data-aos="fade-up"
+                        data-aos-duration="800"
+                        className="flex w-full">
+                        <div
+                          className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
+                          onClick={toggleFilterYear}>
+                          <FontAwesomeIcon
+                            icon={faFilter}
+                            style={{ fontSize: "1rem" }}
+                            className="me-2"
+                          />
+                          Pilih Tahun
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
+                            style={{ fontSize: "1rem" }}
+                            className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300`}
+                          />
+                        </div>
+                      </div>
+
+                      {filterYear && (
+                        <div className="absolute block z-30 left-full ms-2 w-24 origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
+                          <div>
+                            <form action="#">
+                              <div className="py-1">
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="pad1">2020</label>
+                                    <input
+                                      type="checkbox"
+                                      name="pad1"
+                                      id="pad1"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="">2021</label>
+                                    <input type="checkbox" />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="pad1">2022</label>
+                                    <input
+                                      type="checkbox"
+                                      name="pad1"
+                                      id="pad1"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="">2023</label>
+                                    <input type="checkbox" />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="pad1">2024</label>
+                                    <input
+                                      type="checkbox"
+                                      name="pad1"
+                                      id="pad1"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="">2025</label>
+                                    <input type="checkbox" />
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* dropdown filter tahun end */}
+
+                    {/* button add start */}
+                    <div
+                      data-aos="fade-up"
+                      data-aos-duration="900"
+                      className="flex w-full">
+                      <a
+                        href="home/project/add-project"
+                        className="flex w-full">
+                        <button
+                          type="submit"
+                          className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1rem" }}
+                            className="me-2"
+                          />
+                          Add New Project
+                        </button>
+                      </a>
+                    </div>
+
+                    <div
+                      data-aos="fade-up"
+                      data-aos-duration="1000"
+                      className="flex w-full">
+                      <a href="mahasiswa/add-mahasiswa" className="flex w-full">
+                        <button
+                          type="submit"
+                          className="w-full h-10 bg-primary ps-4 gap-0 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1rem" }}
+                            className="me-2"
+                          />
+                          Add Profil Mahasiswa
+                        </button>
+                      </a>
+                    </div>
+
+                    <div
+                      data-aos="fade-up"
+                      data-aos-duration="1100"
+                      className="flex w-full">
+                      <a className="flex w-full" href="/team/add-profile-team">
+                        <button
+                          type="submit"
+                          className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1rem" }}
+                            className="me-2"
+                          />
+                          Add Team
+                        </button>
+                      </a>
+                    </div>
+
+                    <div
+                      data-aos="fade-up"
+                      data-aos-duration="1200"
+                      className="flex w-full">
+                      <a
+                        href="stakeholder/add-stakeholder"
+                        className="flex w-full">
+                        <button
+                          type="submit"
+                          className="w-full h-10 bg-primary ps-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1rem" }}
+                            className="me-2"
+                          />
+                          Add Profil Stakeholder
+                        </button>
+                      </a>
                     </div>
                   </div>
                 )}
               </div>
-              {/* dropdown Filter pad end */}
 
-              {/* dropdown filter tahun */}
-
-              <div
-                ref={menuRefYear}
-                className="relative inline-block w-44 text-left cursor-pointer">
-                <div data-aos="fade-up" data-aos-duration="700">
-                  <div
-                    className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
-                    onClick={toggleFilterYear}>
-                    <FontAwesomeIcon
-                      icon={faFilter}
-                      style={{ fontSize: "1.2rem" }}
-                      className="me-2"
-                    />
-                    Pilih Tahun
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      style={{ fontSize: "1.2rem" }}
-                      className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300`}
-                    />
-                  </div>
-                </div>
-
-                {filterYear && (
-                  <div className="absolute block z-30 left-0 mt-2 w-full origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
-                    <div>
-                      <form action="#">
-                        <div className="py-1">
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="pad1">2020</label>
-                              <input type="checkbox" name="pad1" id="pad1" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="">2021</label>
-                              <input type="checkbox" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="pad1">2022</label>
-                              <input type="checkbox" name="pad1" id="pad1" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="">2023</label>
-                              <input type="checkbox" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="pad1">2024</label>
-                              <input type="checkbox" name="pad1" id="pad1" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                              <label htmlFor="">2025</label>
-                              <input type="checkbox" />
-                            </div>
-                          </div>
-                        </div>
-                      </form>
+              {/* Desktop */}
+              <div className={`flex gap-4 max-sm:hidden`}>
+                <div
+                  ref={menuRefPad}
+                  className="relative inline-block w-44 text-left cursor-pointer">
+                  <div data-aos="fade-up" data-aos-duration="700">
+                    <div
+                      className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
+                      onClick={toggleFilterPad}>
+                      <FontAwesomeIcon
+                        icon={faFilter}
+                        style={{ fontSize: "1.2rem" }}
+                        className="me-2"
+                      />
+                      Pilih PAD
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        style={{ fontSize: "1.2rem" }}
+                        className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300`}
+                      />
                     </div>
                   </div>
-                )}
-              </div>
-              {/* dropdown filter tahun end */}
 
-              {/* button add start */}
-              <div data-aos="fade-up" data-aos-duration="800">
-                <a href="home/project/add-project">
-                  <button
-                    type="submit"
-                    className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                    <FontAwesomeIcon
-                      icon={faFileCirclePlus}
-                      style={{ fontSize: "1.2rem" }}
-                      className="me-2"
-                    />
-                    Add New Project
-                  </button>
-                </a>
+                  {filterPad && (
+                    <div className="absolute left-0 z-30 mt-2 w-full origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
+                      <div>
+                        <form action="#">
+                          <div className="py-1">
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="pad1">PAD 1</label>
+                                <input type="checkbox" name="pad1" id="pad1" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="">PAD 2</label>
+                                <input type="checkbox" />
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* dropdown Filter pad end */}
+
+                {/* dropdown filter tahun */}
+
+                <div
+                  ref={menuRefYear}
+                  className="relative inline-block w-44 text-left cursor-pointer">
+                  <div data-aos="fade-up" data-aos-duration="700">
+                    <div
+                      className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
+                      onClick={toggleFilterYear}>
+                      <FontAwesomeIcon
+                        icon={faFilter}
+                        style={{ fontSize: "1.2rem" }}
+                        className="me-2"
+                      />
+                      Pilih Tahun
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        style={{ fontSize: "1.2rem" }}
+                        className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300`}
+                      />
+                    </div>
+                  </div>
+
+                  {filterYear && (
+                    <div className="absolute block z-30 left-0 mt-2 w-full origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
+                      <div>
+                        <form action="#">
+                          <div className="py-1">
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="pad1">2020</label>
+                                <input type="checkbox" name="pad1" id="pad1" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="">2021</label>
+                                <input type="checkbox" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="pad1">2022</label>
+                                <input type="checkbox" name="pad1" id="pad1" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="">2023</label>
+                                <input type="checkbox" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="pad1">2024</label>
+                                <input type="checkbox" name="pad1" id="pad1" />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                <label htmlFor="">2025</label>
+                                <input type="checkbox" />
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* dropdown filter tahun end */}
+
+                {/* button add start */}
+                <div data-aos="fade-up" data-aos-duration="800">
+                  <a href="home/project/add-project">
+                    <button
+                      type="submit"
+                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                      <FontAwesomeIcon
+                        icon={faFileCirclePlus}
+                        style={{ fontSize: "1.2rem" }}
+                        className="me-2"
+                      />
+                      Add New Project
+                    </button>
+                  </a>
+                </div>
+
+                <div data-aos="fade-up" data-aos-duration="900">
+                  <a href="mahasiswa/add-mahasiswa">
+                    <button
+                      type="submit"
+                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                      <FontAwesomeIcon
+                        icon={faFileCirclePlus}
+                        style={{ fontSize: "1.2rem" }}
+                        className="me-2"
+                      />
+                      Add Profil Mahasiswa
+                    </button>
+                  </a>
+                </div>
+
+                <div data-aos="fade-up" data-aos-duration="1000">
+                  <a className="" href="/team/add-profile-team">
+                    <button
+                      type="submit"
+                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                      <FontAwesomeIcon
+                        icon={faFileCirclePlus}
+                        style={{ fontSize: "1.2rem" }}
+                        className="me-2"
+                      />
+                      Add Team
+                    </button>
+                  </a>
+                </div>
+
+                <div data-aos="fade-up" data-aos-duration="1100">
+                  <a href="stakeholder/add-stakeholder">
+                    <button
+                      type="submit"
+                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                      <FontAwesomeIcon
+                        icon={faFileCirclePlus}
+                        style={{ fontSize: "1.2rem" }}
+                        className="me-2"
+                      />
+                      Add Profil Stakeholder
+                    </button>
+                  </a>
+                </div>
               </div>
 
-              <div data-aos="fade-up" data-aos-duration="900">
-                <a href="mahasiswa/add-mahasiswa">
-                  <button
-                    type="submit"
-                    className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                    <FontAwesomeIcon
-                      icon={faFileCirclePlus}
-                      style={{ fontSize: "1.2rem" }}
-                      className="me-2"
-                    />
-                    Add Profil Mahasiswa
-                  </button>
-                </a>
-              </div>
-
-              <div data-aos="fade-up" data-aos-duration="1000">
-                <a className="" href="/team/add-profile-team">
-                  <button
-                    type="submit"
-                    className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                    <FontAwesomeIcon
-                      icon={faFileCirclePlus}
-                      style={{ fontSize: "1.2rem" }}
-                      className="me-2"
-                    />
-                    Add Team
-                  </button>
-                </a>
-              </div>
-
-              <div data-aos="fade-up" data-aos-duration="1100">
-                <a href="stakeholder/add-stakeholder">
-                  <button
-                    type="submit"
-                    className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                    <FontAwesomeIcon
-                      icon={faFileCirclePlus}
-                      style={{ fontSize: "1.2rem" }}
-                      className="me-2"
-                    />
-                    Add Profil Stakeholder
-                  </button>
-                </a>
-              </div>
+              {/* button add end */}
             </div>
-
-            {/* button add end */}
 
             {/* card start */}
             <div className="">
-              <div className="grid grid-cols-2 gap-4 w-full">
+              <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4 max-sm:gap-0 w-full">
                 {/* card yang dibuat perulangan */}
                 {projects.map((project) => (
                   <Card

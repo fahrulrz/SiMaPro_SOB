@@ -79,7 +79,7 @@ const MyCarousel = () => {
           <button
             key={i}
             type="button"
-            className="w-3 h-3 rounded-full"
+            className="sm:w-3 sm:h-3 w-2 h-2 rounded-full"
             aria-current={i === 0 ? "true" : "false"}
             aria-label={`Slide ${i + 1}`}
             data-carousel-slide-to={i}></button>

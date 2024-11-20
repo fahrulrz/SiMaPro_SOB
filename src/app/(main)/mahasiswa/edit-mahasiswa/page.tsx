@@ -37,6 +37,8 @@ const EditMahasiswa = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
+  console.log(error);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // let modal = new Modal(document.getElementById("confirmModal"), {
@@ -239,7 +241,7 @@ const EditMahasiswa = () => {
                   <button
                     type="submit"
                     className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                    Yes, I'm sure
+                    Yes, It&apos;m sure
                   </button>
                   <button
                     onClick={toggleModal}
@@ -252,8 +254,6 @@ const EditMahasiswa = () => {
             </div>
           </div>
         )}
-
-        
       </form>
     </>
   );

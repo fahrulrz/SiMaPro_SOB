@@ -24,7 +24,7 @@ const Search = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="max-w-md mx-auto">
+    <form onSubmit={handleSearch} className="max-w-md mx-auto max-sm:max-w-36">
       <label className="relative block">
         <span className="sr-only">Search</span>
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">

@@ -67,7 +67,7 @@ const DetailStakeholder = () => {
             <div className="flex flex-col mt-10">
               <div className="flex relative h-[30rem] w-96">
                 <Image
-                  src={stakeholder?.foto}
+                  src={`${stakeholder?.foto}`}
                   alt="Picture of the author"
                   layout="fill"
                   objectFit="cover"

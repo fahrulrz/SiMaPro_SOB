@@ -49,17 +49,16 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
     onMouseLeave={handleMouseLeave}
     className="mt-10"
     >
-      <div className=" flex flex-col justify-between px-12 gap-10">
+      <div className=" flex flex-col justify-between px-12 max-sm:px-0">
         {/* card yang dibuat perulangan */}
         <div
           data-aos={dataAos}
           data-aos-duration="1000"
           key={id}
           onClick={() => clickHandler(id)}
-          className="bg-SimaPro flex w-full h-[28rem] shadow-lg rounded-md overflow-hidden">
-          <div className="relative flex items-end w-full h-full overflow-hidden">
+          className="bg-SimaPro flex w-full h-[28rem] max-sm:h-52 shadow-lg rounded-md overflow-hidden">
+          <div className="relative flex items-end w-full h-full  overflow-hidden">
             <div className="absolute hover:cursor-pointer z-10 w-full h-full opacity-0 hover:opacity-20 bg-black from-black to-transparent transition ease-in-out duration-1000"></div>
-
             <Image
               src={imageUrl}
               alt="Picture of the author"

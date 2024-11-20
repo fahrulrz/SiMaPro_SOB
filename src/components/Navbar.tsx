@@ -49,11 +49,11 @@ const Navbar: React.FC = () => {
   return (
     <Disclosure
       as="nav"
-      className="bg-primary flex items-center justify-center">
+      className="bg-primary flex flex-col items-center justify-center">
       {({ open }) => (
         <>
-          <div className="mx-auto w-full px-2 sm:px-6 lg:px-8">
-            <div className="relative flex h-16 items-center justify-between">
+          <div className="mx-auto w-full px-2 sm:px-6 lg:px-8 ">
+            <div className="relative flex h-16 items-center sm:justify-between max-sm:gap-4">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
                 <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
                       alt="SiMaPro Logo"
                     />
                   </a>
-                  <h1 className="sm:hidden ms-4 font-black">SiMaPro</h1>
+                  {/* <h1 className="sm:hidden ms-4 font-black">SiMaPro</h1> */}
                 </div>
                 <div className="hidden sm:ml-6 sm:flex items-center justify-center">
                   <div className="flex space-x-4 items-center">
@@ -103,15 +103,14 @@ const Navbar: React.FC = () => {
                   </div>
                 </div>
               </div>
+              <Search />
               <div className="inset-y-0 h-10 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {/* Search */}
-
-                <Search />
 
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <MenuButton className="relative  flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
                       <img
@@ -157,8 +156,8 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          <DisclosurePanel className="sm:hidden">
-            <div className="space-y-1 px-2 pb-3 pt-2">
+          <DisclosurePanel className="sm:hidden w-full max-sm:relative">
+            <div className="space-y-1 px-2 pb-3 pt-2 w-full flex flex-col max-sm:absolute bg-primary">
               {navigation.map((item) => (
                 <DisclosureButton
                   key={item.name}
@@ -166,8 +165,8 @@ const Navbar: React.FC = () => {
                   href={item.href}
                   className={classNames(
                     item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      ? "max-sm:bg-blue-900 text-white"
+                      : "text-white hover:bg-gray-700 hover:text-white",
                     "block rounded-md px-3 py-2 text-base font-medium"
                   )}
                   aria-current={item.current ? "page" : undefined}>

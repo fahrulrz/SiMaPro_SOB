@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -41,7 +41,7 @@ const DetailMahasiswa = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     axios
@@ -54,10 +54,10 @@ const DetailMahasiswa = () => {
       });
   }, [id]);
 
-  const editHandler = (event: React.FormEvent) => {
-    event.preventDefault();
-    router.push(`mahasiswa/edit-mahasiswa?id=${id}`);
-  };
+  // const editHandler = (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   router.push(`mahasiswa/edit-mahasiswa?id=${id}`);
+  // };
 
   console.log(error);
   // console.log("ini adalah gambar",  mahasiswa?.project[0].image[0].link_gambar)
@@ -73,7 +73,7 @@ const DetailMahasiswa = () => {
             <div className="bg-red-600 flex flex-col mt-10">
               <div className="flex relative h-[30rem] w-96">
                 <Image
-                  src={mahasiswa?.foto}
+                  src={mahasiswa?.foto} 
                   alt="Picture of the author"
                   //   width={1600}
                   //   height={900}

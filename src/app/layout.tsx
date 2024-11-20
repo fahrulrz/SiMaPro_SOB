@@ -47,7 +47,7 @@ export default function RootLayout({
           rel="stylesheet"></link>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans `}>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans w-screen max-sm:overflow-hidden`}>
         {children}
         <script>
 

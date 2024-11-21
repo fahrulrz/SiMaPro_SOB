@@ -284,7 +284,7 @@ const EditProfileTeam = () => {
                     type="button"
                     onClick={toggleModal}
                     className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
-                    Submit
+                    Update
                   </button>
                   <button
                     type="button"

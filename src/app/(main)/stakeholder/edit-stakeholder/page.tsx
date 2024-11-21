@@ -231,7 +231,7 @@ const EditStakeholder = () => {
                   data-modal-toggle="confirmModal"
                   data-modal-target="confirmModal"
                   className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
-                  Submit
+                  Update
                 </button>
                 <button
                   type="button"
@@ -303,7 +303,7 @@ const EditStakeholder = () => {
                   data-modal-hide="confirmModal"
                   type="submit"
                   className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                  Yes, I'm sure
+                  Yes, I&apos;m sure
                 </button>
                 <button
                   data-modal-hide="confirmModal"

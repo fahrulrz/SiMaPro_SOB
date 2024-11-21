@@ -247,7 +247,7 @@ const EditProject: React.FC = () => {
               ))}
             </div>
           </div>
-          <div className="mt-16">
+          <div className="mt-16 max-sm:mt-4">
             <div className="flex flex-col gap-4 w-full">
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label

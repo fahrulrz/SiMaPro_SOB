@@ -9,9 +9,9 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import Card from "@/components/Card";
 
-import gambar from "../../../../../public/assets/photoProfile.png";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 interface Stakeholder {
   id: number;
@@ -58,16 +58,16 @@ const DetailStakeholder = () => {
 
   return (
     <>
-      <div className="flex w-screen">
-        <div className="bg-[#FBF9F1]  flex p-8 left-0 flex-col w-2/5 ustify-center items-center">
+      <div className="flex w-screen max-sm:flex-col">
+        <div className="bg-[#FBF9F1]  flex p-8 left-0 flex-col w-2/5 max-sm:w-full ustify-center items-center">
           <div className="flex flex-col items-center justify-center">
             <div className="text-4xl flex justify-center items-center text-primary font-bold">
               Stakeholder
             </div>
             <div className="flex flex-col mt-10">
-              <div className="flex relative h-[30rem] w-96">
+              <div className="flex relative h-[30rem] max-sm:h-96 max-sm:w-80 w-96">
                 <Image
-                  src={`${stakeholder?.foto}`}
+                  src={stakeholder?.foto}
                   alt="Picture of the author"
                   layout="fill"
                   objectFit="cover"
@@ -75,7 +75,7 @@ const DetailStakeholder = () => {
                 />
               </div>
             </div>
-            <div className="w-4/5 mt-10 text-xl grid grid-cols-3 text-primary">
+            <div className="w-4/5 mt-10 text-xl max-sm:text-base max-sm:w-full grid grid-cols-3 text-primary">
               <div className="">
                 <div>Nama</div>
                 <div>Kategori</div>
@@ -89,31 +89,38 @@ const DetailStakeholder = () => {
                 <div>: {stakeholder?.nomor_telepon}</div>
               </div>
             </div>
-            <div className="gap-4 mt-10 w-full grid grid-cols-2 px-24">
+            <div className="gap-4 mt-10 w-full grid grid-cols-2 px-24 max-sm:px-8">
               <div>
-                <a
-                  href={`/stakeholder/edit-stakeholder?id=${id}`}
-                  className="bg-primary flex w-full text-lg hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 text-white rounded-md">
-                  <FontAwesomeIcon
-                    icon={faPenToSquare}
-                    size="xl"
-                    className="me-2"
-                  />
-                  Edit Profile
-                </a>
+                <Link href={`/stakeholder/edit-stakeholder?id=${id}`}>
+                  <button className="bg-primary flex w-full text-lg max-sm:text-sm hover:bg-white hover:text-primary items-center gap-3 p-2 max-sm:px-2 max-sm:py-3 px-6 text-white rounded-md">
+                    {" "}
+                    <span className="me-2 max-sm:hidden">
+                      <FontAwesomeIcon icon={faPenToSquare} size="xl" />
+                    </span>
+                    <span className="me-2 sm:hidden">
+                      <FontAwesomeIcon icon={faPenToSquare} size="lg" />
+                    </span>
+                    Edit Profile
+                  </button>
+                </Link>
               </div>
               <div>
                 <a
-                  href=""
-                  className="bg-primary w-full flex text-lg hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 text-white rounded-md">
-                  <FontAwesomeIcon icon={faTrash} size="xl" />
+                  href="#"
+                  className="bg-primary w-full flex text-lg max-sm:text-sm max-sm:px-2 hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 max-sm:py-3 text-white rounded-md">
+                  <span className="max-sm:hidden">
+                    <FontAwesomeIcon icon={faTrash} size="xl" />
+                  </span>
+                  <span className="sm:hidden">
+                    <FontAwesomeIcon icon={faTrash} size="lg" />
+                  </span>
                   Delete Profile
                 </a>
               </div>
             </div>
           </div>
         </div>
-        <div className="h-screen flex flex-col w-3/5 px-20 py-14">
+        <div className="h-screen flex flex-col w-3/5 max-sm:w-full max-sm:px-4 px-20 py-14">
           <div>
             <div className="text-2xl font-bold text-primary">List Project</div>
             <div className="flex h-[80vh] overflow-scroll">

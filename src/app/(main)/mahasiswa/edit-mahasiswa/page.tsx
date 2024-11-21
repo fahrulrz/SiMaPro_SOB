@@ -84,7 +84,7 @@ const EditMahasiswa = () => {
   return (
     <>
       <form onSubmit={submitHandler}>
-        <div className="flex flex-col p-20 h-[55vh] w-full mb-14">
+        <div className="flex flex-col p-20 max-sm:p-4 h-[55vh] w-full mb-14">
           <div className="flex flex-col gap-5">
             <div className=" flex w-full items-center justify-center">
               <div className="text-4xl font-bold text-primary">
@@ -95,8 +95,8 @@ const EditMahasiswa = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="mahasiswaName"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Nama Mahasiswa
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  Nama
                 </label>
                 <input
                   id="mahasiswaName"
@@ -111,13 +111,13 @@ const EditMahasiswa = () => {
                     }
                   }}
                   placeholder="Name   "
-                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
+                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg max-sm:text-base border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="nim"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   NIM
                 </label>
                 <input
@@ -133,19 +133,19 @@ const EditMahasiswa = () => {
                     }
                   }}
                   placeholder="NIM"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary max-sm:text-base bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className="grid grid-cols-4 gap-4 w-full h-full">
                 <label
                   htmlFor="foto"
-                  className="flex py-2 justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex py-2 justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Foto
                 </label>
 
                 <div className="relative w-full col-span-3">
                   {/* Placeholder custom */}
-                  <span className="absolute bg-inputAddProject  w-full inset-0 flex items-center pl-2 text-primary pointer-events-none rounded-md">
+                  <span className="absolute bg-inputAddProject truncate w-full inset-0 flex items-center max-sm:text-sm px-2 text-primary pointer-events-none rounded-md">
                     {mahasiswa && fileName === "Add Foto Profile Mahasiswa" ? (
                       <div>{mahasiswa.foto || ""}</div>
                     ) : (

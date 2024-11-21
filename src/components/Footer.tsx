@@ -18,29 +18,29 @@ const Footer: React.FC = () => {
           <div className="gap-6 max-sm:gap-2 pt-1 flex flex-col">
             <FontAwesomeIcon
               icon={faLocationDot}
-              style={{ fontSize: "1rem" }}
+              style={{ fontSize: "max-sm:1rem 1.3rem" }}
               className="text-inherit me-2"
             />
             <FontAwesomeIcon
               icon={faPhoneVolume}
-              style={{ fontSize: "1rem" }}
+              style={{ fontSize: "max-sm:1rem 1.3rem" }}
               className="text-inherit me-2"
             />
 
             <FontAwesomeIcon
               icon={faEnvelope}
-              style={{ fontSize: "1rem" }}
+              style={{ fontSize: "max-sm:1rem 1.3rem" }}
               className="text-inherit me-2"
             />
           </div>
-          <div className="ms-4 max-sm:ms-1 flex flex-col gap-4 max-sm:gap-0 max-sm:text-base">
+          <div className="ms-4 max-sm:ms-1 flex flex-col gap-[.93rem] max-sm:gap-0 max-sm:text-base">
             <p>Universitas Gadjah Mada</p>
             <p>Fahrul (081228660482)</p>
             <p>muhamadfahrulrazi@mail.ugm.ac.id</p>
           </div>
         </div>
       </div>
-      <div className=" text-white flex text-xl max-sm:text-base font-black justify-center items-center mb-4" >
+      <div className=" text-white flex text-xl max-sm:text-base font-black justify-center items-center mb-4">
         © 2024 SimaPro.id All rights reserved.
       </div>
     </div>

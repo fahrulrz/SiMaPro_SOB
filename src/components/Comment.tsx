@@ -19,7 +19,6 @@ const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
     setIsOtherSetting(!isOtherSetting);
   };
 
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       // Jika klik terjadi di luar elemen menuRef
@@ -45,7 +44,12 @@ const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
       <div className="relative">
         <div className="flex items-center gap-4 py-2">
           <div>
-            <FontAwesomeIcon icon={faUser} size="2xl" />
+            <span className="sm:hidden">
+              <FontAwesomeIcon icon={faUser} size="xl" />
+            </span>
+            <span className="max-sm:hidden">
+              <FontAwesomeIcon icon={faUser} size="2xl" />
+            </span>
           </div>
           <div>{isi_komen}</div>
           <div

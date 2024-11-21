@@ -212,7 +212,7 @@ export default function Dashboard() {
                 ref={menuRefFilter}
                 className="sm:hidden w-60 h-full flex max-sm:relative gap-4">
                 <div
-                  className="btn bg-primary h-ful w-full flex justify-center items-center text-white rounded-[5px]"
+                  className="btn bg-primary h-ful w-full flex justify-center items-center text-white rounded-[5px] cursor-pointer"
                   onClick={handleClickFilter}>
                   Filter
                 </div>

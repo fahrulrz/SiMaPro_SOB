@@ -18,7 +18,7 @@ export default function AuthLayout({
 
       {/* navbar end */}
       {children}
-      <div className="">
+      <div className="mt-10 max-sm:mt-5">
         <Footer />
       </div>
     </div>

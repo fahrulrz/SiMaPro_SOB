@@ -18,10 +18,12 @@ import {
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { faComment as faCommentRegular } from "@fortawesome/free-regular-svg-icons";
 
-// import gambar from "../../../../../public/assets/images/image 24.png";
 import axios from "axios";
 
 import Comment from "@/components/Comment";
+
+// import Aos from "aos";
+// import "aos/dist/aos.css";
 
 interface Category {
   id: number;
@@ -96,11 +98,30 @@ interface Project {
 }
 
 const Content = () => {
+  // Aos.init();
+
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
   const [projects, setProjects] = useState<Project>();
   const [error, setError] = useState(null);
+
+  console.log(error);
+
+  const [clickComment, setClickComment] = useState<boolean>(false);
+
+  const [isHoveredLike, setIsHoveredLike] = useState<boolean>(false);
+
+  const [isHoveredComment, setIsHoveredComment] = useState<boolean>(false);
+
+  const handleClickLike = () => {
+    setIsHoveredLike(!isHoveredLike);
+  };
+
+  const handleClickComment = () => {
+    setClickComment(!clickComment);
+    setIsHoveredComment(!isHoveredComment);
+  };
 
   useEffect(() => {
     axios
@@ -113,15 +134,11 @@ const Content = () => {
       });
   }, [id]);
 
-  const [isHoveredLike, setIsHoveredLike] = useState<boolean>(false);
-
-  const [isHoveredComment, setIsHoveredComment] = useState<boolean>(false);
-
   return (
-    <div className="flex flex-col gap-12 px-20 py-10 h-full w-screen">
-      <div className="flex flex-row h-full w-full gap-5">
-        <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10">
-          <div className="flex w-full max-h-[84.5vh] px-24">
+    <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-full w-screen">
+      <div className="flex flex-row max-sm:flex-col h-full w-full gap-5">
+        <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10 max-sm:gap-4">
+          <div className="flex w-full max-h-[84.5vh] px-24 max-sm:px-0">
             <Image
               src={projects?.image[0].link_gambar}
               alt="Picture of the author"
@@ -131,7 +148,7 @@ const Content = () => {
               objectFit="cover"
             />
           </div>
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-4 gap-6 max-sm:gap-1">
             <div className="flex justify-center items-center">
               <Image
                 src={projects?.image[1].link_gambar}
@@ -168,7 +185,7 @@ const Content = () => {
                 alt="Picture of the author"
                 width={1600}
                 height={900}
-                sizes="max-h-[80vh]"
+                sizes={"max-h-[80vh]"}
                 objectFit="cover"
               />
             </div>
@@ -177,11 +194,12 @@ const Content = () => {
 
         {/* comment section */}
 
-        <div className="bg-[#FBF9F1] p-2 flex flex-col w-2/6 max-h-[84.5vh] relative">
-          <div className="flex w-full z-30 top-0 start-0 sticky text-2xl">
+        {/* desktop */}
+        <div className="bg-[#FBF9F1] p-2 flex max-sm:hidden max-sm:w-full flex-col w-2/6 max-h-[84.5vh] relative">
+          <div className="flex w-full z-30 top-0 start-0 sticky text-2xl max-sm:text-lg">
             Comments
           </div>
-          <div className="flex flex-col mt-4 overflow-scroll px-4 pb-9">
+          <div className="flex flex-col mt-4 overflow-scroll px-4 pb-9 max-sm:text-sm">
             <div className="">
               {projects?.comment.map((comment) => (
                 <Comment
@@ -195,15 +213,15 @@ const Content = () => {
           <div className="flex bottom-0 start-0 z-30 absolute w-full p-4 justify-between bg-primary text-white">
             <form
               action="#"
-              className="flex justify-between w-full gap-4 items-center">
-              <label htmlFor="comment">
+              className="flex w-full gap-4 justify-between items-center">
+              <label htmlFor="comment" className="max-sm:hidden">
                 <span
                   onMouseEnter={() => setIsHoveredComment(true)}
                   onMouseLeave={() => setIsHoveredComment(false)}>
                   <FontAwesomeIcon
                     icon={isHoveredComment ? faComment : faCommentRegular}
                     size="2xl"
-                    className="cursor-pointer"
+                    className="cursor-pointer max-sm:hidden"
                   />
                 </span>
               </label>
@@ -218,23 +236,28 @@ const Content = () => {
               <button type="submit">
                 <FontAwesomeIcon
                   icon={faPaperPlane}
+                  size="xl"
+                  className="cursor-pointer sm:hidden"
+                />
+                <FontAwesomeIcon
+                  icon={faPaperPlane}
                   size="2xl"
-                  className="cursor-pointer"
+                  className="cursor-pointer max-sm:hidden"
                 />
               </button>
             </form>
           </div>
         </div>
+
         {/* end comment section */}
       </div>
 
       {/* like section */}
       <div id="like-comment" className="flex gap-14">
         <div className="flex flex-col text-primary items-center ">
-          <span
-            onMouseEnter={() => setIsHoveredLike(true)}
-            onMouseLeave={() => setIsHoveredLike(false)}>
+          <span>
             <FontAwesomeIcon
+              onClick={handleClickLike}
               icon={isHoveredLike ? faHeart : faHeartRegular}
               size="2x"
               className="cursor-pointer"
@@ -242,15 +265,67 @@ const Content = () => {
           </span>
           <p>120k</p>
         </div>
+        <div className="flex flex-col text-primary sm:hidden items-center ">
+          <span>
+            <FontAwesomeIcon
+              onClick={handleClickComment}
+              icon={isHoveredComment ? faComment : faCommentRegular}
+              size="2x"
+              className="cursor-pointer"
+            />
+          </span>
+          <p>{projects?.comment.length}</p>
+        </div>
       </div>
       {/* end like section */}
 
+      {/* comment mobile */}
+      {clickComment && (
+        <div className="bg-[#FBF9F1] p-2 flex sm:hidden max-sm:w-full flex-col w-2/6 h-80 relative">
+          <div className="flex w-full z-30 top-0 start-0 sticky text-2xl max-sm:text-lg">
+            Comments
+          </div>
+          <div className="flex flex-col mt-4 overflow-scroll px-4 pb-9 max-sm:text-sm">
+            <div className="">
+              {projects?.comment.map((comment) => (
+                <Comment
+                  key={comment.id}
+                  isi_komen={JSON.stringify(comment.isi_komen)}
+                  id={comment.id}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex bottom-0 start-0 z-30 absolute w-full p-2 justify-between bg-primary text-white">
+            <form
+              action="#"
+              className="flex w-full gap-4 justify-between items-center">
+              <input
+                type="text"
+                placeholder="Tulis Komentar"
+                name="comment"
+                id="comment"
+                className="text-primary placeholder:text-hint max-sm:placeholder:text-sm text-lg border-none rounded-md p-1 w-full focus:ring-0"
+              />
+              <button type="submit">
+                {/* mobile */}
+                <FontAwesomeIcon
+                  icon={faPaperPlane}
+                  size="lg"
+                  className="cursor-pointer sm:hidden"
+                />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4">
-        <div className="flex justify-center items-center py-4 bg-white text-4xl font-black text-primary tracking-wide">
+        <div className="flex justify-center items-center py-4 bg-white text-4xl max-sm:text-2xl font-black text-primary tracking-wide">
           {projects?.nama_proyek}
         </div>
-        <div className="flex w-full gap-4 text-primary text-lg">
-          <div className="bg-white w-2/5 p-2 flex flex-col gap-4">
+        <div className="flex max-sm:flex-col w-full gap-4 text-primary text-lg max-sm:text-base">
+          <div className="bg-white w-2/5 max-sm:w-full p-6 max-sm:p-4 flex flex-col gap-4">
             <p>
               {projects?.categories.map((category) => category.nama_kategori)}
             </p>
@@ -324,22 +399,28 @@ const Content = () => {
               </li>
             </ul>
           </div>
-          <div className="bg-white w-3/5 p-2 flex flex-col gap-4">
+          <div className="bg-white w-3/5 max-sm:w-full p-6 max-sm:p-4 flex flex-col gap-4">
             <p>Description : </p>
             <p>{projects?.deskripsi}</p>
           </div>
         </div>
         <div className="w-full flex justify-end gap-6">
           <Link href={`/home/project/edit-project?id=${projects?.id}`}>
-            <button className="bg-white text-primary hover:bg-primary hover:text-white flex items-center gap-3 p-2 px-6  rounded-md">
-              <FontAwesomeIcon icon={faPenToSquare} size="xl" />
+            <button className="bg-white text-primary hover:bg-primary hover:text-white flex items-center gap-3 p-2 px-6 max-sm:px-2  rounded-md">
+              <FontAwesomeIcon
+                icon={faPenToSquare}
+                style={{ fontSize: "max-sm:1rem 1.3rem" }}
+              />
               Edit Proyek
             </button>
           </Link>
 
           <a href="#" className="">
-            <button className="bg-white flex hover:bg-primary hover:text-white items-center gap-3 p-2 px-6 text-primary rounded-md">
-              <FontAwesomeIcon icon={faTrash} size="xl" />
+            <button className="bg-white flex hover:bg-primary hover:text-white items-center gap-3 p-2 px-6 max-sm:px-2 text-primary rounded-md">
+              <FontAwesomeIcon
+                icon={faTrash}
+                style={{ fontSize: "max-sm:1rem 1.3rem" }}
+              />
               Hapus Proyek
             </button>
           </a>

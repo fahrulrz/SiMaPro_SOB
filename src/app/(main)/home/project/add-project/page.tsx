@@ -82,12 +82,12 @@ const AddProject: React.FC = () => {
 
   return (
     <div>
-      <div className="px-36 py-20">
+      <div className="px-36 py-20 max-sm:px-2 max-sm:py-4">
         <form
           onSubmit={submitHandler}
           method="post"
-          className="flex flex-col gap-4 h-full px-10">
-          <div className="flex flex-col gap-4 h-[48rem]">
+          className="flex flex-col gap-4 h-full px-10 max-sm:px-2">
+          <div className="flex flex-col gap-4 h-[48rem] max-sm:h-80">
             <div
               data-aos="zoom-in"
               data-aos-duration="800"
@@ -125,7 +125,7 @@ const AddProject: React.FC = () => {
                   className="flex flex-auto h-full w-full">
                   <label
                     htmlFor={`image-upload-${index + 2}`}
-                    className="bg-inputAddProject hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary flex justify-center items-center">
+                    className="bg-inputAddProject hover:cursor-pointer w-full font-medium tracking-wide text-xl max-sm:text-sm text-primary flex justify-center items-center">
                     {fileUrls[index + 1] ? (
                       <div className="absolute flex w-full h-full">
                         <Image
@@ -152,33 +152,33 @@ const AddProject: React.FC = () => {
               ))}
             </div>
           </div>
-          <div className="mt-16">
-            <div className="flex flex-col gap-4 w-full">
-              <div className=" grid grid-cols-4 gap-4 w-full">
+          <div className="mt-16 max-sm:mt-8">
+            <div className="flex flex-col gap-4 max-sm:gap-2 w-full">
+              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="project-name"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Project Name
                 </label>
                 <input
                   id="project-name"
                   type="text"
                   placeholder="Project Name"
-                  className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
+              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Proyek Aplikasi Dasar
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  PAD
                 </label>
                 {/* dropdown jenis pad */}
                 <Menu
                   as="div"
                   className="relative insline-block text-left w-full col-span-3">
                   <Menu.Button
-                    className={`inline-flex w-full items-center gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 text-lg ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm`}
+                    className={`inline-flex w-full h-full items-center gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 max-sm:py-3 text-lg max-sm:text-sm ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm`}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}>
                     {selectedItem ? selectedItem.name : "Select Project"}{" "}
@@ -193,7 +193,7 @@ const AddProject: React.FC = () => {
                             onClick={() => handleSelect(item)}
                             className={`${
                               active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg`}>
+                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}>
                             {item.name}
                           </button>
                         )}
@@ -207,72 +207,72 @@ const AddProject: React.FC = () => {
                   value={selectedItem ? selectedItem.name : ""}
                 />
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
+              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="year"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Year
                 </label>
                 <input
                   id="year"
                   type="text"
                   placeholder="e.g. 2022"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject  focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject  focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
+              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="stakeholder"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Stakeholder
                 </label>
                 <input
                   id="stakeholder"
                   type="text"
                   placeholder="Stakeholder"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 gap-4 w-full">
+              <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="group-name"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Name Group Members
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  Group Name
                 </label>
                 <input
                   id="group-name"
                   type="text"
                   placeholder="Team Name"
-                  className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
+              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="description"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md">
                   Description
                 </label>
                 <textarea
                   id="description"
-                  rows={10}
-                  className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                  rows={8}
+                  className=" placeholder:text-hint max-sm:placeholder:text-base text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                   placeholder="Add your project description here"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex gap-4 ml-auto">
+          <div className="flex gap-4 max-sm:gap-2 ml-auto">
             <button
               type="button"
               data-modal-toggle="defaultModal"
               data-modal-target="defaultModal"
-              className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+              className="bg-primary px-10 max-sm:px-5 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
               Submit
             </button>
             <button
               type="button"
-              className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+              className="bg-white px-10 max-sm:px-5 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
               onClick={() => router.push("/home")}>
               Cancel
             </button>

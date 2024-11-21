@@ -8,21 +8,21 @@ import Image from "next/image";
 
 export default function Login() {
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-white">
-      <div className="flex flex-row bg-primary w-full h-full items-center">
-        <div className="flex bg-[#FBF9F1] w-2/5 h-full justify-center items-center">
+    <div className="w-screen h-screen flex justify-center bg-white">
+      <div className="flex flex-row max-sm:flex-col bg-primary w-full h-full items-center">
+        <div className="flex bg-[#FBF9F1] max-sm:bg-primary w-2/5 max-sm:flex-1 max-sm:w-full max-sm:px-10 h-full max-sm:h-full  justify-center items-center">
           <Image
             src="/assets/logo.png"
             alt="Logo SiMaPro"
             width={500}
             height={500}
-            className="bg-white flex justify-center items-center text-black"
+            className="bg-white flex justify-center items-center text-black max-sm:mb-0 max-sm:mt-auto"
           />
         </div>
         <form
           action="/home"
           method="post"
-          className="flex flex-1 h-1/2 flex-col gap-4 justify-center px-52">
+          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4  px-52 max-sm:px-10">
           <div className="flex flex-col h-1/4 gap-4 justify-center ">
             <div className="flex flex-auto">
               <label htmlFor="username" className="w-full relative block">
@@ -65,14 +65,14 @@ export default function Login() {
           <div className="flex justify-center items-center h-12 gap-5 ">
             <button
               type="submit"
-              className="bg-white h-full text-primary w-1/2 flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
-              <span>
+              className="bg-white h-full gap-3 max-sm:text-sm text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
+              <span className="max-sm:ms-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="1.6em"
                   height="1.6em"
                   viewBox="0 0 256 262"
-                  className="me-3">
+                  >
                   <path
                     fill="#4285f4"
                     d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
@@ -99,7 +99,7 @@ export default function Login() {
               Login
             </button>
           </div>
-          <div className="flex w-full justify-between text-white">
+          <div className="flex max-sm:flex-col w-full justify-between text-white">
             <div>
               Don&apos;t have an account?
               <a
@@ -109,7 +109,7 @@ export default function Login() {
               </a>
             </div>
             <div className="flex">
-              <a href="#" className="text-white hover:underline">
+              <a href="reset-password" className="text-white hover:underline">
                 Forgot your password?
               </a>
             </div>

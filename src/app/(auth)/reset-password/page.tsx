@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 import "../../styles/style.css";
 
@@ -8,27 +7,29 @@ import Image from "next/image";
 
 export default function ResetPassword() {
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-white">
-      <div className="flex flex-row bg-primary w-3/4 h-1/2 items-center">
-        <div className="flex flex-1 w-1/2 h-full bg-primary justify-center items-center ps-20">
+    <div className="w-screen h-screen flex justify-center bg-white">
+      <div className="flex flex-row max-sm:flex-col bg-primary w-full h-full items-center">
+        <div className="flex bg-[#FBF9F1] max-sm:bg-primary max-sm:mt-14 max-sm:mb-0 w-2/5 max-sm:flex-1 max-sm:w-full max-sm:px-10 h-full max-sm:h-full justify-center items-center">
           <Image
             src="/assets/logo.png"
             alt="Logo SiMaPro"
-            width={370}
-            height={370}
-            className="bg-white flex justify-center items-center text-black"
+            width={500}
+            height={500}
+            className="bg-white flex justify-center items-center text-black max-sm:mb-0 max-sm:mt-auto"
           />
         </div>
         <form
-          action="#"
+          action="/home"
           method="post"
-          className="flex flex-1 h-1/2 flex-col gap-4 justify-center ps-40 pe-40">
-          <div className="flex h-1/2 gap-4">
+          className="flex flex-1 min-h-[80vh] max-sm:mt-10  max-sm:w-full  flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10">
+          <div className="text-2xl max-sm:text-lg flex justify-center items-center text-center text-white mb-10 max-sm:mb-1">
+            Enter the email associated with your account and we&apos;Il send an
+            email with instructions to reset your password.
+          </div>
+          <div className="flex flex-col h-14 gap-4 justify-center ">
             <div className="flex flex-auto">
-              <label
-                htmlFor="username"
-                className="w-full relative flex justify-center items-center">
-                <span className="absolute -inset-y-1/4 left-4 flex items-center">
+              <label htmlFor="email" className="w-full relative block">
+                <span className="absolute inset-y-0 left-4 flex items-center">
                   <FontAwesomeIcon
                     icon={faEnvelope}
                     style={{ fontSize: "1.5rem" }}
@@ -40,22 +41,16 @@ export default function ResetPassword() {
                   id="email"
                   name="email"
                   placeholder="Email"
-                  style={{ color: "var(--primary)" }}
-                  className="w-full h-1/2 border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide p-5 ps-12 font-bold tracking-wide focus:ring-2 focus:ring-[var(--border)] focus:outline-none"
+                  className="w-full text-primary h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-[var(--border)]"
                 />
               </label>
             </div>
           </div>
-          <div className="flex justify-center items-center h-1/4 gap-5">
+          <div className="flex justify-center items-center h-12 gap-5 ">
             <button
               type="submit"
-              className="w-full h-full bg-white text-primary flex justify-center items-center rounded-[5px] font-bold tracking-wide">
+              className="w-1/2 h-full bg-white text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
               Send
-              <FontAwesomeIcon
-                icon={faPaperPlane}
-                style={{ fontSize: "1.2rem" }}
-                className="ms-2"
-              />
             </button>
           </div>
         </form>

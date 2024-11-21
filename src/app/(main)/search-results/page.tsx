@@ -16,7 +16,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import React, { useState, useEffect } from "react";
 
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 interface Category {
   id: number;
@@ -85,13 +85,13 @@ interface Project {
 }
 
 const SearchResults = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [result, setResult] = useState<Project[]>([]);
 
   //   const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedFilters, setSelectedFilters] = useState<Category[]>([]);
+  // const [selectedFilters, setSelectedFilters] = useState<Category[]>([]);
 
   useEffect(() => {
     if (query && query !== "") {
@@ -102,13 +102,13 @@ const SearchResults = () => {
     }
   }, [query]);
 
-  const toggleFilter = (category: Category) => {
-    setSelectedFilters((prev) =>
-      prev.some((item) => item.id === category.id)
-        ? prev.filter((item) => item.id !== category.id)
-        : [...prev, category]
-    );
-  };
+  // const toggleFilter = (category: Category) => {
+  //   setSelectedFilters((prev) =>
+  //     prev.some((item) => item.id === category.id)
+  //       ? prev.filter((item) => item.id !== category.id)
+  //       : [...prev, category]
+  //   );
+  // };
 
   console.log("dibawah merupakan result");
   console.log(result);
@@ -116,68 +116,13 @@ const SearchResults = () => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   return (
     <>
-      <div className="flex flex-col w-full h-full min-h-[50vh] bg-[#E5E1DA] no-scrollbar mb-20">
+      <div className="flex flex-col w-full h-full min-h-[50.5vh] bg-[#E5E1DA] no-scrollbar mb-20">
         <div className="flex w-full h-full text-black">
           <div className="flex w-full flex-col h-full">
-            <div className="flex flex-col w-full h-fit px-28 mt-10">
-              <div className="flex h-20 w-full gap-6 ps-12">
-                {/* dropdown filter */}
-                {/* <Menu
-                  as="div"
-                  className="relative inline-block w-1/5 text-left">
-                  <div data-aos="fade-up" data-aos-duration="700">
-                    <MenuButton
-                      className="inline-flex w-full h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}>
-                      <FontAwesomeIcon
-                        icon={faFilter}
-                        style={{ fontSize: "1.2rem" }}
-                        className="me-2"
-                      />
-                      Filter
-                      <ChevronDownIcon
-                        aria-hidden="true"
-                        className={`-mr-1 h-5 w-5 me-0 ms-auto ease-in-out duration-300 ${
-                          isHovered ? "text-primary" : "text-white"
-                        }`}
-                      />
-                    </MenuButton>
-                  </div>
-
-                  <MenuItems className="absolute left-0 z-10 mt-2 w-full origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5">
-                    <div className="py-1">
-                      {[
-                        { id: 1, nama_kategori: "Projek Aplikasi Dasar 1" },
-                        { id: 2, nama_kategori: "Projek Aplikasi Dasar 2" },
-                        {
-                          id: 3,
-                          nama_kategori: "Projek Aplikasi Dasar Tahun 2020",
-                        },
-                        // Tambahkan kategori lainnya sesuai kebutuhan
-                      ].map((category) => (
-                        <MenuItem key={category.id}>
-                          <div
-                            onClick={() => toggleFilter(category)}
-                            className={`block px-4 py-2 text-sm  cursor-pointer ${
-                              selectedFilters.some(
-                                (item) => item.id === category.id
-                              )
-                                ? "bg-white text-primary"
-                                : "text-white"
-                            }`}>
-                            {category.nama_kategori}
-                          </div>
-                        </MenuItem>
-                      ))}
-                    </div>
-                  </MenuItems>
-                </Menu> */}
-
+            <div className="flex flex-col w-full h-fit px-28 max-sm:px-4 mt-10">
+              <div className="flex h-20 max-sm:h-full w-full gap-6 ps-12 max-sm:ps-0">
                 {/* dropdown filter pad */}
-                <Menu
-                  as="div"
-                  className="relative inline-block w-44 text-left">
+                <Menu as="div" className="relative inline-block w-44 text-left">
                   <div data-aos="fade-up" data-aos-duration="700">
                     <MenuButton
                       className="inline-flex w-full h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
@@ -231,9 +176,7 @@ const SearchResults = () => {
 
                 {/* dropdown filter tahun */}
 
-                <Menu
-                  as="div"
-                  className="relative inline-block w-44 text-left">
+                <Menu as="div" className="relative inline-block w-44 text-left">
                   <div data-aos="fade-up" data-aos-duration="700">
                     <MenuButton
                       className="inline-flex w-full h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
@@ -310,8 +253,8 @@ const SearchResults = () => {
               </div>
 
               {/* card start */}
-              <div className="bg-red-500">
-                <div className="grid grid-cols-2 gap-4 w-full bg-green-500">
+              <div>
+                <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4 max-sm:gap-2 w-full">
                   {/* card yang dibuat perulangan */}
                   {result.map((project) => (
                     <Card

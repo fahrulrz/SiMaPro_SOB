@@ -165,12 +165,12 @@ const EditProject: React.FC = () => {
 
   return (
     <div>
-      <div className="px-36 py-20">
+      <div className="px-36 py-20 max-sm:px-4 max-sm:py-6">
         <form
           onSubmit={submitHandler}
           method="post"
-          className="flex flex-col gap-4 h-full px-10">
-          <div className="flex flex-col gap-4 h-[48rem]">
+          className="flex flex-col gap-4 h-full px-10 max-sm:px-2">
+          <div className="flex flex-col gap-4 h-[48rem] max-sm:h-80">
             <div
               data-aos="zoom-in"
               data-aos-duration="800"
@@ -252,7 +252,7 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="project-name"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Project Name
                 </label>
                 <input
@@ -265,27 +265,27 @@ const EditProject: React.FC = () => {
                     }
                   }}
                   placeholder="Project Name"
-                  className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint max-sm:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Proyek Aplikasi Dasar
+                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  PAD
                 </label>
                 {/* dropdown jenis pad */}
                 <Menu
                   as="div"
                   className="relative insline-block text-left w-full col-span-3">
                   <Menu.Button
-                    className={`inline-flex w-full items-center gap-x-1.5 rounded-md bg-white hover:bg-gray-50 px-3 py-2 text-lg text-primary shadow-sm`}
+                    className={`inline-flex w-full items-center gap-x-1.5 rounded-md bg-white max-sm:py-3 hover:bg-gray-50 px-3 py-2 text-lg max-sm:text-sm text-primary shadow-sm`}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}>
                     {selectedItem
                       ? selectedItem.name
                       : projects?.categories[0].nama_kategori}{" "}
-                    <ChevronDownIcon className="h-5 w-5 ms-auto me-0" />
+                    <ChevronDownIcon className="h-5 w-5 ms-auto me-0 " />
                   </Menu.Button>
 
                   <Menu.Items className="absolute left-0 z-10 mt-2 w-full bg-primary rounded-md shadow-lg overflow-hidden">
@@ -296,7 +296,7 @@ const EditProject: React.FC = () => {
                             onClick={() => handleSelect(item)}
                             className={`${
                               active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg`}>
+                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}>
                             {item.name}
                           </button>
                         )}
@@ -313,7 +313,7 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="year"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Year
                 </label>
                 <input
@@ -332,13 +332,13 @@ const EditProject: React.FC = () => {
                     }
                   }}
                   placeholder="e.g. 2022"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject  focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary bg-inputAddProject  focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="stakeholder"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Stakeholder
                 </label>
                 <input
@@ -357,14 +357,14 @@ const EditProject: React.FC = () => {
                     }
                   }}
                   placeholder="Stakeholder"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className="grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="group-name"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Name Group Members
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  Name Group
                 </label>
                 <input
                   id="group-name"
@@ -382,13 +382,13 @@ const EditProject: React.FC = () => {
                     }
                   }}
                   placeholder="Team Name"
-                  className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="description"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md">
                   Description
                 </label>
                 <textarea
@@ -403,7 +403,7 @@ const EditProject: React.FC = () => {
                       });
                     }
                   }}
-                  className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                   placeholder="Add your project description here"
                 />
               </div>

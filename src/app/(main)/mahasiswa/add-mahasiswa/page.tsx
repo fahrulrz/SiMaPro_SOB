@@ -28,7 +28,7 @@ const AddMahasiswa = () => {
   return (
     <>
       <form onSubmit={submitHandler}>
-        <div className="flex flex-col p-20 h-[55vh] w-full mb-14">
+        <div className="flex flex-col p-20 max-sm:p-4 h-[55vh] w-full mb-14">
           <div className="flex flex-col gap-5">
             <div className=" flex w-full items-center justify-center">
               <div className="text-4xl font-bold text-primary">
@@ -39,8 +39,8 @@ const AddMahasiswa = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="mahasiswaName"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Nama Mahasiswa
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  Nama
                 </label>
                 <input
                   id="mahasiswaName"
@@ -52,26 +52,26 @@ const AddMahasiswa = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="nim"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   NIM
                 </label>
                 <input
                   id="nim"
                   type="text"
                   placeholder="NIM"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg max-sm:placeholder:text-base border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className="grid grid-cols-4 gap-4 w-full h-full">
                 <label
                   htmlFor="foto"
-                  className="flex py-2 justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex py-2 justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Foto
                 </label>
 
-                <div className="relative ">
+                <div className="relative max-sm:col-span-3">
                   {/* Placeholder custom */}
-                  <span className="absolute bg-inputAddProject inset-0 flex items-center pl-2 text-hint pointer-events-none rounded-md">
+                  <span className="absolute bg-inputAddProject inset-0 max-sm:placeholder:text-base flex items-center pl-2 text-hint pointer-events-none rounded-md">
                     {fileName}
                   </span>
 

@@ -48,10 +48,10 @@ const AddStakeholder = () => {
   return (
     <>
       <form onSubmit={submitHandler}>
-        <div className="flex flex-col p-20 h-[55vh] w-full mb-14">
-          <div className="flex flex-col gap-5">
+        <div className="flex flex-col p-20 max-sm:p-4 h-[55vh] w-full mb-14">
+          <div className="flex flex-col gap-5 max-sm:gap-0">
             <div className=" flex w-full items-center justify-center">
-              <div className="text-4xl font-bold text-primary">
+              <div className="text-4xl max-sm:text-3xl font-bold text-primary">
                 Profile Stakeholder
               </div>
             </div>
@@ -59,27 +59,27 @@ const AddStakeholder = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="mahasiswaName"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                  Nama Mahasiswa
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  Nama
                 </label>
                 <input
                   id="mahasiswaName"
                   type="text"
                   placeholder="Name   "
-                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
+                  className=" placeholder:text-hint text-primary max-sm:placeholder:text-sm bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center max-sm:py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Kategori
                 </label>
                 <Menu
                   as="div"
-                  className="relative insline-block text-left w-full col-span-3">
+                  className="relative insline-block text-left w-full col-span-3 ">
                   <Menu.Button
-                    className={`inline-flex w-full items-center gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 text-lg ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm`}
+                    className={`inline-flex w-full items-center max-sm:py-3 gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 text-lg max-sm:text-sm ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm`}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}>
                     {selectedItem ? selectedItem.name : "Pilih kategori"}{" "}
@@ -95,7 +95,7 @@ const AddStakeholder = () => {
                             onClick={() => handleSelect(item)}
                             className={`${
                               active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg`}>
+                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}>
                             {item.name}
                           </button>
                         )}
@@ -113,39 +113,39 @@ const AddStakeholder = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="email"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Email
                 </label>
                 <input
                   id="email"
                   type="email"
                   placeholder="Email"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="noTelepon"
-                  className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   No Telepon
                 </label>
                 <input
                   id="noTelepon"
                   type="text"
                   placeholder="No Telepon"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  className=" placeholder:text-hint text-primary bg-inputAddProject text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                 />
               </div>
               <div className="grid grid-cols-4 gap-4 w-full h-full">
                 <label
                   htmlFor="foto"
-                  className="flex py-2 justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex py-2 justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Foto Profil
                 </label>
 
-                <div className="relative ">
+                <div className="relative max-sm:col-span-3">
                   {/* Placeholder custom */}
-                  <span className="absolute bg-inputAddProject inset-0 flex items-center pl-2 text-hint pointer-events-none rounded-md">
+                  <span className="absolute bg-inputAddProject max-sm:text-sm inset-0 flex items-center pl-2 text-hint pointer-events-none rounded-md">
                     {fileName}
                   </span>
 
@@ -158,24 +158,17 @@ const AddStakeholder = () => {
                   />
                 </div>
               </div>
-              {/* <div className="flex w-full items-end justify-end">
-                <button
-                  type="submit"
-                  className="w-52 text-primary drop-shadow-md bg-inputAddProject hover:bg-primary hover:text-white focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                  Upload
-                </button>
-              </div> */}
               <div className="flex gap-4 ml-auto">
                 <button
                   type="button"
                   data-modal-toggle="confirmModal"
                   data-modal-target="confirmModal"
-                  className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+                  className="bg-primary px-10 py-2 max-sm:px-7 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
                   Submit
                 </button>
                 <button
                   type="button"
-                  className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+                  className="bg-white px-10 py-2 max-sm:px-7 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
                   onClick={() => router.push("/home")}>
                   Cancel
                 </button>

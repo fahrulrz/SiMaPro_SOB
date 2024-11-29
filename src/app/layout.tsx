@@ -8,6 +8,7 @@ config.autoAddCss = false;
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 
 // import { useRouter } from "next/router";
@@ -48,7 +49,10 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans w-screen max-sm:overflow-hidden`}>
+        <AuthProvider>
+
         {children}
+        </AuthProvider>
         <script>
 
         </script>

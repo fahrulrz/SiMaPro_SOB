@@ -235,7 +235,7 @@ const SearchResults = () => {
                         </a>
                       </MenuItem>
 
-                      <form action="#" method="POST">
+                      {/* <form action="#" method="POST">
                         <MenuItem>
                           <button
                             type="submit"
@@ -243,7 +243,7 @@ const SearchResults = () => {
                             Sign out
                           </button>
                         </MenuItem>
-                      </form>
+                      </form> */}
                     </div>
                   </MenuItems>
                 </Menu>

@@ -18,6 +18,7 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavigationItem {
   name: string;
@@ -46,6 +47,12 @@ function classNames(...classes: string[]): string {
 const Navbar: React.FC = () => {
   const pathname = usePathname();
   setCurrentPath(pathname);
+
+  const { user, logout } = useAuth();
+
+  console.log("ini adalah isi dari user -> ",user);
+  console.log("ini adalah isi dari logout -> ",logout);
+
   return (
     <Disclosure
       as="nav"
@@ -120,37 +127,66 @@ const Navbar: React.FC = () => {
                       />
                     </MenuButton>
                   </div>
-                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+
+                  {/* cek login */}
+                  {user ? (
+                    <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <MenuItem>
+                        <div className="px-4 py-2 text-sm text-gray-700 border-b-2">
+                          {user}
+                        </div>
+                      </MenuItem>
+
+                      <MenuItem>
+                        {({ active }) => (
+                          <a
+                            onClick={logout}
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}>
+                            Logout
+                          </a>
+                        )}
+                      </MenuItem>
+                    </MenuItems>
+                  ) : (
+                    <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <MenuItem>
+                        {({ active }) => (
+                          <a
+                            href="/login"
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}>
+                            Login
+                          </a>
+                        )}
+                      </MenuItem>
+                    </MenuItems>
+                  )}
+
+                  {/* <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <MenuItem>
                       <div className="px-4 py-2 text-sm text-gray-700 border-b-2">
                         username
                       </div>
                     </MenuItem>
+
                     <MenuItem>
                       {({ active }) => (
                         <a
-                          href="/login"
+                          // onClick={logout}
                           className={classNames(
                             active ? "bg-gray-100" : "",
                             "block px-4 py-2 text-sm text-gray-700"
                           )}>
-                          Login
+                          Logout
                         </a>
                       )}
                     </MenuItem>
-                    <MenuItem>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active ? "bg-gray-100" : "",
-                            "block px-4 py-2 text-sm text-gray-700"
-                          )}>
-                          Sign out
-                        </a>
-                      )}
-                    </MenuItem>
-                  </MenuItems>
+                  </MenuItems> */}
                 </Menu>
               </div>
             </div>

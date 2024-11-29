@@ -1,3 +1,5 @@
+"use client";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
@@ -5,24 +7,59 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/style.css";
 
 import Image from "next/image";
+// import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { login } from "@/api/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  console.log("test", email, password);
+
+  const { login: setUser } = useAuth();
+
+  const handleLogin = async () => {
+    try {
+      const data = await login(email, password);
+      console.log("api response", data);
+      if (data) {
+        console.log("Login success:", data);
+        console.log(data.name);
+        // Lakukan navigasi ke halaman selanjutnya
+        setUser(data.name);
+        alert("Login successful!");
+        router.push("/home");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(`Login failed. ${error}`);
+    }
+  };
+
   return (
-    <div className="w-screen h-screen flex justify-center bg-white">
+    <div className="w-screen h-screen flex justify-center bg-[#FBF9F1]">
       <div className="flex flex-row max-sm:flex-col bg-primary w-full h-full items-center">
-        <div className="flex bg-[#FBF9F1] max-sm:bg-primary w-2/5 max-sm:flex-1 max-sm:w-full max-sm:px-10 h-full max-sm:h-full  justify-center items-center">
+        <div className="flex bg-[#FBF9F1] max-sm:bg-primary w-2/5 max-sm:flex-1 max-sm:w-full max-sm:px-0 h-full justify-center max-sm:justify-normal max-sm:mb-8 items-center">
           <Image
             src="/assets/logo.png"
             alt="Logo SiMaPro"
             width={500}
             height={500}
-            className="bg-white flex justify-center items-center text-black max-sm:mb-0 max-sm:mt-auto"
+            className="bg-white flex justify-center items-center text-black"
           />
         </div>
         <form
-          action="/home"
-          method="post"
-          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4  px-52 max-sm:px-10">
+          // action="/home"
+          // method="post"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
+          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10">
           <div className="flex flex-col h-1/4 gap-4 justify-center ">
             <div className="flex flex-auto">
               <label htmlFor="username" className="w-full relative block">
@@ -38,6 +75,7 @@ export default function Login() {
                   id="username"
                   name="username"
                   placeholder="Username"
+                  onChange={(e) => setEmail(e.target.value)}
                   style={{ color: "var(--primary)" }}
                   className="w-full h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:ring-2 focus:outline-none focus:ring-[var(--border)]"
                 />
@@ -57,6 +95,7 @@ export default function Login() {
                   id="password"
                   name="password"
                   placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-[var(--border)]"
                 />
               </label>
@@ -71,8 +110,7 @@ export default function Login() {
                   xmlns="http://www.w3.org/2000/svg"
                   width="1.6em"
                   height="1.6em"
-                  viewBox="0 0 256 262"
-                  >
+                  viewBox="0 0 256 262">
                   <path
                     fill="#4285f4"
                     d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
@@ -94,7 +132,7 @@ export default function Login() {
               Sign in with Google
             </button>
             <button
-              type="submit"
+              onClick={handleLogin}
               className="w-1/2 h-full bg-white text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
               Login
             </button>

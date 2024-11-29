@@ -8,8 +8,9 @@ const AddProfileTeam = () => {
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    router.push("home");
+    router.push("/home");
   };
+  
   return (
     <>
       <form onSubmit={submitHandler}>

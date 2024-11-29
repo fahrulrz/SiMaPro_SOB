@@ -18,70 +18,70 @@ import React, { useState, useEffect, useRef } from "react";
 
 import axios from "axios";
 
-interface Category {
-  id: number;
-  nama_kategori: string;
-}
+// interface Category {
+//   id: number;
+//   nama_kategori: string;
+// }
 
-interface Year {
-  id: number;
-  tahun: string;
-}
+// interface Year {
+//   id: number;
+//   tahun: string;
+// }
 
-interface Stakeholder {
-  id: number;
-  nama: string;
-  kategori: string;
-  nomor_telepon: string;
-  email: string;
-  foto: string;
-}
+// interface Stakeholder {
+//   id: number;
+//   nama: string;
+//   kategori: string;
+//   nomor_telepon: string;
+//   email: string;
+//   foto: string;
+// }
 
-interface Team {
-  id: number;
-  nama: string;
-}
+// interface Team {
+//   id: number;
+//   nama: string;
+// }
 
-interface Anggota {
-  id: number;
-  nama_lengkap: string;
-  NIM: string;
-  foto: string;
-}
+// interface Anggota {
+//   id: number;
+//   nama_lengkap: string;
+//   NIM: string;
+//   foto: string;
+// }
 
-interface AnggotaTeam {
-  id: number;
-  role: string;
-  team: Team;
-  member: Anggota;
-}
+// interface AnggotaTeam {
+//   id: number;
+//   role: string;
+//   team: Team;
+//   member: Anggota;
+// }
 
-interface Image {
-  id: number;
-  link_gambar: string;
-}
+// interface Image {
+//   id: number;
+//   link_gambar: string;
+// }
 
-interface Comment {
-  id: number;
-  isi_komen: string;
-  user: User;
-}
+// interface Comment {
+//   id: number;
+//   isi_komen: string;
+//   user: User;
+// }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+// interface User {
+//   id: number;
+//   name: string;
+//   email: string;
+// }
 
 interface Project {
   id: number;
   nama_proyek: string;
-  categories: Category[];
-  year: Year[];
-  image: Image[];
-  comment: Comment;
-  stakeholder: Stakeholder;
-  team: AnggotaTeam;
+  // categories: Category[];
+  // year: Year[];
+  // image: Image[];
+  // comment: Comment;
+  // stakeholder: Stakeholder;
+  // team: AnggotaTeam;
 }
 
 export default function Dashboard() {
@@ -303,58 +303,70 @@ export default function Dashboard() {
                       {filterYear && (
                         <div className="absolute block z-30 left-full ms-2 w-24 origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
                           <div>
-                            <form action="#">
+                            <div>
                               <div className="py-1">
                                 <div>
                                   <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="pad1">2020</label>
+                                    <label htmlFor="2020">2020</label>
                                     <input
                                       type="checkbox"
-                                      name="pad1"
-                                      id="pad1"
+                                      name="2020"
+                                      id="2020"
                                     />
                                   </div>
                                 </div>
                                 <div>
                                   <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="">2021</label>
-                                    <input type="checkbox" />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="pad1">2022</label>
+                                    <label htmlFor="2021">2021</label>
                                     <input
                                       type="checkbox"
-                                      name="pad1"
-                                      id="pad1"
+                                      name="2021"
+                                      id="2021"
                                     />
                                   </div>
                                 </div>
                                 <div>
                                   <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="">2023</label>
-                                    <input type="checkbox" />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="pad1">2024</label>
+                                    <label htmlFor="2022">2022</label>
                                     <input
                                       type="checkbox"
-                                      name="pad1"
-                                      id="pad1"
+                                      name="2022"
+                                      id="2022"
                                     />
                                   </div>
                                 </div>
                                 <div>
                                   <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="">2025</label>
-                                    <input type="checkbox" />
+                                    <label htmlFor="2023">2023</label>
+                                    <input
+                                      type="checkbox"
+                                      name="2023"
+                                      id="2023"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="2024">2024</label>
+                                    <input
+                                      type="checkbox"
+                                      name="2024"
+                                      id="2024"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor="2025">2025</label>
+                                    <input
+                                      type="checkbox"
+                                      name="2025"
+                                      id="2025"
+                                    />
                                   </div>
                                 </div>
                               </div>
-                            </form>
+                            </div>
                           </div>
                         </div>
                       )}

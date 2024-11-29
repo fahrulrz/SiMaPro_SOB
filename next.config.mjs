@@ -19,6 +19,7 @@ const nextConfig = {
       "api.duniagames.co.id",
       "www.tagar.id",
       "i0.wp.com",
+      "fastly.picsum.photos",
     ],
   },
 };

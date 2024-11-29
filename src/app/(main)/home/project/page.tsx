@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -28,6 +28,12 @@ import Comment from "@/components/Comment";
 interface Category {
   id: number;
   nama_kategori: string;
+}
+
+interface Like {
+  id: number;
+  user_id: number;
+  project_id: number;
 }
 
 interface Year {
@@ -114,6 +120,28 @@ const Content = () => {
 
   const [isHoveredComment, setIsHoveredComment] = useState<boolean>(false);
 
+  const [mainImageIndex, setMainImageIndex] = useState<number>(0);
+
+  const [images, setImages] = useState<Image[]>([]);
+
+  useEffect(() => {
+    if (projects) {
+      setImages(projects.image);
+    }
+  }, [projects]);
+
+  console.log(images);
+
+  const handleImageClick = (clickedIndex: number) => {
+    const updatedImages = [...images];
+    const temp = updatedImages[mainImageIndex];
+    updatedImages[mainImageIndex] = updatedImages[clickedIndex];
+    updatedImages[clickedIndex] = temp;
+
+    setImages(updatedImages);
+    setMainImageIndex(clickedIndex);
+  };
+
   const handleClickLike = () => {
     setIsHoveredLike(!isHoveredLike);
   };
@@ -140,8 +168,8 @@ const Content = () => {
         <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10 max-sm:gap-4">
           <div className="flex w-full max-h-[84.5vh] px-24 max-sm:px-0">
             <Image
-              src={projects?.image[0].link_gambar}
-              alt="Picture of the author"
+              src={projects?.image[mainImageIndex].link_gambar}
+              alt="Main Picture"
               width={1600}
               height={900}
               sizes="max-h-[80vh]"
@@ -149,7 +177,7 @@ const Content = () => {
             />
           </div>
           <div className="grid grid-cols-4 gap-6 max-sm:gap-1">
-            <div className="flex justify-center items-center">
+            {/* <div className="flex justify-center items-center">
               <Image
                 src={projects?.image[1].link_gambar}
                 alt="Picture of the author"
@@ -188,7 +216,42 @@ const Content = () => {
                 sizes={"max-h-[80vh]"}
                 objectFit="cover"
               />
-            </div>
+            </div> */}
+            {/* {projects?.image.slice(0, 4).map((img: Image, index: number) => (
+              <div
+                key={index + 1}
+                className={`flex justify-center items-center ${
+                  index + 1 === mainImageIndex ? "border-2 border-blue-500" : ""
+                }`}
+                onClick={() => handleImageClick(index + 1)}>
+                <Image
+                  src={projects?.image[index + 1].link_gambar}
+                  alt={`Picture ${projects?.image[index].link_gambar}`}
+                  width={1600}
+                  height={900}
+                  sizes="80vh"
+                  objectFit="cover"
+                  className="cursor-pointer"
+                />
+              </div>
+            ))} */}
+            {images.map((img: Image, index: number) =>
+              index !== mainImageIndex ? (
+                <div
+                  key={index}
+                  className="flex justify-center items-center cursor-pointer"
+                  onClick={() => handleImageClick(index)}>
+                  <Image
+                    src={img.link_gambar}
+                    alt={`Picture ${index + 1}`}
+                    width={1600}
+                    height={900}
+                    sizes="80vh"
+                    objectFit="cover"
+                  />
+                </div>
+              ) : null
+            )}
           </div>
         </div>
 
@@ -248,7 +311,6 @@ const Content = () => {
             </form>
           </div>
         </div>
-
         {/* end comment section */}
       </div>
 
@@ -263,7 +325,7 @@ const Content = () => {
               className="cursor-pointer"
             />
           </span>
-          <p>120k</p>
+          <p>{projects?.like.length}</p>
         </div>
         <div className="flex flex-col text-primary sm:hidden items-center ">
           <span>

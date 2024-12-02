@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 
@@ -56,6 +56,7 @@ const Team = () => {
 
   const [team, setTeam] = useState<Team>();
   const [error, setError] = useState(null);
+  console.error(error);
 
    useEffect(() => {
      Aos.init();
@@ -63,7 +64,7 @@ const Team = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/teams/${teamId}`)
+      .get(`https://fahrul-api.duckdns.org/api/teams/${teamId}`)
       .then((response) => {
         setTeam(response.data.data);
       })

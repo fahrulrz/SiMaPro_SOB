@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -153,7 +153,7 @@ const Content = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/projects/${id}`) // api mengambil detail project berdasarkan id
+      .get(`https://fahrul-api.duckdns.org/api/projects/${id}`) // api mengambil detail project berdasarkan id
       .then((response) => {
         setProjects(response.data.data);
       })

@@ -9,11 +9,8 @@ import "../../styles/style.css";
 
 import Image from "next/image";
 import React, { useState } from "react";
-// import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-// import { register } from "@/api/auth";
-// import { login } from "@/api/auth";
 
 const Register = () => {
   // const { login: setUser } = useAuth();

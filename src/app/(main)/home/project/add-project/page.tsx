@@ -338,7 +338,7 @@ const AddProject: React.FC = () => {
                     data-modal-target="successModal"
                     type="button"
                     className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                    Yes, I'm sure
+                    Yes, Im sure
                   </button>
                   <button
                     data-modal-hide="defaultModal"

@@ -113,7 +113,7 @@ const EditProject: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/projects/${id}`) // api mengambil detail project berdasarkan id
+      .get(`https://fahrul-api.duckdns.org/api/projects/${id}`) // api mengambil detail project berdasarkan id
       .then((response) => {
         setProjects(response.data.data);
       })
@@ -146,6 +146,7 @@ const EditProject: React.FC = () => {
   };
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  console.log(isHovered);
 
   const navigationItems: NavigationItem[] = [
     { id: 1, name: "Projek Aplikasi Dasar 1" },

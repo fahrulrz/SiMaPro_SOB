@@ -54,7 +54,7 @@ const EditMahasiswa = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/mahasiswa/${id}`)
+      .get(`https://fahrul-api.duckdns.org/api/mahasiswa/${id}`)
       .then((response) => {
         setMahasiswa(response.data.data);
       })

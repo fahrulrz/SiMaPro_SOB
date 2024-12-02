@@ -37,10 +37,11 @@ const EditProfileTeam = () => {
 
   const [team, setTeam] = useState<Team>();
   const [error, setError] = useState(null);
+  console.error(error);
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/teams/${teamId}`)
+      .get(`https://fahrul-api.duckdns.org/api/teams/${teamId}`)
       .then((response) => {
         setTeam(response.data.data);
       })
@@ -355,7 +356,7 @@ const EditProfileTeam = () => {
                     <button
                       type="submit"
                       className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                      Yes, I'm sure
+                      Yes, Im sure
                     </button>
                     <button
                       onClick={toggleModal}

@@ -45,13 +45,14 @@ const EditStakeholder = () => {
 
   const [stakeholder, setStakeholder] = useState<Stakeholder>();
   const [error, setError] = useState(null);
+  console.error(error);
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/stakeholders/${id}`)
+      .get(`https://fahrul-api.duckdns.org/api/stakeholders/${id}`)
       .then((response) => {
         setStakeholder(response.data.data);
       })

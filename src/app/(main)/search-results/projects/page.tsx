@@ -3,7 +3,7 @@
 // import components
 import Card from "@/components/Card";
 
-import "../../styles/style.css";
+import "@/app/styles/style.css";
 
 // import fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -96,7 +96,7 @@ const SearchResults = () => {
   useEffect(() => {
     if (query && query !== "") {
       axios
-        .get(`http://127.0.0.1:8000/api/search/${query}`)
+        .get(`https://fahrul-api.duckdns.org/api/search/${query}`)
         .then((response) => setResult(response.data.data))
         .catch((error) => console.error(error));
     }
@@ -256,15 +256,20 @@ const SearchResults = () => {
               <div>
                 <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4 max-sm:gap-2 w-full">
                   {/* card yang dibuat perulangan */}
-                  {result.map((project) => (
-                    <Card
-                      key={project.id}
-                      id={project.id}
-                      dataAos="fade-up"
-                      name={project.nama_proyek}
-                      imageUrl={project.image[0].link_gambar}
-                    />
-                  ))}
+
+                  {result?.length > 0 ? (
+                    result.map((project) => (
+                      <Card
+                        key={project.id}
+                        id={project.id}
+                        dataAos="fade-up"
+                        name={project.nama_proyek}
+                        imageUrl={project.image[0]?.link_gambar || ""}
+                      />
+                    ))
+                  ) : (
+                    <div className="col-span-2 text-red-500 font-bold text-2xl flex justify-center h-[30vh] items-center">No projects found</div>
+                  )}
                 </div>
               </div>
               {/* card end */}

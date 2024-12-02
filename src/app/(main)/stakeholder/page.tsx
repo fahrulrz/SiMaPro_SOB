@@ -32,7 +32,7 @@ const Stakeholder = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/stakeholders/")
+      .get("https://fahrul-api.duckdns.org/api/stakeholders/")
       .then((response) => {
         setStakeholder(response.data.data);
       })

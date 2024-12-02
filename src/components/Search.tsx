@@ -9,18 +9,29 @@ const Search = () => {
   const pathname = usePathname();
 
   const path = pathname.split("/");
+  console.info("ini adalah info -> ", path);
   let search = "";
 
    if (path[path.length - 1] == "home") {
-     search = "Search Project....";
+     search = "Search Projects....";
+   } else if (path[path.length - 1] == "stakeholder") {
+     search = "Search Stakeholder....";
+   } else if (path[path.length - 1] == "mahasiswa") {
+     search = "Search Mahasiswa....";
    } else {
-     search = "Search " + path[1].charAt(0).toUpperCase() + path[1].slice(1) + "....";
+     search = "Search " + path[2].charAt(0).toUpperCase() + path[2].slice(1) + "....";
    }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Arahkan ke halaman pencarian lain dengan query keyword
-    router.push(`/search-results?query=${keyword}`);
+    if (search === "Search Projects....") {
+      router.push(`/search-results/projects?query=${keyword}`);
+    } else if (search === "Search Stakeholder....") {
+      router.push(`/search-results/stakeholder?query=${keyword}`);
+    } else if (search === "Search Mahasiswa....") {
+      router.push(`/search-results/mahasiswa?query=${keyword}`);
+    }
   };
 
   return (

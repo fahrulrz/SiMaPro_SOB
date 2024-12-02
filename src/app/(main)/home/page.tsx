@@ -14,9 +14,10 @@ import {
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import axios from "axios";
+import { filterProjects } from "@/api/filter";
 
 // interface Category {
 //   id: number;
@@ -56,10 +57,10 @@ import axios from "axios";
 //   member: Anggota;
 // }
 
-// interface Image {
-//   id: number;
-//   link_gambar: string;
-// }
+interface Image {
+  id: number;
+  link_gambar: string;
+}
 
 // interface Comment {
 //   id: number;
@@ -78,7 +79,7 @@ interface Project {
   nama_proyek: string;
   // categories: Category[];
   // year: Year[];
-  // image: Image[];
+  image: Image[];
   // comment: Comment;
   // stakeholder: Stakeholder;
   // team: AnggotaTeam;
@@ -87,6 +88,7 @@ interface Project {
 export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState(null);
+  console.error(error);
 
   const [filterPad, setFilterPad] = useState(false);
 
@@ -99,82 +101,12 @@ export default function Dashboard() {
     setClickFilter(!clickFilter);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Jika klik terjadi di luar elemen menuRef
-      if (
-        menuRefFilter.current &&
-        !menuRefFilter.current.contains(event.target as Node)
-      ) {
-        setClickFilter(false);
-      }
-    };
-
-    if (clickFilter) {
-      window.addEventListener("click", handleClickOutside);
-    } else {
-      window.removeEventListener("click", handleClickOutside);
-    }
-
-    // Bersihkan event listener saat komponen di-unmount
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, [clickFilter]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Jika klik terjadi di luar elemen menuRefPad
-      if (
-        menuRefPad.current &&
-        !menuRefPad.current.contains(event.target as Node)
-      ) {
-        setFilterPad(false);
-      }
-    };
-
-    if (filterPad) {
-      window.addEventListener("click", handleClickOutside);
-    } else {
-      window.removeEventListener("click", handleClickOutside);
-    }
-
-    // Bersihkan event listener saat komponen di-unmount
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, [filterPad]);
-
   const menuRefYear = useRef<HTMLDivElement>(null);
   const [filterYear, setFilterYear] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Jika klik terjadi di luar elemen menuRefYear
-      if (
-        menuRefYear.current &&
-        !menuRefYear.current.contains(event.target as Node)
-      ) {
-        setFilterYear(false);
-      }
-    };
-
-    if (filterYear) {
-      window.addEventListener("click", handleClickOutside);
-    } else {
-      window.removeEventListener("click", handleClickOutside);
-    }
-
-    // Bersihkan event listener saat komponen di-unmount
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, [filterYear]);
-
-  useEffect(() => {
     axios
-
-      .get("http://127.0.0.1:8000/api/projects") // api mengambil semua data project
+      .get("https://fahrul-api.duckdns.org/api/projects") // api mengambil semua data project
       .then((response) => {
         setProjects(response.data.data);
       })
@@ -193,8 +125,135 @@ export default function Dashboard() {
     setFilterYear(!filterYear);
   };
 
-  console.log(projects);
-  console.log(error);
+  // filter year
+  const [checkedFilterYears, setCheckedFilterYears] = useState<string[]>([]);
+
+  const handleFilterYearChange = (year: string) => {
+    if (checkedFilterYears.includes(year)) {
+      setCheckedFilterYears(checkedFilterYears.filter((y) => y !== year));
+    } else {
+      setCheckedFilterYears([...checkedFilterYears, year]);
+    }
+  };
+
+  // filter pad
+  const [checkedFilterPads, setCheckedFilterPads] = useState<string[]>([]);
+
+  const handleFilterPadChange = (pad: string) => {
+    if (checkedFilterPads.includes(pad)) {
+      setCheckedFilterPads(checkedFilterPads.filter((p) => p !== pad));
+    } else {
+      setCheckedFilterPads([...checkedFilterPads, pad]);
+    }
+  };
+
+  console.info("filter year sek di anu ->", checkedFilterYears);
+
+  console.info("filter pad sek di anu ->", checkedFilterPads);
+
+  // menggunakan filter dengan api
+  const filteredProjects = useCallback(async () => {
+    try {
+      console.info("filter berjalan");
+      const data = await filterProjects(checkedFilterPads, checkedFilterYears);
+      console.info(data);
+      setProjects(data);
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  }, [checkedFilterPads, checkedFilterYears]);
+
+  /**
+   * ! ketika di klik diluar akan otomatis mentup
+  
+   * TODO: filter year desktop
+   */
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Jika klik terjadi di luar elemen menuRefYear
+      if (
+        menuRefYear.current &&
+        !menuRefYear.current.contains(event.target as Node)
+      ) {
+        setFilterYear(false);
+        if (checkedFilterYears.length > 0) {
+          filteredProjects();
+        }
+      }
+    };
+
+    if (filterYear) {
+      window.addEventListener("click", handleClickOutside);
+    } else {
+      window.removeEventListener("click", handleClickOutside);
+    }
+
+    // Bersihkan event listener saat komponen di-unmount
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [filterYear, checkedFilterYears.length, filteredProjects]);
+
+  // TODO: filter pad desktop
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Jika klik terjadi di luar elemen menuRefPad
+      if (
+        menuRefPad.current &&
+        !menuRefPad.current.contains(event.target as Node)
+      ) {
+        setFilterPad(false);
+        if (checkedFilterPads.length > 0) {
+          filteredProjects();
+        }
+      }
+    };
+
+    if (filterPad) {
+      window.addEventListener("click", handleClickOutside);
+    } else {
+      window.removeEventListener("click", handleClickOutside);
+    }
+
+    // Bersihkan event listener saat komponen di-unmount
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [filterPad, checkedFilterPads.length, filteredProjects]);
+
+  // TODO: filter mobile
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Jika klik terjadi di luar elemen menuRef
+      if (
+        menuRefFilter.current &&
+        !menuRefFilter.current.contains(event.target as Node)
+      ) {
+        setClickFilter(false);
+        if (checkedFilterPads.length > 0 && checkedFilterYears.length > 0) {
+          filteredProjects();
+        }
+      }
+    };
+
+    if (clickFilter) {
+      window.addEventListener("click", handleClickOutside);
+    } else {
+      window.removeEventListener("click", handleClickOutside);
+    }
+
+    // Bersihkan event listener saat komponen di-unmount
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [
+    clickFilter,
+    checkedFilterPads.length,
+    checkedFilterYears.length,
+    filteredProjects,
+  ]);
 
   return (
     <div className="flex flex-col w-full h-full bg-[#E5E1DA] no-scrollbar mb-20">
@@ -257,13 +316,31 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="pad1"
                                       id="pad1"
+                                      value="PAD1"
+                                      onChange={(e) =>
+                                        handleFilterPadChange(e.target.value)
+                                      }
+                                      checked={checkedFilterPads.includes(
+                                        "PAD1"
+                                      )}
                                     />
                                   </div>
                                 </div>
                                 <div>
                                   <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="">PAD 2</label>
-                                    <input type="checkbox" />
+                                    <label htmlFor="pad2">PAD 2</label>
+                                    <input
+                                      type="checkbox"
+                                      name="pad2"
+                                      id="pad2"
+                                      value="PAD2"
+                                      onChange={(e) =>
+                                        handleFilterPadChange(e.target.value)
+                                      }
+                                      checked={checkedFilterPads.includes(
+                                        "PAD2"
+                                      )}
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -312,6 +389,13 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="2020"
                                       id="2020"
+                                      value="2020"
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        "2020"
+                                      )}
                                     />
                                   </div>
                                 </div>
@@ -322,6 +406,13 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="2021"
                                       id="2021"
+                                      value="2021"
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        "2021"
+                                      )}
                                     />
                                   </div>
                                 </div>
@@ -332,6 +423,13 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="2022"
                                       id="2022"
+                                      value="2022"
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        "2022"
+                                      )}
                                     />
                                   </div>
                                 </div>
@@ -342,6 +440,13 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="2023"
                                       id="2023"
+                                      value="2023"
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        "2023"
+                                      )}
                                     />
                                   </div>
                                 </div>
@@ -352,6 +457,13 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="2024"
                                       id="2024"
+                                      value="2024"
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        "2024"
+                                      )}
                                     />
                                   </div>
                                 </div>
@@ -362,6 +474,13 @@ export default function Dashboard() {
                                       type="checkbox"
                                       name="2025"
                                       id="2025"
+                                      value="2025"
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        "2025"
+                                      )}
                                     />
                                   </div>
                                 </div>
@@ -484,13 +603,31 @@ export default function Dashboard() {
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
                                 <label htmlFor="pad1">PAD 1</label>
-                                <input type="checkbox" name="pad1" id="pad1" />
+                                <input
+                                  type="checkbox"
+                                  name="pad1"
+                                  id="pad1"
+                                  value="PAD1"
+                                  onChange={(e) =>
+                                    handleFilterPadChange(e.target.value)
+                                  }
+                                  checked={checkedFilterPads.includes("PAD1")}
+                                />
                               </div>
                             </div>
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
                                 <label htmlFor="">PAD 2</label>
-                                <input type="checkbox" />
+                                <input
+                                  type="checkbox"
+                                  name="pad2"
+                                  id="pad2"
+                                  value="PAD2"
+                                  onChange={(e) =>
+                                    handleFilterPadChange(e.target.value)
+                                  }
+                                  checked={checkedFilterPads.includes("PAD2")}
+                                />
                               </div>
                             </div>
                           </div>
@@ -531,38 +668,92 @@ export default function Dashboard() {
                           <div className="py-1">
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="pad1">2020</label>
-                                <input type="checkbox" name="pad1" id="pad1" />
+                                <label htmlFor="2020">2020</label>
+                                <input
+                                  type="checkbox"
+                                  name="2020"
+                                  id="2020"
+                                  value="2020"
+                                  onChange={(e) =>
+                                    handleFilterYearChange(e.target.value)
+                                  }
+                                  checked={checkedFilterYears.includes("2020")}
+                                />
                               </div>
                             </div>
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="">2021</label>
-                                <input type="checkbox" />
+                                <label htmlFor="2021">2021</label>
+                                <input
+                                  type="checkbox"
+                                  name="2021"
+                                  id="2021"
+                                  value="2021"
+                                  onChange={(e) =>
+                                    handleFilterYearChange(e.target.value)
+                                  }
+                                  checked={checkedFilterYears.includes("2021")}
+                                />
                               </div>
                             </div>
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="pad1">2022</label>
-                                <input type="checkbox" name="pad1" id="pad1" />
+                                <label htmlFor="2022">2022</label>
+                                <input
+                                  type="checkbox"
+                                  name="2022"
+                                  id="2022"
+                                  value={"2022"}
+                                  onChange={(e) =>
+                                    handleFilterYearChange(e.target.value)
+                                  }
+                                  checked={checkedFilterYears.includes("2022")}
+                                />
                               </div>
                             </div>
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="">2023</label>
-                                <input type="checkbox" />
+                                <label htmlFor="2023">2023</label>
+                                <input
+                                  type="checkbox"
+                                  name="2023"
+                                  id="2023"
+                                  value={"2023"}
+                                  onChange={(e) =>
+                                    handleFilterYearChange(e.target.value)
+                                  }
+                                  checked={checkedFilterYears.includes("2023")}
+                                />
                               </div>
                             </div>
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="pad1">2024</label>
-                                <input type="checkbox" name="pad1" id="pad1" />
+                                <label htmlFor="2024">2024</label>
+                                <input
+                                  type="checkbox"
+                                  name="2024"
+                                  id="2024"
+                                  value={"2024"}
+                                  onChange={(e) =>
+                                    handleFilterYearChange(e.target.value)
+                                  }
+                                  checked={checkedFilterYears.includes("2024")}
+                                />
                               </div>
                             </div>
                             <div>
                               <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="">2025</label>
-                                <input type="checkbox" />
+                                <label htmlFor="2025">2025</label>
+                                <input
+                                  type="checkbox"
+                                  name="2025"
+                                  id="2025"
+                                  value={"2025"}
+                                  onChange={(e) =>
+                                    handleFilterYearChange(e.target.value)
+                                  }
+                                  checked={checkedFilterYears.includes("2025")}
+                                />
                               </div>
                             </div>
                           </div>

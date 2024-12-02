@@ -205,7 +205,7 @@ const EditProject: React.FC = () => {
                   </div>
                 ) : (
                   <Image
-                    src={projects?.image[0].link_gambar}
+                    src={projects?.image[0].link_gambar || ""}
                     alt={JSON.stringify(projects?.image[0].link_gambar)}
                     layout="fill"
                     objectFit="cover"
@@ -233,7 +233,7 @@ const EditProject: React.FC = () => {
                     {fileUrls[index + 1] ? (
                       <div className="absolute flex w-full h-full">
                         <Image
-                          src={fileUrls[index + 1]}
+                          src={fileUrls[index + 1] || ""}
                           alt={
                             selectedFiles[index + 1]?.name || "Uploaded Image"
                           }
@@ -243,7 +243,7 @@ const EditProject: React.FC = () => {
                       </div>
                     ) : (
                       <Image
-                        src={projects?.image[index + 1].link_gambar}
+                        src={projects?.image[index + 1].link_gambar || ""}
                         alt={JSON.stringify(
                           projects?.image[index + 1].link_gambar
                         )}

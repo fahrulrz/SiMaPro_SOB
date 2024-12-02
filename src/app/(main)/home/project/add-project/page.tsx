@@ -129,7 +129,7 @@ const AddProject: React.FC = () => {
                     {fileUrls[index + 1] ? (
                       <div className="absolute flex w-full h-full">
                         <Image
-                          src={fileUrls[index + 1]}
+                          src={fileUrls[index + 1] || ""} // Pastikan selalu memberikan string default
                           alt={
                             selectedFiles[index + 1]?.name || "Uploaded Image"
                           }

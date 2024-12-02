@@ -168,7 +168,7 @@ const Content = () => {
         <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10 max-sm:gap-4">
           <div className="flex w-full max-h-[84.5vh] px-24 max-sm:px-0">
             <Image
-              src={projects?.image[mainImageIndex].link_gambar}
+              src={projects?.image[mainImageIndex].link_gambar || ""}
               alt="Main Picture"
               width={1600}
               height={900}

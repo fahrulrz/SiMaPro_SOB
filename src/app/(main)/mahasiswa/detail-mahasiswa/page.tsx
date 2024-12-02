@@ -67,7 +67,7 @@ const DetailMahasiswa = () => {
             <div className="bg-red-600 flex flex-col mt-10">
               <div className="flex relative h-[30rem] max-sm:h-96 w-96 max-sm:w-72">
                 <Image
-                  src={mahasiswa?.foto}
+                  src={mahasiswa?.foto || ""}
                   alt="Picture of the author"
                   //   width={1600}
                   //   height={900}

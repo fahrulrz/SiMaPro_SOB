@@ -109,17 +109,25 @@ const Content = () => {
   // let id: string;
 
   const [id, setId] = useState<string>(" ");
-  useEffect(() => {
-    const idUrl = window
-      ? new URLSearchParams(window.location.search).get("id") || " "
-      : " ";
-      setId(idUrl);
-  }, []);
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
 
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   axios
+  //     .get(`https://fahrul-api.duckdns.org/api/projects/${id}`) // api mengambil detail project berdasarkan id
+  //     .then((response) => {
+  //       setProjects(response.data.data);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       setError(error);
+  //       setIsLoading(false);
+  //     });
+  // }, [id]);
   const [projects, setProjects] = useState<Project>();
   const [error, setError] = useState(null);
+
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   console.log(error);
 
@@ -133,11 +141,39 @@ const Content = () => {
 
   const [images, setImages] = useState<Image[]>([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    if (projects) {
-      setImages(projects.image);
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || "0"
+      : "0";
+    setId(idUrl);
+    console.log("id", idUrl);
+
+    if (!isLoading || !idUrl) {
+      return;
     }
-  }, [projects]);
+    axios
+      .get(`https://fahrul-api.duckdns.org/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .then((response) => {
+        setProjects(response.data.data);
+        console.log("respon data", response.data.data);
+        console.log("respon project", projects);
+        setImages(response.data.data.image);
+
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setIsLoading(false);
+      });
+  }, [id, projects, isLoading]);
+
+  // useEffect(() => {
+  //   if (projects) {
+  //     setImages(projects.image);
+  //   }
+  // }, [projects]);
 
   console.log(images);
 
@@ -160,19 +196,17 @@ const Content = () => {
     setIsHoveredComment(!isHoveredComment);
   };
 
-  useEffect(() => {
-    axios
-      .get(`https://fahrul-api.duckdns.org/api/projects/${id}`) // api mengambil detail project berdasarkan id
-      .then((response) => {
-        setProjects(response.data.data);
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  }, [id]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error</div>;
+  }
 
   return (
     <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-full w-screen">
+      {isLoading ? <div>Loading...</div> : <>Loading selesai</>}
       <div className="flex flex-row max-sm:flex-col h-full w-full gap-5">
         <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10 max-sm:gap-4">
           <div className="flex w-full max-h-[84.5vh] px-24 max-sm:px-0">

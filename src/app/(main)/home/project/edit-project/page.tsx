@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter} from "next/navigation";
 import React from "react";
 
 import Image from "next/image";
 
-import Aos from "aos";
+// import Aos from "aos";
 import "aos/dist/aos.css";
 
 import { Menu } from "@headlessui/react";
@@ -19,7 +19,7 @@ import axios from "axios";
 
 import "@/app/styles/style.css";
 
-import "flowbite";
+// import "flowbite";
 
 interface NavigationItem {
   id: number;
@@ -87,8 +87,17 @@ const EditProject: React.FC = () => {
   const router = useRouter();
 
   //   mengambil id dari params url
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const [id, setId] = useState<string>(" ");
+
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+      setId(idUrl);
+  }, []);
+
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   // membuat variabel untuk menyimpan data project
   const [projects, setProjects] = useState<Project>();
@@ -171,7 +180,13 @@ const EditProject: React.FC = () => {
       }
     };
 
-  Aos.init();
+    if (typeof window != "undefined") {
+      import("aos").then((Aos) => {
+          Aos.init();
+      });
+  }
+
+  // Aos.init();
 
   // Menangani submit form
   const submitHandler = (event: React.FormEvent) => {

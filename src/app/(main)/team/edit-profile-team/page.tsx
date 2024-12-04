@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import "flowbite";
+import { useRouter} from "next/navigation";
+// import "flowbite";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -30,7 +30,16 @@ interface Team {
 const EditProfileTeam = () => {
   const router = useRouter();
 
-  const teamId = useSearchParams().get("id");
+  const [teamId, setTeamId] = useState<string>(" ");
+
+  useEffect(() => {
+    const teamIdUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+      setTeamId(teamIdUrl);
+  }, []);
+
+  // const teamId = useSearchParams().get("id");
   const idTeam = teamId ? parseInt(teamId) : null;
 
   const [isModalOpen, setIsModalOpen] = useState(false);

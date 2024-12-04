@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -106,8 +106,17 @@ interface Project {
 const Content = () => {
   // Aos.init();
 
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  // let id: string;
+
+  const [id, setId] = useState<string>(" ");
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+      setId(idUrl);
+  }, []);
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   const [projects, setProjects] = useState<Project>();
   const [error, setError] = useState(null);

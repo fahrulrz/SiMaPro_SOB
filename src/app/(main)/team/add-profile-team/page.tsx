@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import 'flowbite';
+// import 'flowbite';
 
 const AddProfileTeam = () => {
   const router = useRouter();

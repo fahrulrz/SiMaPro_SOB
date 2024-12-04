@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import "flowbite";
+// import "flowbite";
 
 const AddMahasiswa = () => {
   const router = useRouter();

@@ -16,7 +16,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import React, { useState, useEffect } from "react";
 
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 
 interface Category {
   id: number;
@@ -86,8 +86,20 @@ interface Project {
 
 const SearchResults = () => {
   // const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+  // const searchParams = useSearchParams();
+
+  const [query, setQuery] = useState<string>("");
+
+  useEffect(() => {
+    const queryUrl = window
+      ? new URLSearchParams(window.location.search).get("query") || " "
+      : " ";
+      setQuery(queryUrl);
+  }, []);
+
+  
+
+  // const query = searchParams.get("query");
   const [result, setResult] = useState<Project[]>([]);
 
   //   const [projects, setProjects] = useState<Project[]>([]);

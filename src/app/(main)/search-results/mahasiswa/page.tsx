@@ -6,7 +6,7 @@ import React, { useState, useEffect } from "react";
 
 import Image from "next/image";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 interface Mahasiswa {
@@ -27,7 +27,17 @@ interface Anggota {
 const SearchMahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
   const [error, setError] = useState(null);
-  const keyword = useSearchParams()?.get("query");
+
+  const [keyword, setKeyword] = useState<string>(" ");
+
+  useEffect(() => {
+    const keywordUrl = window
+      ? new URLSearchParams(window.location.search).get("query") || " "
+      : " ";
+      setKeyword(keywordUrl);
+  }, []);
+
+  // const keyword = useSearchParams()?.get("query");
 
   const router = useRouter();
 

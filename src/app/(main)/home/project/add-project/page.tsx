@@ -6,12 +6,12 @@ import React from "react";
 
 import Image from "next/image";
 
-import Aos from "aos";
+// import Aos from "aos";
 import "aos/dist/aos.css";
 
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import "flowbite";
+// import "flowbite";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -72,7 +72,13 @@ const AddProject: React.FC = () => {
       }
     };
 
-  Aos.init();
+    if (typeof window != "undefined") {
+      import("aos").then((Aos) => {
+          Aos.init();
+      });
+  }
+
+  // Aos.init();
 
   // Menangani submit form
   const submitHandler = (event: React.FormEvent) => {

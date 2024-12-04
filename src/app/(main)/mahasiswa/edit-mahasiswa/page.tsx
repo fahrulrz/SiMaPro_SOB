@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import "flowbite";
+import { useRouter} from "next/navigation";
+// import "flowbite";
 // import "flowbite/dist/flowbite";
 
 import axios from "axios";
@@ -34,8 +34,17 @@ const EditMahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa>();
   const [error, setError] = useState(null);
 
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const [id, setId] = useState<string>(" ");
+
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+    setId(idUrl);
+  }, []);
+
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   console.log(error);
 
@@ -50,7 +59,6 @@ const EditMahasiswa = () => {
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
-
 
   useEffect(() => {
     axios

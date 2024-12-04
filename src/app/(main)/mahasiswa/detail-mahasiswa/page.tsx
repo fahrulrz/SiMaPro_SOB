@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -38,8 +38,17 @@ const DetailMahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa>();
   const [error, setError] = useState(null);
 
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const [id, setId] = useState<string>(" ");
+
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+      setId(idUrl);
+  }, []);
+
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   // const router = useRouter();
 

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter} from "next/navigation";
 import axios from "axios";
 
-import Aos from "aos";
+// import Aos from "aos";
 import "aos/dist/aos.css";
 
 import Image from "next/image";
@@ -52,15 +52,31 @@ const Team = () => {
 
   const router = useRouter();
 
-  const teamId = useSearchParams().get("id");
+  const [teamId, setTeamId] = useState<string>(" ");
+
+  useEffect(() => {
+    const teamIdUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+      setTeamId(teamIdUrl);
+  }, []);
+
+  // const teamId = useSearchParams().get("id");
 
   const [team, setTeam] = useState<Team>();
   const [error, setError] = useState(null);
   console.error(error);
 
-   useEffect(() => {
-     Aos.init();
-   }, []);
+  //  useEffect(() => {
+  //    Aos.init();
+  //  }, []);
+
+  if (typeof window != "undefined") {
+    import("aos").then((Aos) => {
+        Aos.init();
+    });
+}
+
 
   useEffect(() => {
     axios

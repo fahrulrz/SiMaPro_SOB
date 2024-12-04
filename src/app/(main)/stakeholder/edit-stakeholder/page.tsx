@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
-import "flowbite";
+// import "flowbite";
 import axios from "axios";
 
 interface NavigationItem {
@@ -47,8 +47,17 @@ const EditStakeholder = () => {
   const [error, setError] = useState(null);
   console.error(error);
 
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const [id, setId] = useState<string>(" ");
+
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+    setId(idUrl);
+  }, []);
+
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   useEffect(() => {
     axios

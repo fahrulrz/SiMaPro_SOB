@@ -18,8 +18,8 @@ const Search = () => {
      search = "Search Stakeholder....";
    } else if (path[path.length - 1] == "mahasiswa") {
      search = "Search Mahasiswa....";
-   } else {
-     search = "Search " + path[2].charAt(0).toUpperCase() + path[2].slice(1) + "....";
+   } else if (path.length > 2) {
+     search = "Search " + path[2]?.charAt(0)?.toUpperCase() + path[2].slice(1) + "....";
    }
 
   const handleSearch = (e: React.FormEvent) => {

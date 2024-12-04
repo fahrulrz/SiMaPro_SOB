@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter} from "next/navigation";
 
 import Image from "next/image";
 
@@ -28,7 +28,17 @@ interface Project {
 const SearchStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder[]>([]);
   const [error, setError] = useState(null);
-  const keyword = useSearchParams()?.get("query");
+
+  const [keyword, setKeyword] = useState<string>(" ");
+
+  useEffect(() => {
+    const keywordUrl = window
+      ? new URLSearchParams(window.location.search).get("query") || " "
+      : " ";
+      setKeyword(keywordUrl);
+  }, []);
+
+  // const keyword = useSearchParams()?.get("query");
 
   useEffect(() => {
     if (keyword) {

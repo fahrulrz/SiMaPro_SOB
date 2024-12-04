@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -40,8 +40,17 @@ const DetailStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder>();
   const [error, setError] = useState(null);
 
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const [id, setId] = useState<string>(" ");
+
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+      setId(idUrl);
+  }, []);
+
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
 
   useEffect(() => {
     axios

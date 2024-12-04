@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { Carousel } from "flowbite";
+// import { Carousel } from "flowbite";
 import Image from "next/image";
-import type { CarouselOptions } from "flowbite";
+import { type CarouselOptions } from "flowbite";
 
 const imageSources = [
   "/assets/logo.png",
@@ -13,6 +13,22 @@ const imageSources = [
 ]; // Sesuaikan src image di sini
 
 const MyCarousel = () => {
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     import("flowbite").then(({ Carousel }) => {
+  //       const carousel = new Carousel(carouselElement, items, options);
+  //       carousel.cycle();
+
+  //       document
+  //         .querySelector("[data-carousel-prev]")
+  //         ?.addEventListener("click", () => carousel.prev());
+  //       document
+  //         .querySelector("[data-carousel-next]")
+  //         ?.addEventListener("click", () => carousel.next());
+  //     });
+  //   }
+  // });
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const carouselElement = document.getElementById("carousel-example");
@@ -42,15 +58,29 @@ const MyCarousel = () => {
         },
       };
 
-      const carousel = new Carousel(carouselElement, items, options);
-      carousel.cycle();
+      if (typeof window !== "undefined") {
+        import("flowbite").then(({ Carousel }) => {
+          const carousel = new Carousel(carouselElement, items, options);
+          carousel.cycle();
 
-      document
-        .querySelector("[data-carousel-prev]")
-        ?.addEventListener("click", () => carousel.prev());
-      document
-        .querySelector("[data-carousel-next]")
-        ?.addEventListener("click", () => carousel.next());
+          document
+            .querySelector("[data-carousel-prev]")
+            ?.addEventListener("click", () => carousel.prev());
+          document
+            .querySelector("[data-carousel-next]")
+            ?.addEventListener("click", () => carousel.next());
+        });
+      }
+
+      // const carousel = new Carousel(carouselElement, items, options);
+      // carousel.cycle();
+
+      // document
+      //   .querySelector("[data-carousel-prev]")
+      //   ?.addEventListener("click", () => carousel.prev());
+      // document
+      //   .querySelector("[data-carousel-next]")
+      //   ?.addEventListener("click", () => carousel.next());
     }
   }, []);
 

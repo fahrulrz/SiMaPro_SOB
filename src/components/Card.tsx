@@ -4,10 +4,10 @@
 
 // import React, { useEffect,  } from "react";
 import Image from "next/image";
-import Aos from "aos";
+// import Aos from "aos";
 import "aos/dist/aos.css";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Link from "next/link";
@@ -34,10 +34,15 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    Aos.init();
-  }, []);
+  // useEffect(() => {
+  //   Aos.init();
+  // }, []);
 
+  if (typeof window != "undefined") {
+    import("aos").then((Aos) => {
+        Aos.init();
+    });
+}
 
   const clickHandler = (id: number) => {
     router.push(`/home/project?id=${id}`);

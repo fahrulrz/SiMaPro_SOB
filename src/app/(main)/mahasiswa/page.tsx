@@ -30,14 +30,19 @@ const Mahasiswa = () => {
 
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get("https://fahrul-api.duckdns.org/api/mahasiswa")
       .then((response) => {
         setMahasiswa(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         setError(error);
+        setIsLoading(false);
       });
   }, []);
 
@@ -48,6 +53,17 @@ const Mahasiswa = () => {
   const clickHandler = (mahasiswa: number) => {
     router.push(`/mahasiswa/detail-mahasiswa?id=${mahasiswa}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Loading....
+        </div>
+      </div>
+    );
+  }
 
 
   return (
@@ -69,7 +85,7 @@ const Mahasiswa = () => {
                       // height={700}
                       layout="fill"
                       objectFit="cover"
-                      className="bg-red-500"
+                      className={isLoading ? "animate-pulse bg-slate-700" : ""}
                     />
                   </div>
                 </div>

@@ -1,3 +1,5 @@
-# Doakan Saya Agar Tetap Hidup 🙂
+# Dipuji tidak terbang
 
-- [link deploy](https://github.com/fahrulrz/SiMaPro_SOB) -> menyusul ygy ( ga ada duit sih buat deploy )
+# Dihina tiap hari bang
+
+- [link deploy](https://simapro.web.id) -> menyusul ygy ( ga ada duit sih buat deploy )

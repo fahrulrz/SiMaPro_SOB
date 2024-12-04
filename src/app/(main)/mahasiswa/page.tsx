@@ -54,17 +54,6 @@ const Mahasiswa = () => {
     router.push(`/mahasiswa/detail-mahasiswa?id=${mahasiswa}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
-        
-        <div className="text-4xl text-primary font-bold animate-pulse">
-          Loading....
-        </div>
-      </div>
-    );
-  }
-
 
   return (
     <>

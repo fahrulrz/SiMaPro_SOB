@@ -41,35 +41,26 @@ const EditMahasiswa = () => {
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
     setId(idUrl);
-  }, []);
-
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
-
-  console.log(error);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // let modal = new Modal(document.getElementById("confirmModal"), {
-  //   placement: "center",
-  // });
-
-  const modalRef = useRef<HTMLDivElement | null>(null);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  useEffect(() => {
     axios
-      .get(`https://fahrul-api.duckdns.org/api/mahasiswa/${id}`)
+      .get(`https://fahrul-api.duckdns.org/api/mahasiswa/${idUrl}`)
       .then((response) => {
         setMahasiswa(response.data.data);
       })
       .catch((error) => {
         setError(error);
       });
-  }, [id]);
+  }, []);
+
+
+  console.log(error);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   const [fileName, setFileName] = useState<string>(
     "Add Foto Profile Mahasiswa"

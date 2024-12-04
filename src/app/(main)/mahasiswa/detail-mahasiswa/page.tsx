@@ -45,23 +45,17 @@ const DetailMahasiswa = () => {
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
       setId(idUrl);
-  }, []);
 
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
-
-  // const router = useRouter();
-
-  useEffect(() => {
-    axios
-      .get(`https://fahrul-api.duckdns.org/api/mahasiswa/${id}`)
+      axios
+      .get(`https://fahrul-api.duckdns.org/api/mahasiswa/${idUrl}`)
       .then((response) => {
         setMahasiswa(response.data.data);
       })
       .catch((error) => {
         setError(error);
       });
-  }, [id]);
+  }, []);
+
 
   console.log(error);
 

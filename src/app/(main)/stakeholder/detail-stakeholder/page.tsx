@@ -47,21 +47,15 @@ const DetailStakeholder = () => {
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
       setId(idUrl);
-  }, []);
-
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
-
-  useEffect(() => {
-    axios
-      .get(`https://fahrul-api.duckdns.org/api/stakeholders/${id}`)
+      axios
+      .get(`https://fahrul-api.duckdns.org/api/stakeholders/${idUrl}`)
       .then((response) => {
         setStakeholder(response.data.data);
       })
       .catch((error) => {
         setError(error);
       });
-  }, [id]);
+  }, []);
 
   console.log(error);
 

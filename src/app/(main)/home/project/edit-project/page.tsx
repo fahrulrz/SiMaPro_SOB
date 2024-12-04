@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 import Image from "next/image";
@@ -88,16 +88,31 @@ const EditProject: React.FC = () => {
 
   //   mengambil id dari params url
   const [id, setId] = useState<string>(" ");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const idUrl = window
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
-      setId(idUrl);
-  }, []);
+    setId(idUrl);
 
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
+    if (!isLoading || !idUrl) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    axios
+      .get(`https://fahrul-api.duckdns.org/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .then((response) => {
+        setProjects(response.data.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setIsLoading(false);
+      });
+  }, []);
 
   // membuat variabel untuk menyimpan data project
   const [projects, setProjects] = useState<Project>();
@@ -120,16 +135,6 @@ const EditProject: React.FC = () => {
 
   console.log(error);
 
-  useEffect(() => {
-    axios
-      .get(`https://fahrul-api.duckdns.org/api/projects/${id}`) // api mengambil detail project berdasarkan id
-      .then((response) => {
-        setProjects(response.data.data);
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  }, [id]);
 
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
 
@@ -180,10 +185,10 @@ const EditProject: React.FC = () => {
       }
     };
 
-    if (typeof window != "undefined") {
-      import("aos").then((Aos) => {
-          Aos.init();
-      });
+  if (typeof window != "undefined") {
+    import("aos").then((Aos) => {
+      Aos.init();
+    });
   }
 
   // Aos.init();
@@ -193,6 +198,20 @@ const EditProject: React.FC = () => {
     event.preventDefault();
     router.push(`/home/project?id=${id}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Loading....
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error</div>;
+  }
 
   return (
     <div>

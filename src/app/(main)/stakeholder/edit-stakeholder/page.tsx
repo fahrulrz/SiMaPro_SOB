@@ -54,21 +54,15 @@ const EditStakeholder = () => {
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
     setId(idUrl);
-  }, []);
-
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
-
-  useEffect(() => {
     axios
-      .get(`https://fahrul-api.duckdns.org/api/stakeholders/${id}`)
+      .get(`https://fahrul-api.duckdns.org/api/stakeholders/${idUrl}`)
       .then((response) => {
         setStakeholder(response.data.data);
       })
       .catch((error) => {
         setError(error);
       });
-  }, [id]);
+  }, []);
 
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
 

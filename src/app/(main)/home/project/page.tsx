@@ -110,24 +110,8 @@ const Content = () => {
 
   const [id, setId] = useState<string>(" ");
 
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   axios
-  //     .get(`https://fahrul-api.duckdns.org/api/projects/${id}`) // api mengambil detail project berdasarkan id
-  //     .then((response) => {
-  //       setProjects(response.data.data);
-  //       setIsLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       setError(error);
-  //       setIsLoading(false);
-  //     });
-  // }, [id]);
   const [projects, setProjects] = useState<Project>();
   const [error, setError] = useState(null);
-
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
 
   console.log(error);
 
@@ -148,11 +132,12 @@ const Content = () => {
       ? new URLSearchParams(window.location.search).get("id") || "0"
       : "0";
     setId(idUrl);
-    console.log("id", idUrl);
-
+    
     if (!isLoading || !idUrl) {
       return;
     }
+
+    setIsLoading(true);
     axios
       .get(`https://fahrul-api.duckdns.org/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
       .then((response) => {
@@ -168,12 +153,6 @@ const Content = () => {
         setIsLoading(false);
       });
   }, [id, projects, isLoading]);
-
-  // useEffect(() => {
-  //   if (projects) {
-  //     setImages(projects.image);
-  //   }
-  // }, [projects]);
 
   console.log(images);
 
@@ -197,7 +176,14 @@ const Content = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Loading....
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -206,7 +192,6 @@ const Content = () => {
 
   return (
     <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-full w-screen">
-      {isLoading ? <div>Loading...</div> : <>Loading selesai</>}
       <div className="flex flex-row max-sm:flex-col h-full w-full gap-5">
         <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10 max-sm:gap-4">
           <div className="flex w-full max-h-[84.5vh] px-24 max-sm:px-0">

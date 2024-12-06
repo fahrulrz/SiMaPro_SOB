@@ -74,7 +74,7 @@ export default function Login() {
                   type="text"
                   id="username"
                   name="username"
-                  placeholder="Username"
+                  placeholder="Email"
                   onChange={(e) => setEmail(e.target.value)}
                   style={{ color: "var(--primary)" }}
                   className="w-full h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:ring-2 focus:outline-none focus:ring-[var(--border)]"

@@ -20,6 +20,7 @@ const nextConfig = {
       "www.tagar.id",
       "i0.wp.com",
       "fastly.picsum.photos",
+      "simapro.web.id",
     ],
   },
 };

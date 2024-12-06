@@ -2,4 +2,5 @@
 
 # Dihina tiap hari bang
 
-- [link deploy](https://simapro.web.id) -> menyusul ygy ( ga ada duit sih buat deploy )
+- [link deploy beta](https://simapro.web.id)
+- [link deploy final](https://pad.simapro.web.id)

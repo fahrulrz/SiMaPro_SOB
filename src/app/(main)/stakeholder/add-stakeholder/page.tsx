@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Menu } from "@headlessui/react";
@@ -23,6 +23,15 @@ const AddStakeholder = () => {
 
   const handleSelect = (item: NavigationItem) => {
     setSelectedItem(item);
+  };
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -161,8 +170,7 @@ const AddStakeholder = () => {
               <div className="flex gap-4 ml-auto">
                 <button
                   type="button"
-                  data-modal-toggle="confirmModal"
-                  data-modal-target="confirmModal"
+                  onClick={toggleModal}
                   className="bg-primary px-10 py-2 max-sm:px-7 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
                   Submit
                 </button>
@@ -177,7 +185,7 @@ const AddStakeholder = () => {
           </div>
         </div>
         {/* confirm modal */}
-        <div
+        {/* <div
           id="confirmModal"
           tabIndex={-1}
           className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -245,7 +253,78 @@ const AddStakeholder = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+
+
+{isModalOpen && (
+          <div
+            ref={modalRef}
+            tabIndex={-1}
+            className="overflow-y-auto flex bg-black/30 overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full">
+            <div className="relative p-4 w-full max-w-md max-h-full">
+              <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+                <button
+                  type="button"
+                  className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  //close modal
+                  onClick={toggleModal}>
+                  <svg
+                    className="w-3 h-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 14">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    />
+                  </svg>
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                  <span className="sr-only">Close modal</span>
+                </button>
+                <div className="p-4 md:p-5 text-center">
+                  <svg
+                    className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                    Are you sure you want to upload this profile?
+                  </h3>
+                  <button
+                    type="submit"
+                    className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    Yes, It&apos;m sure
+                  </button>
+                  <button
+                    onClick={toggleModal}
+                    type="button"
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    No, cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </>
   );

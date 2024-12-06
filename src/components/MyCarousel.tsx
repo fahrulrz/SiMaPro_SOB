@@ -6,10 +6,10 @@ import Image from "next/image";
 import { type CarouselOptions } from "flowbite";
 
 const imageSources = [
+  "/assets/slide1.png",
+  "/assets/slide2.png",
+  "/assets/slide3.png",
   "/assets/logo.png",
-  "/assets/logo2.png",
-  "/assets/logo.png",
-  "/assets/logo4.png",
 ]; // Sesuaikan src image di sini
 
 const MyCarousel = () => {

@@ -23,6 +23,8 @@ const nextConfig = {
       "simapro.web.id",
     ],
   },
+  loader: 'custom',
+  loaderFile: './loader.ts',
 };
 
 export default nextConfig;

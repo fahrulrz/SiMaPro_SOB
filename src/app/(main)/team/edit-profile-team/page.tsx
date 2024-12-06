@@ -75,18 +75,18 @@ const EditProfileTeam = () => {
       team.team_member[3] &&
       team.team_member[3].member.nama_lengkap ? (
         <form onSubmit={submitHandler}>
-          <div className="flex flex-col p-20 h-full w-full mb-14">
+          <div className="flex flex-col p-20 max-sm:p-4 h-full w-full mb-14">
             <div className="flex flex-col gap-5">
               <div className=" flex w-full items-center justify-center">
-                <div className="text-4xl font-bold text-primary">
+                <div className="text-4xl max-sm:text-3xl font-bold text-primary">
                   Profil Team
                 </div>
               </div>
-              <div className="w-full mt-8 flex flex-col gap-4 h-full">
+              <div className="w-full mt-8 flex flex-col gap-4 max-sm:gap-0 h-full">
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="mahasiswaName"
-                    className="flex justify-center items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                     Nama Team
                   </label>
                   <input
@@ -102,20 +102,20 @@ const EditProfileTeam = () => {
                         });
                       }
                     }}
-                    className=" placeholder:text-hint py-3 text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
+                    className=" placeholder:text-hint py-3 text-primary bg-inputAddProject text-lg max-sm:py-3 max-sm:placeholder:text-sm  border-none rounded-md p-2 w-full col-span-3 focus:ring-0 max-sm:text-sm"
                   />
                 </div>
-                <div className="mt-6 flex flex-col gap-4">
+                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
                   <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl  text-primary">
+                    <p className="flex justify-center text-xl max-sm:text-base text-primary max-sm:col-span-3 max-sm:justify-normal">
                       Project Manager
                     </p>
                   </div>
                   <div className=" grid grid-cols-4 gap-4 w-full">
                     <label
                       htmlFor="projectManager"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                      Nama Mahasiswa
+                      className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                      Nama 
                     </label>
                     <input
                       id="projectManager"
@@ -147,21 +147,21 @@ const EditProfileTeam = () => {
                           });
                         }
                       }}
-                      className=" placeholder:text-hint  text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                      className=" placeholder:text-hint  text-primary bg-inputAddProject text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:text-sm"
                     />
                   </div>
                 </div>
-                <div className="mt-6 flex flex-col gap-4">
+                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
                   <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl text-primary">
+                    <p className="flex justify-center max-sm:text-base text-xl text-primary max-sm:col-span-3 max-sm:justify-start">
                       Front End
                     </p>
                   </div>
                   <div className=" grid grid-cols-4 gap-4 w-full">
                     <label
                       htmlFor="frontEnd"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                      Nama Mahasiswa
+                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm ">
+                      Nama 
                     </label>
                     <input
                       id="frontEnd"
@@ -193,21 +193,21 @@ const EditProfileTeam = () => {
                           });
                         }
                       }}
-                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:placeholder:text-sm max-sm:text-sm"
                     />
                   </div>
                 </div>
-                <div className="mt-6 flex flex-col gap-4">
+                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
                   <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl text-primary">
+                    <p className="flex justify-center text-xl text-primary max-sm:text-base max-sm:col-span-3 max-sm:justify-start">
                       Back End
                     </p>
                   </div>
                   <div className=" grid grid-cols-4 gap-4 w-full">
                     <label
                       htmlFor="backEnd"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                      Nama Mahasiswa
+                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm">
+                      Nama
                     </label>
                     <input
                       id="backEnd"
@@ -239,21 +239,21 @@ const EditProfileTeam = () => {
                           });
                         }
                       }}
-                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:placeholder:text-smb max-sm:text-sm"
                     />
                   </div>
                 </div>
-                <div className="mt-6 flex flex-col gap-4">
+                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
                   <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl text-primary">
+                    <p className="flex justify-center text-xl text-primary max-sm:text-base max-sm:col-span-3 max-sm:justify-start">
                       UI/UX
                     </p>
                   </div>
                   <div className=" grid grid-cols-4 gap-4 w-full">
                     <label
                       htmlFor="uiux"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                      Nama Mahasiswa
+                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm">
+                      Nama
                     </label>
                     <input
                       id="uiux"
@@ -285,20 +285,20 @@ const EditProfileTeam = () => {
                           });
                         }
                       }}
-                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:placeholder:text-smb max-sm:text-sm"
                     />
                   </div>
                 </div>
-                <div className="flex gap-4 ml-auto">
+                <div className="flex gap-4 ml-auto max-sm:mt-6">
                   <button
                     type="button"
                     onClick={toggleModal}
-                    className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+                    className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject max-sm:px-4">
                     Update
                   </button>
                   <button
                     type="button"
-                    className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+                    className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject max-sm:px-4"
                     onClick={() => router.push(`/team?id=${idTeam}`)}>
                     Cancel
                   </button>

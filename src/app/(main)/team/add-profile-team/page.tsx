@@ -122,7 +122,7 @@ const AddProfileTeam = () => {
                   data-modal-toggle="confirmModal"
                   data-modal-target="confirmModal"
                   className="bg-primary px-10 py-2 max-sm:px-4 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
-                  Submit
+                  Upload
                 </button>
                 <button
                   type="button"

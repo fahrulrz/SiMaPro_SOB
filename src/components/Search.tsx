@@ -12,15 +12,23 @@ const Search = () => {
   console.info("ini adalah info -> ", path);
   let search = "";
 
-   if (path[path.length - 1] == "home") {
-     search = "Search Projects....";
-   } else if (path[path.length - 1] == "stakeholder") {
-     search = "Search Stakeholder....";
-   } else if (path[path.length - 1] == "mahasiswa") {
-     search = "Search Mahasiswa....";
-   } else if (path.length > 2) {
-     search = "Search " + path[2]?.charAt(0)?.toUpperCase() + path[2].slice(1) + "....";
-   }
+  if (path[path.length - 1] == "home") {
+    search = "Search Projects....";
+  } else if (path[path.length - 1] == "stakeholder") {
+    search = "Search Stakeholder....";
+  } else if (path[path.length - 1] == "mahasiswa") {
+    search = "Search Mahasiswa....";
+  } else if (path.length > 2) {
+    if (path[2] == "project") {
+      search = "Search Projects....";
+    } else {
+      search =
+        "Search " +
+        path[1]?.charAt(0)?.toUpperCase() +
+        path[1].slice(1) +
+        "....";
+    }
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

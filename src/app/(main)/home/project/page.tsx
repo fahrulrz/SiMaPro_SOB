@@ -139,7 +139,7 @@ const Content = () => {
 
     setIsLoading(true);
     axios
-      .get(`https://fahrul-api.duckdns.org/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .get(`https://be-pad.trpl.space/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
       .then((response) => {
         setProjects(response.data.data);
         console.log("respon data", response.data.data);

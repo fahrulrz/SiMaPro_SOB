@@ -108,7 +108,7 @@ const SearchResults = () => {
   useEffect(() => {
     if (query && query !== "") {
       axios
-        .get(`https://fahrul-api.duckdns.org/api/search/${query}`)
+        .get(`https://be-pad.trpl.space/api/search/${query}`)
         .then((response) => setResult(response.data.data))
         .catch((error) => console.error(error));
     }

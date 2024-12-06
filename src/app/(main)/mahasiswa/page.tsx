@@ -35,7 +35,7 @@ const Mahasiswa = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://fahrul-api.duckdns.org/api/mahasiswa")
+      .get("https://be-pad.trpl.space/api/mahasiswa")
       .then((response) => {
         setMahasiswa(response.data.data);
         setIsLoading(false);

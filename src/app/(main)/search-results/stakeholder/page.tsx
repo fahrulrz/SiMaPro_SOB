@@ -43,7 +43,7 @@ const SearchStakeholder = () => {
   useEffect(() => {
     if (keyword) {
       axios
-        .get(`https://fahrul-api.duckdns.org/api/stakeholders/search/${keyword}`)
+        .get(`https://be-pad.trpl.space/api/stakeholders/search/${keyword}`)
         .then((response) => {
           setStakeholder(response.data.data);
         })

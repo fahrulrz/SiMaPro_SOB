@@ -44,7 +44,7 @@ const SearchMahasiswa = () => {
   useEffect(() => {
     if (keyword) {
       axios
-        .get(`https://fahrul-api.duckdns.org/api/mahasiswa/search/${keyword}`)
+        .get(`https://be-pad.trpl.space/api/mahasiswa/search/${keyword}`)
         .then((response) => {
           setMahasiswa(response.data.data);
         })

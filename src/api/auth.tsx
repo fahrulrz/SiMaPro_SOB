@@ -1,6 +1,6 @@
 export const login = async (name: string, password: string) => {
   try {
-    const response = await fetch("https://fahrul-api.duckdns.org/api/login", {
+    const response = await fetch("https://be-pad.trpl.space/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export const register = async (
 ) => {
   try {
     console.log("response: test")
-    const response = await fetch("https://fahrul-api.duckdns.org/api/register", {
+    const response = await fetch("https://be-pad.trpl.space/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

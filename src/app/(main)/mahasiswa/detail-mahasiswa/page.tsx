@@ -47,7 +47,7 @@ const DetailMahasiswa = () => {
       setId(idUrl);
 
       axios
-      .get(`https://fahrul-api.duckdns.org/api/mahasiswa/${idUrl}`)
+      .get(`https://be-pad.trpl.space/api/mahasiswa/${idUrl}`)
       .then((response) => {
         setMahasiswa(response.data.data);
       })

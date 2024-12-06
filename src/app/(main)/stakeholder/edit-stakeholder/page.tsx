@@ -63,7 +63,7 @@ const EditStakeholder = () => {
       : " ";
     setId(idUrl);
     axios
-      .get(`https://fahrul-api.duckdns.org/api/stakeholders/${idUrl}`)
+      .get(`https://be-pad.trpl.space/api/stakeholders/${idUrl}`)
       .then((response) => {
         setStakeholder(response.data.data);
       })

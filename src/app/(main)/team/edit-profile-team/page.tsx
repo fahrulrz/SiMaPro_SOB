@@ -50,7 +50,7 @@ const EditProfileTeam = () => {
 
   useEffect(() => {
     axios
-      .get(`https://fahrul-api.duckdns.org/api/teams/${teamId}`)
+      .get(`https://be-pad.trpl.space/api/teams/${teamId}`)
       .then((response) => {
         setTeam(response.data.data);
       })

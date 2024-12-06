@@ -106,7 +106,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     axios
-      .get("https://fahrul-api.duckdns.org/api/projects") // api mengambil semua data project
+      .get("https://be-pad.trpl.space/api/projects") // api mengambil semua data project
       .then((response) => {
         setProjects(response.data.data);
       })

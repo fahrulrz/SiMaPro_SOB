@@ -34,7 +34,7 @@ const Stakeholder = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://fahrul-api.duckdns.org/api/stakeholders/")
+      .get("https://be-pad.trpl.space/api/stakeholders/")
       .then((response) => {
         setStakeholder(response.data.data);
         setIsLoading(false);

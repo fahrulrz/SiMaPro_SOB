@@ -1,11 +1,11 @@
-export const login = async (email: string, password: string) => {
+export const login = async (name: string, password: string) => {
   try {
     const response = await fetch("https://fahrul-api.duckdns.org/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ name, password }),
     });
 
     const data = await response.json();

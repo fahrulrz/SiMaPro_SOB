@@ -112,7 +112,7 @@ const EditProject: React.FC = () => {
         setError(error);
         setIsLoading(false);
       });
-  }, []);
+  }, [isLoading]);
 
   // membuat variabel untuk menyimpan data project
   const [projects, setProjects] = useState<Project>();

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -25,7 +25,6 @@ interface Project {
   deskripsi: string;
 }
 
-
 const Stakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder[]>([]);
   const [error, setError] = useState(null);
@@ -34,7 +33,11 @@ const Stakeholder = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://be-pad.trpl.space/api/stakeholders/")
+      .get("https://be-pad.trpl.space/api/stakeholders", {
+        headers: {
+          Accept: "application/json",
+        },
+      })
       .then((response) => {
         setStakeholder(response.data.data);
         setIsLoading(false);
@@ -45,24 +48,23 @@ const Stakeholder = () => {
       });
   }, []);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const clickHandler = (stakeholder: number) => {
-      router.push(`/stakeholder/detail-stakeholder?id=${stakeholder}`);
-    };
+  const clickHandler = (stakeholder: number) => {
+    router.push(`/stakeholder/detail-stakeholder?id=${stakeholder}`);
+  };
 
-    console.log(error);
+  console.log(error);
 
-    if (isLoading) {
-      return (
-        <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
-          
-          <div className="text-4xl text-primary font-bold animate-pulse">
-            Loading....
-          </div>
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Loading....
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
   return (
     <>

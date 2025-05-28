@@ -1,23 +1,20 @@
-export const login = async (name: string, password: string) => {
-  try {
-    const response = await fetch("https://be-pad.trpl.space/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, password }),
-    });
+export const googleLogin = () => {
+  // Arahkan langsung ke backend buat redirect ke Google
+  window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/redirect`;
+};
 
-    const data = await response.json();
-    if (data.status === "true") {
-      return data.data; // Kembalikan data pengguna jika login berhasil
-    } else {
-      throw new Error("Login failed. Invalid credentials or other issues.");
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error; // Lempar error agar bisa ditangkap di komponen
+export const getUser = async () => {
+  const response = await fetch("http://localhost:8000/api/user", {
+    method: "GET",
+    credentials: "include", // Biar cookie otomatis dikirim
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch user");
   }
+
+  const data = await response.json();
+  return data;
 };
 
 export const register = async (
@@ -26,16 +23,19 @@ export const register = async (
   password: string
 ) => {
   try {
-    console.log("response: test")
-    const response = await fetch("https://be-pad.trpl.space/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
+    console.log("response: test");
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      }
+    );
 
-    console.log("response:", response.status)
+    console.log("response:", response.status);
 
     if (!response.ok) {
       // Jika respons tidak ok, lempar error

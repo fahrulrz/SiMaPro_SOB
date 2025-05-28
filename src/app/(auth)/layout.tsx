@@ -1,3 +1,5 @@
+import { AuthProvider } from "@/contexts/AuthContext";
+
 // src/app/(auth)/layout.tsx
 export default function AuthLayout({
   children,
@@ -7,13 +9,11 @@ export default function AuthLayout({
   return (
     <div className="auth-layout">
       {/* Layout khusus untuk halaman utama */}
-      
+
       {/* navbar start */}
-        
 
       {/* navbar end */}
-
-      {children}
+      <AuthProvider> {children}</AuthProvider>
     </div>
   );
 }

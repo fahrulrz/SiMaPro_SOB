@@ -33,7 +33,7 @@ const Stakeholder = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://be-pad.trpl.space/api/stakeholders", {
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/stakeholders`, {
         headers: {
           Accept: "application/json",
         },

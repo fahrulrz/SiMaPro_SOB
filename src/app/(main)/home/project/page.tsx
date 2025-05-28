@@ -132,14 +132,14 @@ const Content = () => {
       ? new URLSearchParams(window.location.search).get("id") || "0"
       : "0";
     setId(idUrl);
-    
+
     if (!isLoading || !idUrl) {
       return;
     }
 
     setIsLoading(true);
     axios
-      .get(`https://be-pad.trpl.space/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
       .then((response) => {
         setProjects(response.data.data);
         console.log("respon data", response.data.data);
@@ -178,7 +178,6 @@ const Content = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
-        
         <div className="text-4xl text-primary font-bold animate-pulse">
           Loading....
         </div>

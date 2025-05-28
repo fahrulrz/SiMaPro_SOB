@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 
@@ -35,7 +35,7 @@ const SearchStakeholder = () => {
     const keywordUrl = window
       ? new URLSearchParams(window.location.search).get("query") || " "
       : " ";
-      setKeyword(keywordUrl);
+    setKeyword(keywordUrl);
   }, []);
 
   // const keyword = useSearchParams()?.get("query");
@@ -43,7 +43,9 @@ const SearchStakeholder = () => {
   useEffect(() => {
     if (keyword) {
       axios
-        .get(`https://be-pad.trpl.space/api/stakeholders/search/${keyword}`)
+        .get(
+          `${process.env.NEXT_PUBLIC_API_URL}/stakeholders/search/${keyword}`
+        )
         .then((response) => {
           setStakeholder(response.data.data);
         })

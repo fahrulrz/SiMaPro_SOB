@@ -63,7 +63,7 @@ const EditStakeholder = () => {
       : " ";
     setId(idUrl);
     axios
-      .get(`https://be-pad.trpl.space/api/stakeholders/${idUrl}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/stakeholders/${idUrl}`)
       .then((response) => {
         setStakeholder(response.data.data);
       })
@@ -77,8 +77,6 @@ const EditStakeholder = () => {
   const handleSelect = (item: NavigationItem) => {
     setSelectedItem(item);
   };
-
-
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -260,7 +258,6 @@ const EditStakeholder = () => {
         </div>
         {/* confirm modal */}
 
-        
         {isModalOpen && (
           <div
             ref={modalRef}

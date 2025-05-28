@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 // import "flowbite";
 
 import axios from "axios";
@@ -36,7 +36,7 @@ const EditProfileTeam = () => {
     const teamIdUrl = window
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
-      setTeamId(teamIdUrl);
+    setTeamId(teamIdUrl);
   }, []);
 
   // const teamId = useSearchParams().get("id");
@@ -50,7 +50,7 @@ const EditProfileTeam = () => {
 
   useEffect(() => {
     axios
-      .get(`https://be-pad.trpl.space/api/teams/${teamId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`)
       .then((response) => {
         setTeam(response.data.data);
       })
@@ -115,7 +115,7 @@ const EditProfileTeam = () => {
                     <label
                       htmlFor="projectManager"
                       className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                      Nama 
+                      Nama
                     </label>
                     <input
                       id="projectManager"
@@ -161,7 +161,7 @@ const EditProfileTeam = () => {
                     <label
                       htmlFor="frontEnd"
                       className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm ">
-                      Nama 
+                      Nama
                     </label>
                     <input
                       id="frontEnd"

@@ -34,7 +34,7 @@ const SearchMahasiswa = () => {
     const keywordUrl = window
       ? new URLSearchParams(window.location.search).get("query") || " "
       : " ";
-      setKeyword(keywordUrl);
+    setKeyword(keywordUrl);
   }, []);
 
   // const keyword = useSearchParams()?.get("query");
@@ -44,7 +44,7 @@ const SearchMahasiswa = () => {
   useEffect(() => {
     if (keyword) {
       axios
-        .get(`https://be-pad.trpl.space/api/mahasiswa/search/${keyword}`)
+        .get(`${process.env.NEXT_PUBLIC_API_URL}/mahasiswa/search/${keyword}`)
         .then((response) => {
           setMahasiswa(response.data.data);
         })

@@ -17,6 +17,7 @@ const nextConfig = {
       "tse3.mm.bing.net",
       "cdn.idntimes.com",
       "api.duniagames.co.id",
+      'via.placeholder.com',
       "www.tagar.id",
       "i0.wp.com",
       "fastly.picsum.photos",

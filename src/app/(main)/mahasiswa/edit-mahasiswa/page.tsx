@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 // import "flowbite";
 // import "flowbite/dist/flowbite";
 
@@ -42,7 +42,7 @@ const EditMahasiswa = () => {
       : " ";
     setId(idUrl);
     axios
-      .get(`https://be-pad.trpl.space/api/mahasiswa/${idUrl}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/mahasiswa/${idUrl}`)
       .then((response) => {
         setMahasiswa(response.data.data);
       })
@@ -50,7 +50,6 @@ const EditMahasiswa = () => {
         setError(error);
       });
   }, []);
-
 
   console.log(error);
 

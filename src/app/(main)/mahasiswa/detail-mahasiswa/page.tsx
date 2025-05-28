@@ -44,10 +44,10 @@ const DetailMahasiswa = () => {
     const idUrl = window
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
-      setId(idUrl);
+    setId(idUrl);
 
-      axios
-      .get(`https://be-pad.trpl.space/api/mahasiswa/${idUrl}`)
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/mahasiswa/${idUrl}`)
       .then((response) => {
         setMahasiswa(response.data.data);
       })
@@ -55,7 +55,6 @@ const DetailMahasiswa = () => {
         setError(error);
       });
   }, []);
-
 
   console.log(error);
 

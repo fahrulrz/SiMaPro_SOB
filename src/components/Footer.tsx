@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       <div className=" text-white flex text-xl max-sm:text-base font-black justify-center items-center mb-4">
-        © 2024 SimaPro.id All rights reserved.
+        <a href="/about">© 2024 SimaPro.id All rights reserved.</a>
       </div>
     </div>
   );

@@ -94,10 +94,8 @@ const SearchResults = () => {
     const queryUrl = window
       ? new URLSearchParams(window.location.search).get("query") || " "
       : " ";
-      setQuery(queryUrl);
+    setQuery(queryUrl);
   }, []);
-
-  
 
   // const query = searchParams.get("query");
   const [result, setResult] = useState<Project[]>([]);
@@ -108,7 +106,7 @@ const SearchResults = () => {
   useEffect(() => {
     if (query && query !== "") {
       axios
-        .get(`https://be-pad.trpl.space/api/search/${query}`)
+        .get(`${process.env.NEXT_PUBLIC_API_URL}/search/${query}`)
         .then((response) => setResult(response.data.data))
         .catch((error) => console.error(error));
     }
@@ -280,7 +278,9 @@ const SearchResults = () => {
                       />
                     ))
                   ) : (
-                    <div className="col-span-2 text-red-500 font-bold text-2xl flex justify-center h-[30vh] items-center">No projects found</div>
+                    <div className="col-span-2 text-red-500 font-bold text-2xl flex justify-center h-[30vh] items-center">
+                      No projects found
+                    </div>
                   )}
                 </div>
               </div>

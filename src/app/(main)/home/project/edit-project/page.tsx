@@ -103,7 +103,7 @@ const EditProject: React.FC = () => {
     setIsLoading(true);
 
     axios
-      .get(`https://be-pad.trpl.space/api/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
       .then((response) => {
         setProjects(response.data.data);
         setIsLoading(false);
@@ -134,7 +134,6 @@ const EditProject: React.FC = () => {
   };
 
   console.log(error);
-
 
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
 

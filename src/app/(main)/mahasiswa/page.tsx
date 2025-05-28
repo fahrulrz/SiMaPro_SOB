@@ -35,7 +35,7 @@ const Mahasiswa = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://be-pad.trpl.space/api/mahasiswa")
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/mahasiswa`)
       .then((response) => {
         setMahasiswa(response.data.data);
         setIsLoading(false);
@@ -46,9 +46,7 @@ const Mahasiswa = () => {
       });
   }, []);
 
-  console.log(mahasiswa);
-
-  console.log(error);
+  console.error(error);
 
   const clickHandler = (mahasiswa: number) => {
     router.push(`/mahasiswa/detail-mahasiswa?id=${mahasiswa}`);
@@ -57,14 +55,12 @@ const Mahasiswa = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
-        
         <div className="text-4xl text-primary font-bold animate-pulse">
           Loading....
         </div>
       </div>
     );
   }
-
 
   return (
     <>
@@ -75,24 +71,30 @@ const Mahasiswa = () => {
               key={mahasiswa.id}
               onClick={() => clickHandler(mahasiswa.id)}
               className={`bg-[#FBF9F1] h-[36rem] max-sm:h-80 flex flex-col justify-center items-center cursor-pointer hover:scale-110 hover:shadow-lg z-10 hover:z-30 transition duration-300 ease-in-out`}>
-              <div className="flex flex-col w-full h-full justify-center items-center mb-10">
-                <div className="flex w-full h-full p-8">
-                  <div className="flex relative h-full max-sm:h-52 w-full">
-                    <Image
-                      src={mahasiswa.foto}
-                      alt="Picture of the author"
-                      // width={720}
-                      // height={700}
-                      layout="fill"
-                      objectFit="cover"
-                      className={isLoading ? "animate-pulse bg-slate-700" : ""}
-                    />
+              {mahasiswa.foto ? (
+                <div className="flex flex-col w-full h-full justify-center items-center mb-10">
+                  <div className="flex w-full h-full p-8">
+                    <div className="flex relative h-full max-sm:h-52 w-full">
+                      <Image
+                        src={mahasiswa.foto}
+                        alt="Picture of the author"
+                        layout="fill"
+                        objectFit="cover"
+                        className={
+                          isLoading ? "animate-pulse bg-slate-700" : ""
+                        }
+                      />
+                    </div>
                   </div>
+                  <h1 className="text-primary font-bold text-xl mb-10 max-sm:mb-0">
+                    {mahasiswa.nama_lengkap}{" "}
+                  </h1>
                 </div>
-                <h1 className="text-primary font-bold text-xl mb-10 max-sm:mb-0">
-                  {mahasiswa.nama_lengkap}{" "}
-                </h1>
-              </div>
+              ) : (
+                <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                  No Image
+                </div>
+              )}
             </div>
           ))}
         </div>

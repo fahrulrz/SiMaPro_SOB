@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 // import Aos from "aos";
@@ -58,7 +58,7 @@ const Team = () => {
     const teamIdUrl = window
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
-      setTeamId(teamIdUrl);
+    setTeamId(teamIdUrl);
   }, []);
 
   // const teamId = useSearchParams().get("id");
@@ -69,14 +69,13 @@ const Team = () => {
 
   if (typeof window != "undefined") {
     import("aos").then((Aos) => {
-        Aos.init();
+      Aos.init();
     });
-}
-
+  }
 
   useEffect(() => {
     axios
-      .get(`https://be-pad.trpl.space/api/teams/${teamId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`)
       .then((response) => {
         setTeam(response.data.data);
       })

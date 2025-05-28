@@ -17,15 +17,16 @@ const nextConfig = {
       "tse3.mm.bing.net",
       "cdn.idntimes.com",
       "api.duniagames.co.id",
-      'via.placeholder.com',
+      "via.placeholder.com",
+      "localhost",
       "www.tagar.id",
       "i0.wp.com",
       "fastly.picsum.photos",
       "simapro.web.id",
     ],
   },
-  loader: 'custom',
-  loaderFile: './loader.ts',
+  loader: "custom",
+  loaderFile: "./loader.ts",
 };
 
 export default nextConfig;

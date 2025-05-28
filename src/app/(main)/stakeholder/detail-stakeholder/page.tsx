@@ -134,7 +134,7 @@ const DetailStakeholder = () => {
                     id={project.id}
                     dataAos=""
                     name={project.nama_proyek}
-                    imageUrl={project.image[0].link_gambar}
+                    imageUrl={project.image[0]?.link_gambar}
                     // year={project.year.map((item) => item.tahun).join(", ")}
                     // comment={JSON.stringify(project.image)}
                     // comment={project.comments.map((isi) => isi.isi_komen).join(', ')}

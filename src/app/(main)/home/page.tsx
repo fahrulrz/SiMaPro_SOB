@@ -790,7 +790,7 @@ export default function Dashboard() {
                     id={project.id}
                     dataAos="fade-up"
                     name={project.nama_proyek}
-                    imageUrl={project.image[0].link_gambar}
+                    imageUrl={project.image[0]?.link_gambar}
                   />
                 ))}
               </div>

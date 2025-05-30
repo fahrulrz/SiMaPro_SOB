@@ -12,29 +12,8 @@ import Card from "@/components/Card";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { Stakeholder } from "@/lib/Stakeholder";
 
-interface Stakeholder {
-  id: number;
-  nama: string;
-  kategori: string;
-  nomor_telepon: string;
-  email: string;
-  foto: string;
-  projects: Project[];
-}
-
-interface Image {
-  id: number;
-  link_gambar: string;
-}
-
-interface Project {
-  id: number;
-  nama_proyek: string;
-  logo: string;
-  deskripsi: string;
-  image: Image[];
-}
 
 const DetailStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder>();
@@ -73,6 +52,7 @@ const DetailStakeholder = () => {
                   src={stakeholder?.foto || ""}
                   alt="Picture of the author"
                   layout="fill"
+                  unoptimized
                   objectFit="cover"
                   sizes="80vh"
                 />

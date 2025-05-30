@@ -74,6 +74,7 @@ const DetailMahasiswa = () => {
                   //   width={1600}
                   //   height={900}
                   layout="fill"
+                  unoptimized
                   objectFit="cover"
                   sizes="80vh"
                 />

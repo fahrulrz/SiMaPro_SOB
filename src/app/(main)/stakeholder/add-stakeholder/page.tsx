@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-
-// import "flowbite";
+import { initFlowbite } from "flowbite";
+import { submitStakeholder } from "@/lib/Stakeholder";
+import type { AddStakeholder } from "@/lib/Stakeholder";
 
 interface NavigationItem {
   id: number;
@@ -14,17 +15,47 @@ interface NavigationItem {
 }
 
 const AddStakeholder = () => {
+  initFlowbite();
+
   const router = useRouter();
+  const [formData, setFormData] = useState<AddStakeholder>({
+    nama: "",
+    kategori: "",
+    nomor_telepon: "",
+    email: "",
+    foto: null,
+  });
   const [fileName, setFileName] = useState<string>(
     "Add Foto Profil Stakeholder"
   );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+
+    if (name == "foto") {
+      setFormData({
+        ...formData,
+        foto: files ? files[0] : null,
+      });
+      if (files && files.length > 0) {
+        setFileName(files[0].name);
+      } else {
+        setFileName("Add Foto Profil Stakeholder");
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+    console.log(formData);
+  };
 
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
 
   const handleSelect = (item: NavigationItem) => {
     setSelectedItem(item);
   };
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -41,18 +72,23 @@ const AddStakeholder = () => {
     { id: 2, name: "Eksternal" },
   ];
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setFileName(files[0].name);
-    } else {
-      setFileName("Add Foto Profil Stakeholder");
-    }
-  };
-
-  const submitHandler = (event: React.FormEvent) => {
+  const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    router.push("/home");
+    
+    const data = new FormData();
+    data.append("nama", formData.nama);
+    data.append("kategori", selectedItem?.name || "");
+    data.append("nomor_telepon", formData.nomor_telepon);
+    data.append("email", formData.email);
+    data.append("foto", formData.foto as Blob);
+
+    try {
+      const res = await submitStakeholder(data);
+      console.log("Berhasil upload:", res);
+      router.push("/stakeholder");
+    } catch (error) {
+      console.error("Gagal upload:", error);
+    }
   };
   return (
     <>
@@ -67,20 +103,22 @@ const AddStakeholder = () => {
             <div className="w-full mt-8 flex flex-col gap-4 h-full">
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
-                  htmlFor="mahasiswaName"
+                  htmlFor="stakeholderName"
                   className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Nama
                 </label>
                 <input
-                  id="mahasiswaName"
+                  id="stakeholderName"
                   type="text"
-                  placeholder="Name   "
+                  name="nama"
+                  onChange={handleChange}
+                  placeholder="Name"
                   className=" placeholder:text-hint text-primary max-sm:placeholder:text-sm bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
                 />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
-                  htmlFor="selectedProject"
+                  htmlFor="kategori"
                   className="flex justify-center max-sm:py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Kategori
                 </label>
@@ -115,7 +153,8 @@ const AddStakeholder = () => {
                 {/* Tampilkan nilai yang dipilih sebagai nilai input tersembunyi */}
                 <input
                   type="hidden"
-                  name="selectedProject"
+                  name="kategori"
+                  onChange={handleChange}
                   value={selectedItem ? selectedItem.name : ""}
                 />
               </div>
@@ -127,7 +166,9 @@ const AddStakeholder = () => {
                 </label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
+                  onChange={handleChange}
                   placeholder="Email"
                   className=" placeholder:text-hint text-primary bg-inputAddProject text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                 />
@@ -140,7 +181,9 @@ const AddStakeholder = () => {
                 </label>
                 <input
                   id="noTelepon"
+                  name="nomor_telepon"
                   type="text"
+                  onChange={handleChange}
                   placeholder="No Telepon"
                   className=" placeholder:text-hint text-primary bg-inputAddProject text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                 />
@@ -161,8 +204,9 @@ const AddStakeholder = () => {
                   {/* Input file */}
                   <input
                     id="foto"
+                    name="foto"
                     type="file"
-                    onChange={handleFileChange}
+                    onChange={handleChange}
                     className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
                   />
                 </div>
@@ -255,8 +299,7 @@ const AddStakeholder = () => {
           </div>
         </div> */}
 
-
-{isModalOpen && (
+        {isModalOpen && (
           <div
             ref={modalRef}
             tabIndex={-1}
@@ -312,7 +355,7 @@ const AddStakeholder = () => {
                   <button
                     type="submit"
                     className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                    Yes, It&apos;m sure
+                    Yes, I&apos;m sure
                   </button>
                   <button
                     onClick={toggleModal}

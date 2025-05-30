@@ -4,12 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { initFlowbite } from "flowbite";
 import { submitMahasiswa } from "@/lib/Mahasiswa";
-
-interface AddMahasiswa {
-  nama_lengkap: string;
-  NIM: string;
-  foto: File | null;
-}
+import type { AddMahasiswa } from "@/lib/Mahasiswa";
 
 const AddMahasiswa = () => {
   const router = useRouter();

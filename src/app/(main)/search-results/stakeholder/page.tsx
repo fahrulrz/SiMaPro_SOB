@@ -78,9 +78,10 @@ const SearchStakeholder = () => {
                     <div className="flex relative h-full max-sm:h-52 w-full">
                       <Image
                         src={stakeholder.foto}
-                        alt="Picture of the author"
+                        alt={"Photo of "+stakeholder.nama}
                         layout="fill"
                         objectFit="cover"
+                        unoptimized
                         className="bg-red-500"
                       />
                     </div>

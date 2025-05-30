@@ -37,8 +37,6 @@ const SearchMahasiswa = () => {
     setKeyword(keywordUrl);
   }, []);
 
-  // const keyword = useSearchParams()?.get("query");
-
   const router = useRouter();
 
   useEffect(() => {
@@ -77,7 +75,8 @@ const SearchMahasiswa = () => {
                     <div className="flex relative h-full max-sm:h-52 w-full">
                       <Image
                         src={mahasiswa.foto}
-                        alt="Picture of the author"
+                        alt={"Picture of "+mahasiswa.nama_lengkap}
+                        unoptimized
                         layout="fill"
                         objectFit="cover"
                         className="bg-red-500"

@@ -1,50 +1,45 @@
 "use client";
 
-// import { usePathname } from "next/navigation";
-
 import React, { useState, useEffect } from "react";
 
 import Image from "next/image";
 
 import { useRouter } from "next/navigation";
-import axios from "axios";
-
-interface Mahasiswa {
-  id: number;
-  nama_lengkap: string;
-  NIM: string;
-  foto: string;
-  team_member: Anggota[];
-}
-
-interface Anggota {
-  id: number;
-  role: string;
-  team_id: number;
-  member_id: number;
-}
+import { getMahasiswa } from "@/lib/Mahasiswa";
+import type { Mahasiswa } from "@/lib/Mahasiswa";
 
 const Mahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/mahasiswa`)
-      .then((response) => {
-        setMahasiswa(response.data.data);
+    const fetchData = async () => {
+      try {
+        const response = await getMahasiswa();
+        setMahasiswa(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message || "Gagal mengambil data");
+        } else {
+          setError("Unknown error");
+        }
+      } finally {
         setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setIsLoading(false);
-      });
+      }
+    };
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log(
+      "Daftar foto mahasiswa:",
+      mahasiswa.map((m) => m.foto)
+    );
+  }, [mahasiswa]);
 
   console.error(error);
 
@@ -77,8 +72,9 @@ const Mahasiswa = () => {
                     <div className="flex relative h-full max-sm:h-52 w-full">
                       <Image
                         src={mahasiswa.foto}
-                        alt="Picture of the author"
+                        alt={ "Picture of "+ mahasiswa.nama_lengkap}
                         layout="fill"
+                        unoptimized
                         objectFit="cover"
                         className={
                           isLoading ? "animate-pulse bg-slate-700" : ""

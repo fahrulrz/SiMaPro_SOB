@@ -3,19 +3,19 @@ import { authMiddleware } from "./middlewares/authMiddleware"; // Pastikan path 
 
 export function middleware(request: NextRequest) {
     // Log ini akan muncul di terminal tempat Next.js dev server berjalan
-    console.log(`🚀 Root middleware: Dipanggil untuk rute: ${request.nextUrl.pathname}`);
+    // console.log(`🚀 Root middleware: Dipanggil untuk rute: ${request.nextUrl.pathname}`);
 
     const authResult = authMiddleware(request);
 
     if (authResult) {
         // Jika authMiddleware mengembalikan sebuah response (misalnya redirect),
         // maka kembalikan response tersebut.
-        console.log(`🚀 Root middleware: Menerima hasil dari authMiddleware, status: ${authResult.status}, lokasi redirect: ${authResult.headers.get('location') || 'Tidak ada redirect'}`);
+        // console.log(`🚀 Root middleware: Menerima hasil dari authMiddleware, status: ${authResult.status}, lokasi redirect: ${authResult.headers.get('location') || 'Tidak ada redirect'}`);
         return authResult;
     }
 
     // Jika authMiddleware mengembalikan null, lanjutkan ke rute yang diminta.
-    console.log(`🚀 Root middleware: Melanjutkan dengan NextResponse.next() untuk: ${request.nextUrl.pathname}`);
+    // console.log(`🚀 Root middleware: Melanjutkan dengan NextResponse.next() untuk: ${request.nextUrl.pathname}`);
     return NextResponse.next();
 }
 

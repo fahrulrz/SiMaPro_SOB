@@ -1,16 +1,149 @@
 "use client";
 
+import SearchResult from "@/components/SearchResult";
+import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
+import { submitTeam, TeamMember } from "@/lib/Team";
+import { initFlowbite } from "flowbite";
 import { useRouter } from "next/navigation";
-// import 'flowbite';
+import { useState } from "react";
 
 const AddProfileTeam = () => {
+  initFlowbite();
+
+  const [pmKeyword, setPmKeyword] = useState("");
+  const [feKeyword, setFeKeyword] = useState("");
+  const [beKeyword, setBeKeyword] = useState("");
+  const [uiuxKeyword, setUiuxKeyword] = useState("");
+
+  const [pm, setPm] = useState("");
+  const [fe, setFe] = useState("");
+  const [be, setBe] = useState("");
+  const [uiux, setUiux] = useState("");
+
+  const [activePM, setActivePM] = useState(false);
+  const [activeFE, setActiveFE] = useState(false);
+  const [activeBE, setActiveBE] = useState(false);
+  const [activeUIUX, setActiveUIUX] = useState(false);
+
+  const [mahasiswas, setMahasiswas] = useState<Mahasiswa[]>([]);
+
+  const [formData, setFormData] = useState<TeamMember>({
+    nama_tim: "",
+    member_pm: 0,
+    member_fe: 0,
+    member_be: 0,
+    member_ui_ux: 0,
+  });
+
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
 
-  const submitHandler = (event: React.FormEvent) => {
-    event.preventDefault();
-    router.push("/home");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name == "pm") {
+      setPmKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActivePM(true);
+    } else if (name == "fe") {
+      setFeKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveFE(true);
+    } else if (name == "be") {
+      setBeKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveBE(true);
+    } else if (name == "uiux") {
+      setUiuxKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveUIUX(true);
+    } else if (name == "teamName") {
+      setFormData({
+        ...formData,
+        nama_tim: value,
+      });
+    }
   };
-  
+
+  const handleClick = (name: string, id: number, fullName: string) => {
+    if (name == "pm") {
+      setActivePM(false);
+      setFormData({
+        ...formData,
+        member_pm: id,
+      });
+      setPm(fullName);
+      setPmKeyword("");
+      setMahasiswas([]);
+    } else if (name == "fe") {
+      setActiveFE(false);
+      setFormData({
+        ...formData,
+        member_fe: id,
+      });
+      setFe(fullName);
+      setFeKeyword("");
+      setMahasiswas([]);
+    } else if (name == "be") {
+      setActiveBE(false);
+      setFormData({
+        ...formData,
+        member_be: id,
+      });
+      setBe(fullName);
+      setBeKeyword("");
+      setMahasiswas([]);
+    } else if (name == "uiux") {
+      setActiveUIUX(false);
+      setFormData({
+        ...formData,
+        member_ui_ux: id,
+      });
+      setUiux(fullName);
+      setUiuxKeyword("");
+      setMahasiswas([]);
+    }
+  };
+
+  const submitHandler = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const res = await submitTeam(formData);
+      console.log("Berhasil upload:", res);
+      router.push("/home");
+    } catch (error) {
+      console.error("Gagal upload:", error);
+    }
+  };
+
+  console.log(error);
+
   return (
     <>
       <form onSubmit={submitHandler}>
@@ -24,13 +157,15 @@ const AddProfileTeam = () => {
             <div className="w-full mt-8 flex flex-col gap-4 max-sm:gap-0 h-full">
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
-                  htmlFor="mahasiswaName"
+                  htmlFor="teamName"
                   className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
                   Nama Team
                 </label>
                 <input
-                  id="mahasiswaName"
+                  id="teamName"
+                  name="teamName"
                   type="text"
+                  onChange={handleChange}
                   placeholder="Team Name"
                   className=" placeholder:text-hint py-3 max-sm:py-2 max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
                 />
@@ -41,7 +176,7 @@ const AddProfileTeam = () => {
                     Project Manager
                   </p>
                 </div>
-                <div className=" grid grid-cols-4 gap-4 w-full">
+                <div className="grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="projectManager"
                     className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
@@ -49,10 +184,41 @@ const AddProfileTeam = () => {
                   </label>
                   <input
                     id="projectManager"
+                    name="pm"
+                    onChange={handleChange}
+                    value={pmKeyword != "" ? pmKeyword : pm}
                     type="text"
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activePM && pmKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "pm",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}>
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
@@ -69,10 +235,41 @@ const AddProfileTeam = () => {
                   </label>
                   <input
                     id="frontEnd"
+                    name="fe"
+                    onChange={handleChange}
+                    value={feKeyword != "" ? feKeyword : fe}
                     type="text"
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeFE && feKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "fe",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}>
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
@@ -89,10 +286,41 @@ const AddProfileTeam = () => {
                   </label>
                   <input
                     id="backEnd"
+                    name="be"
                     type="text"
+                    onChange={handleChange}
+                    value={beKeyword != "" ? beKeyword : be}
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeBE && beKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "be",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}>
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
@@ -109,10 +337,41 @@ const AddProfileTeam = () => {
                   </label>
                   <input
                     id="uiux"
+                    name="uiux"
                     type="text"
+                    onChange={handleChange}
+                    value={uiuxKeyword != "" ? uiuxKeyword : uiux}
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeUIUX && uiuxKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "uiux",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}>
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
 

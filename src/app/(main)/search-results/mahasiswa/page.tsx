@@ -1,28 +1,8 @@
 "use client";
-
-// import { usePathname } from "next/navigation";
-
 import React, { useState, useEffect } from "react";
-
 import Image from "next/image";
-
 import { useRouter } from "next/navigation";
-import axios from "axios";
-
-interface Mahasiswa {
-  id: number;
-  nama_lengkap: string;
-  NIM: string;
-  foto: string;
-  team_member: Anggota[];
-}
-
-interface Anggota {
-  id: number;
-  role: string;
-  team_id: number;
-  member_id: number;
-}
+import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
 
 const SearchMahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
@@ -41,20 +21,19 @@ const SearchMahasiswa = () => {
 
   useEffect(() => {
     if (keyword) {
-      axios
-        .get(`${process.env.NEXT_PUBLIC_API_URL}/mahasiswa/search/${keyword}`)
-        .then((response) => {
-          setMahasiswa(response.data.data);
+      searchMahasiswa(keyword)
+        .then((data) => {
+          setMahasiswa(data);
         })
-        .catch((error) => {
-          setError(error);
+        .catch((err) => {
+          setError(err);
         });
+    } else if (keyword == "") {
+      router.push("/mahasiswa");
     }
-  }, [keyword]);
+  }, [keyword, router]);
 
-  console.log(mahasiswa);
-
-  console.log(error);
+  console.error(error);
 
   const clickHandler = (mahasiswa: number) => {
     router.push(`/mahasiswa/detail-mahasiswa?id=${mahasiswa}`);
@@ -75,7 +54,7 @@ const SearchMahasiswa = () => {
                     <div className="flex relative h-full max-sm:h-52 w-full">
                       <Image
                         src={mahasiswa.foto}
-                        alt={"Picture of "+mahasiswa.nama_lengkap}
+                        alt={"Picture of " + mahasiswa.nama_lengkap}
                         unoptimized
                         layout="fill"
                         objectFit="cover"

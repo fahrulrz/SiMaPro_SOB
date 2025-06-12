@@ -34,10 +34,6 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   Aos.init();
-  // }, []);
-
   if (typeof window != "undefined") {
     import("aos").then((Aos) => {
         Aos.init();

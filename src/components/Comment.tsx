@@ -15,8 +15,6 @@ const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
   const [isOtherSetting, setIsOtherSetting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   
-console.log(id);
-
 
   const handleOtherSetting = () => {
     setIsOtherSetting(!isOtherSetting);

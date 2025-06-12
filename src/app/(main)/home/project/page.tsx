@@ -21,6 +21,13 @@ import { faComment as faCommentRegular } from "@fortawesome/free-regular-svg-ico
 import axios from "axios";
 
 import Comment from "@/components/Comment";
+import {
+  getComments,
+  getLikeCount,
+  getLikeStatus,
+  likeProject,
+  submitComment,
+} from "@/lib/Project";
 
 // import Aos from "aos";
 // import "aos/dist/aos.css";
@@ -28,12 +35,6 @@ import Comment from "@/components/Comment";
 interface Category {
   id: number;
   nama_kategori: string;
-}
-
-interface Like {
-  id: number;
-  user_id: number;
-  project_id: number;
 }
 
 interface Year {
@@ -62,7 +63,6 @@ interface Anggota {
   NIM: string;
   foto: string;
 }
-
 interface AnggotaTeam {
   id: number;
   role: string;
@@ -86,17 +86,12 @@ interface User {
   email: string;
 }
 
-interface Like {
-  id: number;
-}
-
 interface Project {
   id: number;
   nama_proyek: string;
   deskripsi: string;
   image: Image[];
-  like: Like[];
-  comment: Comment[];
+  comments: Comment[];
   year: Year[];
   stakeholder: Stakeholder;
   team: Team;
@@ -104,27 +99,16 @@ interface Project {
 }
 
 const Content = () => {
-  // Aos.init();
-
-  // let id: string;
-
   const [id, setId] = useState<string>(" ");
-
   const [projects, setProjects] = useState<Project>();
   const [error, setError] = useState(null);
-
-  console.log(error);
-
   const [clickComment, setClickComment] = useState<boolean>(false);
-
+  const [comment, setComment] = useState<string>("");
+  const [likes, setLike] = useState<number>(0);
   const [isHoveredLike, setIsHoveredLike] = useState<boolean>(false);
-
   const [isHoveredComment, setIsHoveredComment] = useState<boolean>(false);
-
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
-
   const [images, setImages] = useState<Image[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -139,22 +123,28 @@ const Content = () => {
 
     setIsLoading(true);
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`)
       .then((response) => {
         setProjects(response.data.data);
-        console.log("respon data", response.data.data);
-        console.log("respon project", projects);
         setImages(response.data.data.image);
-
+        setLike(response.data.data.likes.length);
+        likeStatus(response.data.data.id);
         setIsLoading(false);
       })
       .catch((error) => {
         setError(error);
         setIsLoading(false);
       });
-  }, [id, projects, isLoading]);
+  }, [id]);
 
-  console.log(images);
+  const likeStatus = async (id: number) => {
+    try {
+      const response = await getLikeStatus(id);
+      setIsHoveredLike(response.data.liked);
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const handleImageClick = (clickedIndex: number) => {
     const updatedImages = [...images];
@@ -166,13 +156,46 @@ const Content = () => {
     setMainImageIndex(clickedIndex);
   };
 
-  const handleClickLike = () => {
-    setIsHoveredLike(!isHoveredLike);
+  const handleClickLike = async () => {
+    try {
+      const res = await likeProject(projects?.id || 0);
+      if (res.status === 200) {
+        const like = await getLikeStatus(projects?.id || 0);
+        if (like.status === 200) {
+          setIsHoveredLike(like.data.liked);
+          const likes = await getLikeCount(projects?.id || 0);
+          if (likes.status === 200) {
+            setLike(likes.data.likes_count);
+          }
+        }
+      }
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleClickComment = () => {
-    setClickComment(!clickComment);
-    setIsHoveredComment(!isHoveredComment);
+  const handleClickComment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setComment("");
+    // setClickComment(!clickComment);
+    try {
+      const res = await submitComment(projects?.id || 0, comment);
+      if (res.status === 201) {
+        const comments = await getComments(projects?.id || 0);
+        if (comments.status === 200) {
+          setProjects({
+            ...(projects as Project),
+            comments: comments.data.comments,
+          });
+          console.log("isi get comment -> ", comments.data.comments);
+        }
+      }
+      console.log(res);
+      // setIsHoveredComment(!isHoveredComment);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (isLoading) {
@@ -186,7 +209,13 @@ const Content = () => {
   }
 
   if (error) {
-    return <div>Error</div>;
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-red-500 font-bold animate-pulse">
+          Error
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -204,64 +233,6 @@ const Content = () => {
             />
           </div>
           <div className="grid grid-cols-4 gap-6 max-sm:gap-1">
-            {/* <div className="flex justify-center items-center">
-              <Image
-                src={projects?.image[1].link_gambar}
-                alt="Picture of the author"
-                width={1600}
-                height={900}
-                sizes="80vh"
-                objectFit="cover"
-              />
-            </div>
-            <div className="flex justify-center items-center">
-              <Image
-                src={projects?.image[2].link_gambar}
-                alt="Picture of the author"
-                width={1600}
-                height={900}
-                sizes="80vh"
-                objectFit="cover"
-              />
-            </div>
-            <div className=" flex justify-center items-center">
-              <Image
-                src={projects?.image[3].link_gambar}
-                alt="Picture of the author"
-                width={1600}
-                height={900}
-                sizes="80vh"
-                objectFit="cover"
-              />
-            </div>
-            <div className="bg-gray-500 flex justify-center items-center">
-              <Image
-                src={projects?.image[4].link_gambar}
-                alt="Picture of the author"
-                width={1600}
-                height={900}
-                sizes={"max-h-[80vh]"}
-                objectFit="cover"
-              />
-            </div> */}
-            {/* {projects?.image.slice(0, 4).map((img: Image, index: number) => (
-              <div
-                key={index + 1}
-                className={`flex justify-center items-center ${
-                  index + 1 === mainImageIndex ? "border-2 border-blue-500" : ""
-                }`}
-                onClick={() => handleImageClick(index + 1)}>
-                <Image
-                  src={projects?.image[index + 1].link_gambar}
-                  alt={`Picture ${projects?.image[index].link_gambar}`}
-                  width={1600}
-                  height={900}
-                  sizes="80vh"
-                  objectFit="cover"
-                  className="cursor-pointer"
-                />
-              </div>
-            ))} */}
             {images.map((img: Image, index: number) =>
               index !== mainImageIndex ? (
                 <div
@@ -290,8 +261,8 @@ const Content = () => {
             Comments
           </div>
           <div className="flex flex-col mt-4 overflow-scroll px-4 pb-9 max-sm:text-sm">
-            <div className="">
-              {projects?.comment.map((comment) => (
+            <div className="pb-8">
+              {projects?.comments?.map((comment) => (
                 <Comment
                   key={comment.id}
                   isi_komen={JSON.stringify(comment.isi_komen)}
@@ -302,7 +273,7 @@ const Content = () => {
           </div>
           <div className="flex bottom-0 start-0 z-30 absolute w-full p-4 justify-between bg-primary text-white">
             <form
-              action="#"
+              onSubmit={handleClickComment}
               className="flex w-full gap-4 justify-between items-center">
               <label htmlFor="comment" className="max-sm:hidden">
                 <span
@@ -321,6 +292,8 @@ const Content = () => {
                 placeholder="Tulis Komentar"
                 name="comment"
                 id="comment"
+                onChange={(e) => setComment(e.target.value)}
+                value={comment}
                 className="text-primary placeholder:text-hint text-lg border-none rounded-md p-2 w-full focus:ring-0"
               />
               <button type="submit">
@@ -352,18 +325,17 @@ const Content = () => {
               className="cursor-pointer"
             />
           </span>
-          <p>{projects?.like.length}</p>
+          <p>{likes}</p>
         </div>
         <div className="flex flex-col text-primary sm:hidden items-center ">
           <span>
             <FontAwesomeIcon
-              onClick={handleClickComment}
-              icon={isHoveredComment ? faComment : faCommentRegular}
+              onClick={() => setClickComment(!clickComment)}
+              icon={clickComment ? faComment : faCommentRegular}
               size="2x"
-              className="cursor-pointer"
             />
           </span>
-          <p>{projects?.comment.length}</p>
+          <p>{projects?.comments?.length}</p>
         </div>
       </div>
       {/* end like section */}
@@ -375,8 +347,8 @@ const Content = () => {
             Comments
           </div>
           <div className="flex flex-col mt-4 overflow-scroll px-4 pb-9 max-sm:text-sm">
-            <div className="">
-              {projects?.comment.map((comment) => (
+            <div className="pb-4">
+              {projects?.comments.map((comment) => (
                 <Comment
                   key={comment.id}
                   isi_komen={JSON.stringify(comment.isi_komen)}
@@ -387,13 +359,15 @@ const Content = () => {
           </div>
           <div className="flex bottom-0 start-0 z-30 absolute w-full p-2 justify-between bg-primary text-white">
             <form
-              action="#"
+              onSubmit={handleClickComment}
               className="flex w-full gap-4 justify-between items-center">
               <input
                 type="text"
                 placeholder="Tulis Komentar"
                 name="comment"
                 id="comment"
+                onChange={(e) => setComment(e.target.value)}
+                value={comment}
                 className="text-primary placeholder:text-hint max-sm:placeholder:text-sm text-lg border-none rounded-md p-1 w-full focus:ring-0"
               />
               <button type="submit">

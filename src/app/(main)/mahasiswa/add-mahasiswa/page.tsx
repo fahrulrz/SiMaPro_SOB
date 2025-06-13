@@ -47,6 +47,7 @@ const AddMahasiswa = () => {
     const data = new FormData();
     data.append("nama_lengkap", formData.nama_lengkap);
     data.append("NIM", formData.NIM);
+    console.log("ini foto", formData.foto);
     data.append("foto", formData.foto as Blob);
 
     try {
@@ -145,7 +146,7 @@ const AddMahasiswa = () => {
         <div
           id="popup-modal"
           tabIndex={-1}
-          className="hidden overflow-y-auto overflow-x-hidden fixed flex z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+          className="overflow-y-auto overflow-x-hidden fixed flex z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
           <div className="relative p-4 w-full max-w-md max-h-full">
             <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
               <button

@@ -130,6 +130,7 @@ const Content = () => {
         setLike(response.data.data.likes.length);
         likeStatus(response.data.data.id);
         setIsLoading(false);
+        console.log("isi project -> ", response.data.data);
       })
       .catch((error) => {
         setError(error);
@@ -147,13 +148,14 @@ const Content = () => {
   };
 
   const handleImageClick = (clickedIndex: number) => {
+    // Tukar posisi gambar yang diklik dengan main image
     const updatedImages = [...images];
     const temp = updatedImages[mainImageIndex];
     updatedImages[mainImageIndex] = updatedImages[clickedIndex];
     updatedImages[clickedIndex] = temp;
 
     setImages(updatedImages);
-    setMainImageIndex(clickedIndex);
+    setMainImageIndex(mainImageIndex); // mainImageIndex tetap sama
   };
 
   const handleClickLike = async () => {
@@ -222,13 +224,14 @@ const Content = () => {
     <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-full w-screen">
       <div className="flex flex-row max-sm:flex-col h-full w-full gap-5">
         <div className="flex flex-col h-full w-full max-h-[84.5vh] gap-10 max-sm:gap-4">
-          <div className="flex w-full max-h-[84.5vh] px-24 max-sm:px-0">
+          <div className="flex w-full h-[65vh] px-24 max-sm:px-0 items-center justify-center">
             <Image
-              src={projects?.image[mainImageIndex].link_gambar || ""}
+              src={images[mainImageIndex]?.link_gambar || ""}
               alt="Main Picture"
               width={1600}
               height={900}
-              sizes="max-h-[80vh]"
+              unoptimized
+              className="object-contain w-full h-full"
               objectFit="cover"
             />
           </div>
@@ -237,14 +240,15 @@ const Content = () => {
               index !== mainImageIndex ? (
                 <div
                   key={index}
-                  className="flex justify-center items-center cursor-pointer"
+                  className="flex justify-center items-center cursor-pointer max-h-[20vh] bg-blue-500 overflow-hidden relative"
                   onClick={() => handleImageClick(index)}>
                   <Image
                     src={img.link_gambar}
                     alt={`Picture ${index + 1}`}
-                    width={1600}
+                    width={900}
                     height={900}
-                    sizes="80vh"
+                    unoptimized
+                    className="w-full h-full object-cover"
                     objectFit="cover"
                   />
                 </div>
@@ -315,8 +319,8 @@ const Content = () => {
       </div>
 
       {/* like section */}
-      <div id="like-comment" className="flex gap-14">
-        <div className="flex flex-col text-primary items-center ">
+      <div id="like-comment" className="flex gap-14 sm:mt-5">
+        <div className="flex flex-col text-primary items-center">
           <span>
             <FontAwesomeIcon
               onClick={handleClickLike}

@@ -17,6 +17,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import "@/app/styles/style.css";
+import { submitProject } from "@/lib/Project";
+import { initFlowbite } from "flowbite";
 
 interface NavigationItem {
   id: number;
@@ -26,6 +28,14 @@ interface NavigationItem {
 const AddProject: React.FC = () => {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
+  const [formData, setFormData] = useState({
+    projectName: "",
+    stakeholder: 0,
+    team: 0,
+    year: 0,
+    description: "",
+    projectCategory: 0,
+  });
 
   // State untuk menyimpan file dan URL file untuk setiap input
   const [selectedFiles, setSelectedFiles] = useState<(File | null)[]>([
@@ -44,8 +54,11 @@ const AddProject: React.FC = () => {
   ]);
 
   const handleSelect = (item: NavigationItem) => {
+    setFormData({ ...formData, projectCategory: item.id });
     setSelectedItem(item);
   };
+
+  initFlowbite();
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -72,18 +85,51 @@ const AddProject: React.FC = () => {
       }
     };
 
-    if (typeof window != "undefined") {
-      import("aos").then((Aos) => {
-          Aos.init();
-      });
+  if (typeof window != "undefined") {
+    import("aos").then((Aos) => {
+      Aos.init();
+    });
   }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   // Aos.init();
 
   // Menangani submit form
-  const submitHandler = (event: React.FormEvent) => {
+  const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    router.push("/home");
+    const data = new FormData();
+    data.append("nama_proyek", formData.projectName);
+    data.append("stakeholder_id", formData.stakeholder.toString());
+    data.append("team_id", formData.team.toString());
+    data.append("year", formData.year.toString());
+    data.append("deskripsi", formData.description);
+    data.append("category_project", formData.projectCategory.toString());
+
+    selectedFiles.forEach((file) => {
+      if (file) {
+        data.append("images[]", file as Blob);
+      }
+    });
+
+    console.log("Isi FormData:");
+    console.log(Array.from(data.entries()));
+
+    try {
+      const res = await submitProject(data);
+      console.log("berhasil upload project", res);
+      router.push("/home/project");
+    } catch (error) {
+      console.log("gagal upload project", error);
+    }
   };
 
   return (
@@ -169,6 +215,8 @@ const AddProject: React.FC = () => {
                 <input
                   id="project-name"
                   type="text"
+                  name="projectName"
+                  onChange={handleChange}
                   placeholder="Project Name"
                   className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
@@ -222,6 +270,8 @@ const AddProject: React.FC = () => {
                 <input
                   id="year"
                   type="text"
+                  onChange={handleChange}
+                  name="year"
                   placeholder="e.g. 2022"
                   className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject  focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
@@ -235,6 +285,8 @@ const AddProject: React.FC = () => {
                 <input
                   id="stakeholder"
                   type="text"
+                  name="stakeholder"
+                  onChange={handleChange}
                   placeholder="Stakeholder"
                   className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
@@ -249,6 +301,8 @@ const AddProject: React.FC = () => {
                   id="group-name"
                   type="text"
                   placeholder="Team Name"
+                  onChange={handleChange}
+                  name="team"
                   className=" placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
@@ -261,6 +315,8 @@ const AddProject: React.FC = () => {
                 <textarea
                   id="description"
                   rows={8}
+                  onChange={handleChange}
+                  name="description"
                   className=" placeholder:text-hint max-sm:placeholder:text-base text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                   placeholder="Add your project description here"
                 />

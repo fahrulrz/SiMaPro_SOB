@@ -23,6 +23,7 @@ const nextConfig = {
       "i0.wp.com",
       "fastly.picsum.photos",
       "simapro.web.id",
+      "127.0.0.1",
     ],
   },
   loader: "custom",

@@ -65,6 +65,7 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
               alt="Picture of the author"
               layout="fill"
               objectFit="cover"
+              unoptimized
             />
 
             <div

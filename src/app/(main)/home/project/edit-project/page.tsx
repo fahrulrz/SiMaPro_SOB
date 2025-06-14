@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -18,6 +18,9 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 import "@/app/styles/style.css";
+import { searchStakeholder } from "@/lib/Stakeholder";
+import SearchResult from "@/components/SearchResult";
+import { updateProject } from "@/lib/Project";
 
 // import "flowbite";
 
@@ -75,8 +78,6 @@ interface Project {
   nama_proyek: string;
   deskripsi: string;
   image: Image[];
-  //   like: Like[];
-  //   comment: Comment[];
   year: Year[];
   stakeholder: Stakeholder;
   team: Team;
@@ -89,52 +90,25 @@ const EditProject: React.FC = () => {
   //   mengambil id dari params url
   const [id, setId] = useState<string>(" ");
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const idUrl = window
-      ? new URLSearchParams(window.location.search).get("id") || " "
-      : " ";
-    setId(idUrl);
-
-    if (!isLoading || !idUrl) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
-      .then((response) => {
-        setProjects(response.data.data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setIsLoading(false);
-      });
-  }, [isLoading]);
-
   // membuat variabel untuk menyimpan data project
   const [projects, setProjects] = useState<Project>();
+  // const [stakeholder, setStakeholder] = useState<string>();
+  const [stakeholders, setStakeholders] = useState<Stakeholder[]>();
+  const [stakeholderKeyword, setStakeholderKeyword] = useState<string>("");
   const [error, setError] = useState(null);
+  // const successModalRef = useRef<HTMLDivElement | null>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [update, setUpdate] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const handleSuccess = () => {
-    setIsSuccess(!isSuccess);
-    setUpdate(false);
-    setTimeout(() => {
-      setIsSuccess(false);
-      router.push(`/home/project?id=${id}`);
-    }, 5000);
-  };
-
-  const handleUpdate = () => {
-    setUpdate(!update);
-  };
-
-  console.log(error);
-
+  const [activeStakeholder, setActiveStakeholder] = useState(false);
+  const [formData, setFormData] = useState({
+    projectName: "",
+    stakeholder: 0,
+    team: 0,
+    year: 0,
+    description: "",
+    projectCategory: 0,
+  });
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
 
   // State untuk menyimpan file dan URL file untuk setiap input
@@ -154,12 +128,55 @@ const EditProject: React.FC = () => {
     null,
   ]);
 
-  const handleSelect = (item: NavigationItem) => {
-    setSelectedItem(item);
+  useEffect(() => {
+    const idUrl = window
+      ? new URLSearchParams(window.location.search).get("id") || " "
+      : " ";
+    setId(idUrl);
+
+    if (!isLoading || !idUrl) {
+      return;
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    setIsLoading(true);
+
+    console.log("use effect berjalan lagi");
+
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
+      .then((response) => {
+        setProjects(response.data.data);
+        setStakeholderKeyword(response.data.data.stakeholder.nama);
+        setIsLoading(false);
+        setFormData({
+          projectName: response.data.data.nama_proyek,
+          stakeholder: response.data.data.stakeholder.id,
+          team: response.data.data.team.id,
+          year: response.data.data.year[0].tahun,
+          description: response.data.data.deskripsi,
+          projectCategory: response.data.data.categories[0].id,
+        });
+      })
+      .catch((error) => {
+        setError(error);
+        setIsLoading(false);
+      });
+  }, [isLoading]);
+
+  const handleUpdate = () => {
+    setUpdate(!update);
   };
 
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  console.log(isHovered);
+  console.log(error);
+
+  const handleSelect = (item: NavigationItem) => {
+    setFormData({ ...formData, projectCategory: item.id });
+    setSelectedItem(item);
+  };
 
   const navigationItems: NavigationItem[] = [
     { id: 1, name: "Projek Aplikasi Dasar 1" },
@@ -190,12 +207,97 @@ const EditProject: React.FC = () => {
     });
   }
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+
+    if (name == "stakeholder") {
+      setStakeholderKeyword(value);
+      console.log("stakeholder ->", value);
+
+      if (value == "") {
+        setActiveStakeholder(false);
+        // Clear timeout jika ada
+        if (searchTimeoutRef.current) {
+          clearTimeout(searchTimeoutRef.current);
+          searchTimeoutRef.current = null;
+        }
+        return;
+      }
+
+      // Clear timeout sebelumnya
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      // Set timeout baru dengan delay 500ms
+      searchTimeoutRef.current = setTimeout(() => {
+        searchStakeholder(value)
+          .then((data) => {
+            setStakeholders(data);
+            setActiveStakeholder(true);
+          })
+          .catch((err) => {
+            setError(err);
+          });
+      }, 500);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleClick = (name: string, id: number, fullName: string) => {
+    if (name == "stakeholder") {
+      setActiveStakeholder(false);
+      setFormData({
+        ...formData,
+        stakeholder: id,
+      });
+      setStakeholderKeyword(fullName);
+      setStakeholderKeyword(fullName);
+      setStakeholders([]);
+    }
+  };
+
   // Aos.init();
 
   // Menangani submit form
-  const submitHandler = (event: React.FormEvent) => {
+  const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    router.push(`/home/project?id=${id}`);
+
+    const data = new FormData();
+    data.append("nama_proyek", formData.projectName);
+    data.append("stakeholder_id", formData.stakeholder.toString());
+    data.append("team_id", formData.team.toString());
+    data.append("year", formData.year.toString());
+    data.append("deskripsi", formData.description);
+    data.append("category_project", formData.projectCategory.toString());
+
+    selectedFiles.forEach((file) => {
+      if (file) {
+        data.append("images[]", file as Blob);
+      }
+    });
+
+    console.log("Isi FormData:");
+    console.log(Array.from(data.entries()));
+
+    try {
+      const res = await updateProject(data, projects?.id as number);
+      // if (successModalRef.current) {
+      //   successModalRef.current.classList.remove("hidden");
+      //   successModalRef.current.classList.add("flex");
+      // }
+      setIsSuccess(!isSuccess);
+      setUpdate(false);
+      console.log("berhasil upload project", res);
+    } catch (error) {
+      console.log("gagal upload project", error);
+    }
   };
 
   if (isLoading) {
@@ -233,6 +335,7 @@ const EditProject: React.FC = () => {
                       src={fileUrls[0]}
                       alt={selectedFiles[0]?.name || "Uploaded Image"}
                       layout="fill"
+                      unoptimized
                       objectFit="cover"
                     />
                   </div>
@@ -241,6 +344,7 @@ const EditProject: React.FC = () => {
                     src={projects?.image[0].link_gambar || ""}
                     alt={JSON.stringify(projects?.image[0].link_gambar)}
                     layout="fill"
+                    unoptimized
                     objectFit="cover"
                   />
                 )}
@@ -271,6 +375,7 @@ const EditProject: React.FC = () => {
                             selectedFiles[index + 1]?.name || "Uploaded Image"
                           }
                           layout="fill"
+                          unoptimized
                           objectFit="cover"
                         />
                       </div>
@@ -281,6 +386,7 @@ const EditProject: React.FC = () => {
                           projects?.image[index + 1].link_gambar
                         )}
                         layout="fill"
+                        unoptimized
                         objectFit="cover"
                       />
                     )}
@@ -307,12 +413,9 @@ const EditProject: React.FC = () => {
                 <input
                   id="project-name"
                   type="text"
-                  value={projects?.nama_proyek}
-                  onChange={(e) => {
-                    if (projects) {
-                      setProjects({ ...projects, nama_proyek: e.target.value });
-                    }
-                  }}
+                  name="projectName"
+                  value={formData.projectName}
+                  onChange={handleChange}
                   placeholder="Project Name"
                   className=" placeholder:text-hint max-sm:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
@@ -329,11 +432,13 @@ const EditProject: React.FC = () => {
                   className="relative insline-block text-left w-full col-span-3">
                   <Menu.Button
                     className={`inline-flex w-full items-center gap-x-1.5 rounded-md bg-white max-sm:py-3 hover:bg-gray-50 px-3 py-2 text-lg max-sm:text-sm text-primary shadow-sm`}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}>
+                    // onMouseEnter={() => setIsHovered(true)}
+                    // onMouseLeave={() => setIsHovered(false)}
+                  >
                     {selectedItem
                       ? selectedItem.name
-                      : projects?.categories[0].nama_kategori}{" "}
+                      : projects?.categories[0].nama_kategori}
+                    {""}
                     <ChevronDownIcon className="h-5 w-5 ms-auto me-0 " />
                   </Menu.Button>
 
@@ -368,18 +473,20 @@ const EditProject: React.FC = () => {
                 <input
                   id="year"
                   type="text"
-                  value={projects?.year.map((item) => item.tahun).join(", ")}
-                  onChange={(e) => {
-                    if (projects) {
-                      const updatedYears = e.target.value
-                        .split(",")
-                        .map((year) => ({
-                          id: 0, // sesuaikan dengan ID atau biarkan 0 jika tidak digunakan
-                          tahun: year.trim(),
-                        }));
-                      setProjects({ ...projects, year: updatedYears });
-                    }
-                  }}
+                  name="year"
+                  value={formData.year}
+                  // onChange={(e) => {
+                  //   if (projects) {
+                  //     const updatedYears = e.target.value
+                  //       .split(",")
+                  //       .map((year) => ({
+                  //         id: 0,
+                  //         tahun: year.trim(),
+                  //       }));
+                  //     setProjects({ ...projects, year: updatedYears });
+                  //   }
+                  // }}
+                  onChange={handleChange}
                   placeholder="e.g. 2022"
                   className=" placeholder:text-hint text-primary bg-inputAddProject  focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
@@ -393,21 +500,51 @@ const EditProject: React.FC = () => {
                 <input
                   id="stakeholder"
                   type="text"
-                  value={projects?.stakeholder.nama}
-                  onChange={(e) => {
-                    if (projects) {
-                      setProjects({
-                        ...projects,
-                        stakeholder: {
-                          ...projects.stakeholder, // menjaga properti lain
-                          nama: e.target.value, // hanya memperbarui nama
-                        },
-                      });
-                    }
-                  }}
+                  name="stakeholder"
+                  value={stakeholderKeyword != "" ? stakeholderKeyword : ""}
+                  // onChange={(e) => {
+                  //   if (projects) {
+                  //     setProjects({
+                  //       ...projects,
+                  //       stakeholder: {
+                  //         ...projects.stakeholder,
+                  //         nama: e.target.value,
+                  //       },
+                  //     });
+                  //   }
+                  // }}
                   placeholder="Stakeholder"
+                  onChange={handleChange}
                   className=" placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
+              </div>
+              <div className="w-full  -mt-3 relative">
+                <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                  <div className="col-span-1"></div>
+                  <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                    {activeStakeholder && stakeholderKeyword != "" ? (
+                      stakeholders && stakeholders.length > 0 ? (
+                        stakeholders.map((stakeholder) => (
+                          <div
+                            onClick={() =>
+                              handleClick(
+                                "stakeholder",
+                                stakeholder.id,
+                                stakeholder.nama
+                              )
+                            }
+                            key={stakeholder.id}>
+                            <SearchResult name={stakeholder.nama} />
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <SearchResult name="No Stakeholder Found" />
+                        </div>
+                      )
+                    ) : null}
+                  </div>
+                </div>
               </div>
               <div className="grid grid-cols-4 gap-4 w-full">
                 <label
@@ -418,18 +555,9 @@ const EditProject: React.FC = () => {
                 <input
                   id="group-name"
                   type="text"
-                  value={projects?.team.nama_tim}
-                  onChange={(e) => {
-                    if (projects) {
-                      setProjects({
-                        ...projects,
-                        team: {
-                          ...projects.team, // menjaga properti lain
-                          nama_tim: e.target.value, // hanya memperbarui nama
-                        },
-                      });
-                    }
-                  }}
+                  value={formData.team}
+                  name="team"
+                  onChange={handleChange}
                   placeholder="Team Name"
                   className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
@@ -443,15 +571,9 @@ const EditProject: React.FC = () => {
                 <textarea
                   id="description"
                   rows={10}
-                  value={projects?.deskripsi}
-                  onChange={(e) => {
-                    if (projects) {
-                      setProjects({
-                        ...projects,
-                        deskripsi: e.target.value,
-                      });
-                    }
-                  }}
+                  value={formData.description}
+                  onChange={handleChange}
+                  name="description"
                   className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                   placeholder="Add your project description here"
                 />
@@ -530,7 +652,7 @@ const EditProject: React.FC = () => {
                     </h3>
                     <button
                       type="button"
-                      onClick={handleSuccess}
+                      onClick={submitHandler}
                       className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                       Yes, It&apos;m sure
                     </button>

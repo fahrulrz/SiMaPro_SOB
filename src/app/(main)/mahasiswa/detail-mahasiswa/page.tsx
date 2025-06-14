@@ -13,6 +13,7 @@ import Card from "@/components/Card";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import myImageLoader from "@/lib/loader";
 
 interface Mahasiswa {
   id: number;
@@ -69,12 +70,12 @@ const DetailMahasiswa = () => {
             <div className="bg-red-600 flex flex-col mt-10">
               <div className="flex relative h-[30rem] max-sm:h-96 w-96 max-sm:w-72">
                 <Image
+                  loader={myImageLoader}
                   src={mahasiswa?.foto || ""}
                   alt="Picture of the author"
                   //   width={1600}
                   //   height={900}
                   layout="fill"
-                  unoptimized
                   objectFit="cover"
                   sizes="80vh"
                 />

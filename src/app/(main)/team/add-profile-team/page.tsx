@@ -3,12 +3,20 @@
 import SearchResult from "@/components/SearchResult";
 import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
 import { submitTeam, TeamMember } from "@/lib/Team";
-import { initFlowbite } from "flowbite";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const AddProfileTeam = () => {
-  initFlowbite();
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+  }, []);
 
   const [pmKeyword, setPmKeyword] = useState("");
   const [feKeyword, setFeKeyword] = useState("");

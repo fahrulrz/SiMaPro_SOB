@@ -14,7 +14,6 @@ import axios from "axios";
 import Link from "next/link";
 import { Stakeholder } from "@/lib/Stakeholder";
 
-
 const DetailStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder>();
   const [error, setError] = useState(null);

@@ -15,6 +15,21 @@ export const submitProject = async (formData: FormData) => {
     return res;
 };
 
+export const updateProject = async (formData: FormData, id: number) => {
+    const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/projects/updateProject/${id}`,
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Accept: "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        }
+    );
+    return res;
+}
+
 export const likeProject = async (id: number) => {
     const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}/like`,

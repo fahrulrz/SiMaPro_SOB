@@ -10,6 +10,8 @@ const nextConfig = {
     ];
   },
 
+  output: "standalone",
+
   images: {
     domains: [
       "tse1.mm.bing.net",
@@ -26,8 +28,6 @@ const nextConfig = {
       "127.0.0.1",
     ],
   },
-  loader: "custom",
-  loaderFile: "./loader.ts",
 };
 
 export default nextConfig;

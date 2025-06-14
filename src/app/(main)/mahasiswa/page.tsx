@@ -32,7 +32,8 @@ const Mahasiswa = () => {
       }
     };
     fetchData();
-  }, []);
+    console.log("Data mahasiswa:", mahasiswa);
+  }, [isLoading]);
 
   useEffect(() => {
     console.log(
@@ -72,7 +73,7 @@ const Mahasiswa = () => {
                     <div className="flex relative h-full max-sm:h-52 w-full">
                       <Image
                         src={mahasiswa.foto}
-                        alt={ "Picture of "+ mahasiswa.nama_lengkap}
+                        alt={"Picture of " + mahasiswa.nama_lengkap}
                         layout="fill"
                         unoptimized
                         objectFit="cover"

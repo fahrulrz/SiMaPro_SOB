@@ -9,6 +9,7 @@ import "../../styles/style.css";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import myImageLoader from "@/lib/loader";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -47,6 +48,7 @@ export default function Login() {
             src="/assets/logo.png"
             alt="Logo SiMaPro"
             width={500}
+            loader={myImageLoader}
             height={500}
             className="bg-white flex justify-center items-center text-black"
           />

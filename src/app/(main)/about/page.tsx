@@ -1,3 +1,5 @@
+"use client";
+import myImageLoader from "@/lib/loader";
 import Image from "next/image";
 
 const About = () => {
@@ -21,6 +23,7 @@ const About = () => {
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
+            loader={myImageLoader}
           />
         </div>
         <div className="flex flex-col justify-center items-center gap-12 text-inputAddProject">
@@ -59,6 +62,7 @@ const About = () => {
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
+            loader={myImageLoader}
           />
         </div>
       </div>
@@ -69,6 +73,7 @@ const About = () => {
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
+            loader={myImageLoader}
           />
         </div>
         <div className="flex flex-col justify-center items-center gap-12">
@@ -107,6 +112,7 @@ const About = () => {
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
+            loader={myImageLoader}
           />
         </div>
       </div>

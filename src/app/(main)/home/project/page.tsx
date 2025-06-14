@@ -136,7 +136,7 @@ const Content = () => {
         setError(error);
         setIsLoading(false);
       });
-  }, [id]);
+  }, [id, isLoading]);
 
   const likeStatus = async (id: number) => {
     try {

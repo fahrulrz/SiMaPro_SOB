@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -18,7 +18,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import "@/app/styles/style.css";
 import { submitProject } from "@/lib/Project";
-import { initFlowbite } from "flowbite";
+import myImageLoader from "@/lib/loader";
 
 interface NavigationItem {
   id: number;
@@ -28,6 +28,7 @@ interface NavigationItem {
 const AddProject: React.FC = () => {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
+  const successModalRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState({
     projectName: "",
     stakeholder: 0,
@@ -58,7 +59,16 @@ const AddProject: React.FC = () => {
     setSelectedItem(item);
   };
 
-  initFlowbite();
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+  }, []);
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -125,8 +135,11 @@ const AddProject: React.FC = () => {
 
     try {
       const res = await submitProject(data);
+      if (successModalRef.current) {
+        successModalRef.current.classList.remove("hidden");
+        successModalRef.current.classList.add("flex");
+      }
       console.log("berhasil upload project", res);
-      router.push("/home/project");
     } catch (error) {
       console.log("gagal upload project", error);
     }
@@ -150,6 +163,7 @@ const AddProject: React.FC = () => {
                 {fileUrls[0] ? (
                   <div className="absolute flex w-full h-full">
                     <Image
+                      loader={myImageLoader}
                       src={fileUrls[0]}
                       alt={selectedFiles[0]?.name || "Uploaded Image"}
                       layout="fill"
@@ -181,6 +195,7 @@ const AddProject: React.FC = () => {
                     {fileUrls[index + 1] ? (
                       <div className="absolute flex w-full h-full">
                         <Image
+                          loader={myImageLoader}
                           src={fileUrls[index + 1] || ""} // Pastikan selalu memberikan string default
                           alt={
                             selectedFiles[index + 1]?.name || "Uploaded Image"
@@ -398,7 +413,7 @@ const AddProject: React.FC = () => {
                     data-modal-hide="defaultModal"
                     data-modal-toggle="successModal"
                     data-modal-target="successModal"
-                    type="button"
+                    type="submit"
                     className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                     Yes, Im sure
                   </button>
@@ -432,7 +447,8 @@ const AddProject: React.FC = () => {
 
                   <button
                     data-modal-hide="successModal"
-                    type="submit"
+                    type="button"
+                    onClick={() => router.push("/home/project")}
                     className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     Close
                   </button>

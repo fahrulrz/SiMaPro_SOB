@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { initFlowbite } from "flowbite";
 import { submitStakeholder } from "@/lib/Stakeholder";
 import type { AddStakeholder } from "@/lib/Stakeholder";
 
@@ -15,7 +14,16 @@ interface NavigationItem {
 }
 
 const AddStakeholder = () => {
-  initFlowbite();
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+  }, []);
 
   const router = useRouter();
   const [formData, setFormData] = useState<AddStakeholder>({
@@ -74,7 +82,7 @@ const AddStakeholder = () => {
 
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     const data = new FormData();
     data.append("nama", formData.nama);
     data.append("kategori", selectedItem?.name || "");

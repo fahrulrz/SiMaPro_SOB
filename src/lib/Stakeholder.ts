@@ -50,7 +50,7 @@ export const submitStakeholder = async (formData: FormData) => {
 export const searchStakeholder = async (keyword: string) => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/stakeholders/search${keyword}`
+      `${process.env.NEXT_PUBLIC_API_URL}/stakeholders/search/${keyword}`
     );
     return response.data.data;
   } catch (error) {

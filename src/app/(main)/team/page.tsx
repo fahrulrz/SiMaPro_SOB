@@ -13,6 +13,7 @@ import Card from "@/components/Card";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import myImageLoader from "@/lib/loader";
 
 interface Images {
   id: number;
@@ -111,6 +112,7 @@ const Team = () => {
                     <div className="flex w-full h-full p-8">
                       <div className="flex relative h-full w-full">
                         <Image
+                          loader={myImageLoader}
                           src={member.member.foto}
                           alt={`Foto ${member.member.nama_lengkap}`}
                           // width={720}

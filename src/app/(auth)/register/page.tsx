@@ -11,6 +11,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import myImageLoader from "@/lib/loader";
 
 const Register = () => {
   // const { login: setUser } = useAuth();
@@ -18,7 +19,7 @@ const Register = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
-  const {register} = useAuth();
+  const { register } = useAuth();
 
   const handleRegister = async () => {
     try {
@@ -38,13 +39,13 @@ const Register = () => {
           <Image
             src="/assets/logo.png"
             alt="Logo SiMaPro"
+            loader={myImageLoader}
             width={500}
             height={500}
             className="bg-white flex justify-center items-center text-black"
           />
         </div>
-        <div
-          className="flex flex-1 sm:min-h-[80vh] max-sm:min-h-50vh max-sm:mt-10  max-sm:w-full flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10">
+        <div className="flex flex-1 sm:min-h-[80vh] max-sm:min-h-50vh max-sm:mt-10  max-sm:w-full flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10">
           <div className="flex flex-col h-44 gap-4 justify-center ">
             <div className="flex flex-auto">
               <label htmlFor="username" className="w-full relative block">

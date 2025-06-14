@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { initFlowbite } from "flowbite";
 import { submitMahasiswa } from "@/lib/Mahasiswa";
 import type { AddMahasiswa } from "@/lib/Mahasiswa";
 
@@ -14,7 +13,16 @@ const AddMahasiswa = () => {
     foto: null,
   });
 
-  initFlowbite();
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+  }, []);
 
   const [fileName, setFileName] = useState<string>(
     "Add Foto Profile Mahasiswa"

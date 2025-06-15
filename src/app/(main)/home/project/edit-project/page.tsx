@@ -276,6 +276,7 @@ const EditProject: React.FC = () => {
     data.append("year", formData.year.toString());
     data.append("deskripsi", formData.description);
     data.append("category_project", formData.projectCategory.toString());
+    data.append("_method", "put");
 
     selectedFiles.forEach((file) => {
       if (file) {
@@ -651,7 +652,7 @@ const EditProject: React.FC = () => {
                       made will replace the current profile information.
                     </h3>
                     <button
-                      type="button"
+                      type="submit"
                       onClick={submitHandler}
                       className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                       Yes, It&apos;m sure

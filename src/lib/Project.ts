@@ -16,7 +16,7 @@ export const submitProject = async (formData: FormData) => {
 };
 
 export const updateProject = async (formData: FormData, id: number) => {
-    const res = await axios.put(
+    const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/projects/updateProject/${id}`,
         formData,
         {

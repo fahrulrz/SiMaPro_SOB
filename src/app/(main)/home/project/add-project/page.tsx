@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 import Image from "next/image";
 
-// import Aos from "aos";
 import "aos/dist/aos.css";
 
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-// import "flowbite";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import "@/app/styles/style.css";
 import { submitProject } from "@/lib/Project";
@@ -28,7 +26,9 @@ interface NavigationItem {
 const AddProject: React.FC = () => {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
-  const successModalRef = useRef<HTMLDivElement | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showFailedModal, setShowFailedModal] = useState(false);
+
   const [formData, setFormData] = useState({
     projectName: "",
     stakeholder: 0,
@@ -66,9 +66,25 @@ const AddProject: React.FC = () => {
         initFlowbite();
       }
     };
-
     initializeFlowbite();
-  }, []);
+    if (showFailedModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    }
+    if (showSuccessModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+      console.log("dipanggil terus");
+    };
+  }, [showFailedModal, showSuccessModal]);
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -135,13 +151,25 @@ const AddProject: React.FC = () => {
 
     try {
       const res = await submitProject(data);
-      if (successModalRef.current) {
-        successModalRef.current.classList.remove("hidden");
-        successModalRef.current.classList.add("flex");
-      }
+      setShowSuccessModal(true);
       console.log("berhasil upload project", res);
     } catch (error) {
+      setShowFailedModal(true);
       console.log("gagal upload project", error);
+    }
+  };
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
+
+  const closeFailedModal = () => {
+    setShowFailedModal(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
     }
   };
 
@@ -151,17 +179,21 @@ const AddProject: React.FC = () => {
         <form
           onSubmit={submitHandler}
           method="post"
-          className="flex flex-col gap-4 h-full px-10 max-sm:px-2">
+          className="flex flex-col gap-4 h-full px-10 max-sm:px-2"
+        >
           <div className="flex flex-col gap-4 h-[48rem] max-sm:h-80">
             <div
               data-aos="zoom-in"
               data-aos-duration="800"
-              className=" h-full  ">
+              className=" h-full  "
+            >
               <label
                 htmlFor="image-upload-1"
-                className="bg-inputAddProject relative hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary h-full justify-center items-center flex">
+                className="bg-inputAddProject relative hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary h-full justify-center items-center flex"
+              >
                 {fileUrls[0] ? (
                   <div className="absolute flex w-full h-full">
+                    sss
                     <Image
                       loader={myImageLoader}
                       src={fileUrls[0]}
@@ -188,10 +220,12 @@ const AddProject: React.FC = () => {
                   key={index}
                   data-aos="zoom-in"
                   data-aos-duration="800"
-                  className="flex flex-auto h-full w-full">
+                  className="flex flex-auto h-full w-full"
+                >
                   <label
                     htmlFor={`image-upload-${index + 2}`}
-                    className="bg-inputAddProject hover:cursor-pointer w-full font-medium tracking-wide text-xl max-sm:text-sm text-primary flex justify-center items-center">
+                    className="bg-inputAddProject hover:cursor-pointer w-full font-medium tracking-wide text-xl max-sm:text-sm text-primary flex justify-center items-center"
+                  >
                     {fileUrls[index + 1] ? (
                       <div className="absolute flex w-full h-full">
                         <Image
@@ -224,7 +258,8 @@ const AddProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="project-name"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Project Name
                 </label>
                 <input
@@ -239,17 +274,20 @@ const AddProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   PAD
                 </label>
                 {/* dropdown jenis pad */}
                 <Menu
                   as="div"
-                  className="relative insline-block text-left w-full col-span-3">
+                  className="relative insline-block text-left w-full col-span-3"
+                >
                   <Menu.Button
                     className={`inline-flex w-full h-full items-center gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 max-sm:py-3 text-lg max-sm:text-sm ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm`}
                     onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}>
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
                     {selectedItem ? selectedItem.name : "Select Project"}{" "}
                     <ChevronDownIcon className="h-5 w-5 ms-auto me-0" />
                   </Menu.Button>
@@ -262,7 +300,8 @@ const AddProject: React.FC = () => {
                             onClick={() => handleSelect(item)}
                             className={`${
                               active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}>
+                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}
+                          >
                             {item.name}
                           </button>
                         )}
@@ -279,7 +318,8 @@ const AddProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="year"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Year
                 </label>
                 <input
@@ -294,7 +334,8 @@ const AddProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="stakeholder"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Stakeholder
                 </label>
                 <input
@@ -309,7 +350,8 @@ const AddProject: React.FC = () => {
               <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="group-name"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Group Name
                 </label>
                 <input
@@ -324,7 +366,8 @@ const AddProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
                   htmlFor="description"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md"
+                >
                   Description
                 </label>
                 <textarea
@@ -344,13 +387,15 @@ const AddProject: React.FC = () => {
               type="button"
               data-modal-toggle="defaultModal"
               data-modal-target="defaultModal"
-              className="bg-primary px-10 max-sm:px-5 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+              className="bg-primary px-10 max-sm:px-5 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+            >
               Submit
             </button>
             <button
               type="button"
               className="bg-white px-10 max-sm:px-5 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
-              onClick={() => router.push("/home")}>
+              onClick={() => router.push("/home")}
+            >
               Cancel
             </button>
           </div>
@@ -359,20 +404,23 @@ const AddProject: React.FC = () => {
           <div
             id="defaultModal"
             tabIndex={-1}
-            className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+          >
             <div className="relative p-4 w-full max-w-md max-h-full">
               <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
                 <button
                   type="button"
                   className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                   //close modal
-                  data-modal-hide="defaultModal">
+                  data-modal-hide="defaultModal"
+                >
                   <svg
                     className="w-3 h-3"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
-                    viewBox="0 0 14 14">
+                    viewBox="0 0 14 14"
+                  >
                     <path
                       stroke="currentColor"
                       stroke-linecap="round"
@@ -396,7 +444,8 @@ const AddProject: React.FC = () => {
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
-                    viewBox="0 0 20 20">
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       stroke="currentColor"
                       stroke-linecap="round"
@@ -411,16 +460,17 @@ const AddProject: React.FC = () => {
                   </h3>
                   <button
                     data-modal-hide="defaultModal"
-                    data-modal-toggle="successModal"
-                    data-modal-target="successModal"
                     type="submit"
-                    className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    onClick={submitHandler}
+                    className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                  >
                     Yes, Im sure
                   </button>
                   <button
                     data-modal-hide="defaultModal"
                     type="button"
-                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  >
                     No, cancel
                   </button>
                 </div>
@@ -430,9 +480,11 @@ const AddProject: React.FC = () => {
 
           {/* modal success */}
           <div
-            id="successModal"
-            tabIndex={-1}
-            className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            className={`${
+              showSuccessModal ? "flex" : "hidden"
+            } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+            onClick={(e) => handleBackdropClick(e, closeSuccessModal)}
+          >
             <div className="relative p-4 w-full max-w-md max-h-full">
               <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
                 <div className="p-4 md:p-5 text-center">
@@ -442,14 +494,48 @@ const AddProject: React.FC = () => {
                     className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
                   />
                   <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
-                    Your project has been uploaded successfully!
+                    Project upload success!
                   </h3>
 
                   <button
                     data-modal-hide="successModal"
                     type="button"
                     onClick={() => router.push("/home/project")}
-                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* modal failed */}
+          <div
+            id="failedModal"
+            tabIndex={-1}
+            className={`${
+              showFailedModal ? "flex" : "hidden"
+            } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+            onClick={(e) => handleBackdropClick(e, closeFailedModal)}
+          >
+            <div className="relative p-4 w-full max-w-md max-h-full">
+              <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+                <div className="p-4 md:p-5 text-center">
+                  <FontAwesomeIcon
+                    icon={faXmark}
+                    size="6x"
+                    className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                  />
+                  <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                    Project upload failed! Please try again.
+                  </h3>
+
+                  <button
+                    onClick={closeFailedModal}
+                    type="button"
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  >
                     Close
                   </button>
                 </div>

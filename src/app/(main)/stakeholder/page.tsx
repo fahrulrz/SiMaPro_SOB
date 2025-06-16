@@ -46,7 +46,7 @@ const Stakeholder = () => {
         setError(error);
         setIsLoading(false);
       });
-  }, [isLoading]);
+  }, []);
 
   const router = useRouter();
 

@@ -149,6 +149,7 @@ const EditProject: React.FC = () => {
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
       .then((response) => {
+        const images = response.data.data.image;
         setProjects(response.data.data);
         setStakeholderKeyword(response.data.data.stakeholder.nama);
         setIsLoading(false);
@@ -160,6 +161,11 @@ const EditProject: React.FC = () => {
           description: response.data.data.deskripsi,
           projectCategory: response.data.data.categories[0].id,
         });
+        setFileUrls(
+          Array.from({ length: 5 }).map(
+            (_, i) => images[i]?.link_gambar ?? null
+          )
+        );
       })
       .catch((error) => {
         setError(error);
@@ -182,6 +188,17 @@ const EditProject: React.FC = () => {
     { id: 1, name: "Projek Aplikasi Dasar 1" },
     { id: 2, name: "Projek Aplikasi Dasar 2" },
   ];
+
+  const convertUrlsToFiles = async (urls: (string | null)[]) => {
+    return Promise.all(
+      urls.map(async (url) => {
+        if (!url) return null;
+        const res = await fetch(url);
+        const blob = await res.blob();
+        return new File([blob], "image.jpg", { type: blob.type });
+      })
+    );
+  };
 
   // Menangani perubahan file untuk input file tertentu
   const handleFileChange =
@@ -278,21 +295,20 @@ const EditProject: React.FC = () => {
     data.append("category_project", formData.projectCategory.toString());
     data.append("_method", "put");
 
-    selectedFiles.forEach((file) => {
+    const fetchedOldFiles = await convertUrlsToFiles(fileUrls);
+
+    for (let i = 0; i < 5; i++) {
+      const file = selectedFiles[i] ?? fetchedOldFiles[i];
       if (file) {
-        data.append("images[]", file as Blob);
+        data.append("images[]", file);
       }
-    });
+    }
 
     console.log("Isi FormData:");
     console.log(Array.from(data.entries()));
 
     try {
       const res = await updateProject(data, projects?.id as number);
-      // if (successModalRef.current) {
-      //   successModalRef.current.classList.remove("hidden");
-      //   successModalRef.current.classList.add("flex");
-      // }
       setIsSuccess(!isSuccess);
       setUpdate(false);
       console.log("berhasil upload project", res);
@@ -321,15 +337,18 @@ const EditProject: React.FC = () => {
         <form
           onSubmit={submitHandler}
           method="post"
-          className="flex flex-col gap-4 h-full px-10 max-sm:px-2">
+          className="flex flex-col gap-4 h-full px-10 max-sm:px-2"
+        >
           <div className="flex flex-col gap-4 h-[48rem] max-sm:h-80">
             <div
               data-aos="zoom-in"
               data-aos-duration="800"
-              className=" h-full  ">
+              className=" h-full  "
+            >
               <label
                 htmlFor="image-upload-1"
-                className="bg-inputAddProject relative hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary h-full justify-center items-center flex">
+                className="bg-inputAddProject relative hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary h-full justify-center items-center flex"
+              >
                 {fileUrls[0] ? (
                   <div className="absolute flex w-full h-full">
                     <Image
@@ -364,10 +383,12 @@ const EditProject: React.FC = () => {
                   key={index}
                   data-aos="zoom-in"
                   data-aos-duration="800"
-                  className="flex flex-auto h-full w-full">
+                  className="flex flex-auto h-full w-full"
+                >
                   <label
                     htmlFor={`image-upload-${index + 2}`}
-                    className="bg-inputAddProject hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary flex justify-center items-center">
+                    className="bg-inputAddProject hover:cursor-pointer w-full font-medium tracking-wide text-xl text-primary flex justify-center items-center"
+                  >
                     {fileUrls[index + 1] ? (
                       <div className="absolute flex w-full h-full">
                         <Image
@@ -382,9 +403,9 @@ const EditProject: React.FC = () => {
                       </div>
                     ) : (
                       <Image
-                        src={projects?.image[index + 1].link_gambar || ""}
+                        src={projects?.image[index + 1]?.link_gambar || ""}
                         alt={JSON.stringify(
-                          projects?.image[index + 1].link_gambar
+                          projects?.image[index + 1]?.link_gambar
                         )}
                         layout="fill"
                         unoptimized
@@ -408,7 +429,8 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="project-name"
-                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Project Name
                 </label>
                 <input
@@ -424,13 +446,15 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   PAD
                 </label>
                 {/* dropdown jenis pad */}
                 <Menu
                   as="div"
-                  className="relative insline-block text-left w-full col-span-3">
+                  className="relative insline-block text-left w-full col-span-3"
+                >
                   <Menu.Button
                     className={`inline-flex w-full items-center gap-x-1.5 rounded-md bg-white max-sm:py-3 hover:bg-gray-50 px-3 py-2 text-lg max-sm:text-sm text-primary shadow-sm`}
                     // onMouseEnter={() => setIsHovered(true)}
@@ -451,7 +475,8 @@ const EditProject: React.FC = () => {
                             onClick={() => handleSelect(item)}
                             className={`${
                               active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}>
+                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}
+                          >
                             {item.name}
                           </button>
                         )}
@@ -468,7 +493,8 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="year"
-                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Year
                 </label>
                 <input
@@ -476,17 +502,6 @@ const EditProject: React.FC = () => {
                   type="text"
                   name="year"
                   value={formData.year}
-                  // onChange={(e) => {
-                  //   if (projects) {
-                  //     const updatedYears = e.target.value
-                  //       .split(",")
-                  //       .map((year) => ({
-                  //         id: 0,
-                  //         tahun: year.trim(),
-                  //       }));
-                  //     setProjects({ ...projects, year: updatedYears });
-                  //   }
-                  // }}
                   onChange={handleChange}
                   placeholder="e.g. 2022"
                   className=" placeholder:text-hint text-primary bg-inputAddProject  focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
@@ -495,7 +510,8 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="stakeholder"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Stakeholder
                 </label>
                 <input
@@ -503,17 +519,6 @@ const EditProject: React.FC = () => {
                   type="text"
                   name="stakeholder"
                   value={stakeholderKeyword != "" ? stakeholderKeyword : ""}
-                  // onChange={(e) => {
-                  //   if (projects) {
-                  //     setProjects({
-                  //       ...projects,
-                  //       stakeholder: {
-                  //         ...projects.stakeholder,
-                  //         nama: e.target.value,
-                  //       },
-                  //     });
-                  //   }
-                  // }}
                   placeholder="Stakeholder"
                   onChange={handleChange}
                   className=" placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
@@ -534,7 +539,8 @@ const EditProject: React.FC = () => {
                                 stakeholder.nama
                               )
                             }
-                            key={stakeholder.id}>
+                            key={stakeholder.id}
+                          >
                             <SearchResult name={stakeholder.nama} />
                           </div>
                         ))
@@ -550,7 +556,8 @@ const EditProject: React.FC = () => {
               <div className="grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="group-name"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Name Group
                 </label>
                 <input
@@ -566,7 +573,8 @@ const EditProject: React.FC = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="description"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md"
+                >
                   Description
                 </label>
                 <textarea
@@ -586,13 +594,15 @@ const EditProject: React.FC = () => {
             <button
               type="button"
               onClick={handleUpdate}
-              className="bg-primary px-10 py-2 hover:bg-red-500 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+              className="bg-primary px-10 py-2 hover:bg-red-500 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+            >
               Update
             </button>
             <button
               type="button"
               className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
-              onClick={() => router.push(`/home/project?id=${id}`)}>
+              onClick={() => router.push(`/home/project?id=${id}`)}
+            >
               Cancel
             </button>
           </div>
@@ -601,20 +611,23 @@ const EditProject: React.FC = () => {
           {update && (
             <div
               tabIndex={-1}
-              className="overflow-y-auto flex bg-black/30 overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full">
+              className="overflow-y-auto flex bg-black/30 overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full"
+            >
               <div className="relative p-4 w-full max-w-md max-h-full">
                 <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
                   <button
                     type="button"
                     className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                     //close modal
-                    onClick={handleUpdate}>
+                    onClick={handleUpdate}
+                  >
                     <svg
                       className="w-3 h-3"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
-                      viewBox="0 0 14 14">
+                      viewBox="0 0 14 14"
+                    >
                       <path
                         stroke="currentColor"
                         stroke-linecap="round"
@@ -638,7 +651,8 @@ const EditProject: React.FC = () => {
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
-                      viewBox="0 0 20 20">
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         stroke="currentColor"
                         stroke-linecap="round"
@@ -654,13 +668,15 @@ const EditProject: React.FC = () => {
                     <button
                       type="submit"
                       onClick={submitHandler}
-                      className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                      className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                    >
                       Yes, It&apos;m sure
                     </button>
                     <button
                       onClick={handleUpdate}
                       type="button"
-                      className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    >
                       No, cancel
                     </button>
                   </div>
@@ -674,7 +690,8 @@ const EditProject: React.FC = () => {
             <div
               id="successModal"
               tabIndex={-1}
-              className="overflow-y-auto flex bg-black/30 overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full">
+              className="overflow-y-auto flex bg-black/30 overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full"
+            >
               <div className="relative p-4 w-full max-w-md max-h-full">
                 <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
                   <div className="p-4 md:p-5 text-center">
@@ -689,7 +706,8 @@ const EditProject: React.FC = () => {
 
                     <button
                       type="submit"
-                      className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    >
                       Close
                     </button>
                   </div>

@@ -3,20 +3,14 @@
 import SearchResult from "@/components/SearchResult";
 import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
 import { submitTeam, TeamMember } from "@/lib/Team";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const AddProfileTeam = () => {
-  useEffect(() => {
-    const initializeFlowbite = async () => {
-      if (typeof window !== "undefined") {
-        const { initFlowbite } = await import("flowbite");
-        initFlowbite();
-      }
-    };
-
-    initializeFlowbite();
-  }, []);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showFailedModal, setShowFailedModal] = useState(false);
 
   const [pmKeyword, setPmKeyword] = useState("");
   const [feKeyword, setFeKeyword] = useState("");
@@ -46,6 +40,35 @@ const AddProfileTeam = () => {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+
+    if (showFailedModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    }
+    if (showSuccessModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+      console.log("dipanggil terus");
+    };
+  }, [showFailedModal, showSuccessModal]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -144,13 +167,29 @@ const AddProfileTeam = () => {
     try {
       const res = await submitTeam(formData);
       console.log("Berhasil upload:", res);
+      setShowSuccessModal(true);
       router.push("/home");
     } catch (error) {
+      setShowFailedModal(true);
       console.error("Gagal upload:", error);
     }
   };
 
   console.log(error);
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
+
+  const closeFailedModal = () => {
+    setShowFailedModal(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
 
   return (
     <>
@@ -166,7 +205,8 @@ const AddProfileTeam = () => {
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="teamName"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Nama Team
                 </label>
                 <input
@@ -187,7 +227,8 @@ const AddProfileTeam = () => {
                 <div className="grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="projectManager"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
@@ -215,7 +256,8 @@ const AddProfileTeam = () => {
                                   mahasiswa.nama_lengkap
                                 )
                               }
-                              key={mahasiswa.id}>
+                              key={mahasiswa.id}
+                            >
                               <SearchResult name={mahasiswa.nama_lengkap} />
                             </div>
                           ))
@@ -238,7 +280,8 @@ const AddProfileTeam = () => {
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="frontEnd"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
@@ -266,7 +309,8 @@ const AddProfileTeam = () => {
                                   mahasiswa.nama_lengkap
                                 )
                               }
-                              key={mahasiswa.id}>
+                              key={mahasiswa.id}
+                            >
                               <SearchResult name={mahasiswa.nama_lengkap} />
                             </div>
                           ))
@@ -289,7 +333,8 @@ const AddProfileTeam = () => {
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="backEnd"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
@@ -317,7 +362,8 @@ const AddProfileTeam = () => {
                                   mahasiswa.nama_lengkap
                                 )
                               }
-                              key={mahasiswa.id}>
+                              key={mahasiswa.id}
+                            >
                               <SearchResult name={mahasiswa.nama_lengkap} />
                             </div>
                           ))
@@ -340,7 +386,8 @@ const AddProfileTeam = () => {
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="uiux"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
@@ -368,7 +415,8 @@ const AddProfileTeam = () => {
                                   mahasiswa.nama_lengkap
                                 )
                               }
-                              key={mahasiswa.id}>
+                              key={mahasiswa.id}
+                            >
                               <SearchResult name={mahasiswa.nama_lengkap} />
                             </div>
                           ))
@@ -388,13 +436,15 @@ const AddProfileTeam = () => {
                   type="button"
                   data-modal-toggle="confirmModal"
                   data-modal-target="confirmModal"
-                  className="bg-primary px-10 py-2 max-sm:px-4 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+                  className="bg-primary px-10 py-2 max-sm:px-4 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+                >
                   Upload
                 </button>
                 <button
                   type="button"
                   className="bg-white px-10 py-2 max-sm:px-4 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
-                  onClick={() => router.push("/home")}>
+                  onClick={() => router.push("/home")}
+                >
                   Cancel
                 </button>
               </div>
@@ -406,20 +456,23 @@ const AddProfileTeam = () => {
         <div
           id="confirmModal"
           tabIndex={-1}
-          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        >
           <div className="relative p-4 w-full max-w-md max-h-full">
             <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
               <button
                 type="button"
                 className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 //close modal
-                data-modal-hide="confirmModal">
+                data-modal-hide="confirmModal"
+              >
                 <svg
                   className="w-3 h-3"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 14 14">
+                  viewBox="0 0 14 14"
+                >
                   <path
                     stroke="currentColor"
                     stroke-linecap="round"
@@ -443,7 +496,8 @@ const AddProfileTeam = () => {
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 20 20">
+                  viewBox="0 0 20 20"
+                >
                   <path
                     stroke="currentColor"
                     stroke-linecap="round"
@@ -459,14 +513,81 @@ const AddProfileTeam = () => {
                 <button
                   data-modal-hide="confirmModal"
                   type="submit"
-                  className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                  className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                >
                   Yes, Im sure
                 </button>
                 <button
                   data-modal-hide="confirmModal"
                   type="button"
-                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
                   No, cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* modal success */}
+        <div
+          className={`${
+            showSuccessModal ? "flex" : "hidden"
+          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          onClick={(e) => handleBackdropClick(e, closeSuccessModal)}
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <div className="p-4 md:p-5 text-center">
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  size="6x"
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                />
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Team successfully added!
+                </h3>
+
+                <button
+                  data-modal-hide="successModal"
+                  type="button"
+                  onClick={() => router.push("/mahasiswa")}
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* modal failed */}
+        <div
+          id="failedModal"
+          tabIndex={-1}
+          className={`${
+            showFailedModal ? "flex" : "hidden"
+          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          onClick={(e) => handleBackdropClick(e, closeFailedModal)}
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <div className="p-4 md:p-5 text-center">
+                <FontAwesomeIcon
+                  icon={faXmark}
+                  size="6x"
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                />
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Team failed to upload!
+                </h3>
+
+                <button
+                  onClick={closeFailedModal}
+                  type="button"
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
                 </button>
               </div>
             </div>

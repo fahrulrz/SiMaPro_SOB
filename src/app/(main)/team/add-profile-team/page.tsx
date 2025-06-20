@@ -17,11 +17,6 @@ const AddProfileTeam = () => {
   const [beKeyword, setBeKeyword] = useState("");
   const [uiuxKeyword, setUiuxKeyword] = useState("");
 
-  const [pm, setPm] = useState("");
-  const [fe, setFe] = useState("");
-  const [be, setBe] = useState("");
-  const [uiux, setUiux] = useState("");
-
   const [activePM, setActivePM] = useState(false);
   const [activeFE, setActiveFE] = useState(false);
   const [activeBE, setActiveBE] = useState(false);
@@ -128,8 +123,8 @@ const AddProfileTeam = () => {
         ...formData,
         member_pm: id,
       });
-      setPm(fullName);
-      setPmKeyword("");
+      // setPm(fullName);
+      setPmKeyword(fullName);
       setMahasiswas([]);
     } else if (name == "fe") {
       setActiveFE(false);
@@ -137,8 +132,8 @@ const AddProfileTeam = () => {
         ...formData,
         member_fe: id,
       });
-      setFe(fullName);
-      setFeKeyword("");
+      // setFe(fullName);
+      setFeKeyword(fullName);
       setMahasiswas([]);
     } else if (name == "be") {
       setActiveBE(false);
@@ -146,8 +141,8 @@ const AddProfileTeam = () => {
         ...formData,
         member_be: id,
       });
-      setBe(fullName);
-      setBeKeyword("");
+      // setBe(fullName);
+      setBeKeyword(fullName);
       setMahasiswas([]);
     } else if (name == "uiux") {
       setActiveUIUX(false);
@@ -155,8 +150,8 @@ const AddProfileTeam = () => {
         ...formData,
         member_ui_ux: id,
       });
-      setUiux(fullName);
-      setUiuxKeyword("");
+      // setUiux(fullName);
+      setUiuxKeyword(fullName);
       setMahasiswas([]);
     }
   };
@@ -168,7 +163,6 @@ const AddProfileTeam = () => {
       const res = await submitTeam(formData);
       console.log("Berhasil upload:", res);
       setShowSuccessModal(true);
-      router.push("/home");
     } catch (error) {
       setShowFailedModal(true);
       console.error("Gagal upload:", error);
@@ -235,7 +229,7 @@ const AddProfileTeam = () => {
                     id="projectManager"
                     name="pm"
                     onChange={handleChange}
-                    value={pmKeyword != "" ? pmKeyword : pm}
+                    value={pmKeyword}
                     type="text"
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
@@ -288,7 +282,7 @@ const AddProfileTeam = () => {
                     id="frontEnd"
                     name="fe"
                     onChange={handleChange}
-                    value={feKeyword != "" ? feKeyword : fe}
+                    value={feKeyword}
                     type="text"
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
@@ -342,7 +336,7 @@ const AddProfileTeam = () => {
                     name="be"
                     type="text"
                     onChange={handleChange}
-                    value={beKeyword != "" ? beKeyword : be}
+                    value={beKeyword}
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
@@ -395,7 +389,7 @@ const AddProfileTeam = () => {
                     name="uiux"
                     type="text"
                     onChange={handleChange}
-                    value={uiuxKeyword != "" ? uiuxKeyword : uiux}
+                    value={uiuxKeyword}
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
@@ -551,7 +545,7 @@ const AddProfileTeam = () => {
                 <button
                   data-modal-hide="successModal"
                   type="button"
-                  onClick={() => router.push("/mahasiswa")}
+                  onClick={() => router.push("/home")}
                   className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                 >
                   Close

@@ -16,15 +16,18 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const { login, googleLogin } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [incorrect, setIncorrect] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await login(email, password); // login dari context
       console.log("Login success ", res);
+      setIncorrect(false);
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed");
+      setIncorrect(true);
+      // alert("Login failed");
     }
   };
 
@@ -57,8 +60,14 @@ export default function Login() {
           // action="/home"
           // method="post"
           onSubmit={handleLogin}
-          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10">
-          <div className="flex flex-col h-1/4 gap-4 justify-center ">
+          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10"
+        >
+          <div
+            className={`text-red-500 ${incorrect ? "block" : "hidden"} text-lg`}
+          >
+            Incorrect email or password*
+          </div>
+          <div className="flex flex-col h-1/4 gap-4 justify-center">
             <div className="flex flex-auto">
               <label htmlFor="username" className="w-full relative block">
                 <span className="absolute inset-y-0 left-4 flex items-center">
@@ -100,7 +109,8 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  >
                     {showPassword ? "🙈" : "👁️"}
                   </button>
                 </div>
@@ -111,13 +121,15 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="bg-white h-full gap-3 max-sm:text-sm text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
+              className="bg-white h-full gap-3 max-sm:text-sm text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide"
+            >
               <span className="max-sm:ms-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="1.6em"
                   height="1.6em"
-                  viewBox="0 0 256 262">
+                  viewBox="0 0 256 262"
+                >
                   <path
                     fill="#4285f4"
                     d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
@@ -140,7 +152,8 @@ export default function Login() {
             </button>
             <button
               type="submit"
-              className="w-1/2 h-full bg-white text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
+              className="w-1/2 h-full bg-white text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide"
+            >
               Login
             </button>
           </div>
@@ -149,7 +162,8 @@ export default function Login() {
               Don&apos;t have an account?
               <a
                 href="register"
-                className="text-blue-500 hover:underline font-black ms-2">
+                className="text-blue-500 hover:underline font-black ms-2"
+              >
                 Sign up
               </a>
             </div>

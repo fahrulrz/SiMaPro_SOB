@@ -77,8 +77,9 @@ const AddMahasiswa = () => {
     const data = new FormData();
     data.append("nama_lengkap", formData.nama_lengkap);
     data.append("NIM", formData.NIM);
-    console.log("ini foto", formData.foto);
-    data.append("foto", formData.foto as Blob);
+    if (formData.foto && formData.foto instanceof File) {
+      data.append("foto", formData.foto);
+    }
 
     try {
       const res = await submitMahasiswa(data);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -17,6 +17,10 @@ import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import "@/app/styles/style.css";
 import { submitProject } from "@/lib/Project";
 import myImageLoader from "@/lib/loader";
+import { searchStakeholder, Stakeholder } from "@/lib/Stakeholder";
+import SearchResult from "@/components/SearchResult";
+import Team from "@/app/(main)/team/page";
+import { searchTeam } from "@/lib/Team";
 
 interface NavigationItem {
   id: number;
@@ -28,6 +32,18 @@ const AddProject: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailedModal, setShowFailedModal] = useState(false);
+  const [activeStakeholder, setActiveStakeholder] = useState(false);
+  const [stakeholderKeyword, setStakeholderKeyword] = useState<string>("");
+  const [stakeholders, setStakeholders] = useState<Stakeholder[]>();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Team
+  const [activeTeam, setActiveTeam] = useState(false);
+  const [teams, setTeams] = useState<Team[]>();
+  const [teamKeyword, setTeamKeyword] = useState<string>("");
+
+  // Id store
+  const [id, setId] = useState<string>("");
 
   const [formData, setFormData] = useState({
     projectName: "",
@@ -121,10 +137,90 @@ const AddProject: React.FC = () => {
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if (name == "stakeholder") {
+      setStakeholderKeyword(value);
+
+      if (value == "") {
+        setActiveStakeholder(false);
+        // Clear timeout jika ada
+        if (searchTimeoutRef.current) {
+          clearTimeout(searchTimeoutRef.current);
+          searchTimeoutRef.current = null;
+        }
+        return;
+      }
+
+      // Clear timeout sebelumnya
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      // Set timeout baru dengan delay 500ms
+      searchTimeoutRef.current = setTimeout(() => {
+        searchStakeholder(value)
+          .then((data) => {
+            setStakeholders(data);
+            setActiveStakeholder(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, 500);
+    } else if (name == "team") {
+      setTeamKeyword(value);
+
+      if (value == "") {
+        setActiveTeam(false);
+        // Clear timeout jika ada
+        if (searchTimeoutRef.current) {
+          clearTimeout(searchTimeoutRef.current);
+          searchTimeoutRef.current = null;
+        }
+        return;
+      }
+
+      // Clear timeout sebelumnya
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      searchTimeoutRef.current = setTimeout(() => {
+        searchTeam(value)
+          .then((data) => {
+            setTeams(data);
+            setActiveTeam(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, 500);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleClick = (name: string, id: number, fullName: string) => {
+    if (name == "stakeholder") {
+      setActiveStakeholder(false);
+      setFormData({
+        ...formData,
+        stakeholder: id,
+      });
+      setStakeholderKeyword(fullName);
+      setStakeholders([]);
+    } else if (name == "team") {
+      setActiveTeam(false);
+      setFormData({
+        ...formData,
+        team: id,
+      });
+      setTeamKeyword(fullName);
+      setTeams([]);
+    }
   };
 
   // Aos.init();
@@ -152,7 +248,7 @@ const AddProject: React.FC = () => {
     try {
       const res = await submitProject(data);
       setShowSuccessModal(true);
-      console.log("berhasil upload project", res);
+      setId(res.data.project.id.toString());
     } catch (error) {
       setShowFailedModal(true);
       console.log("gagal upload project", error);
@@ -342,10 +438,40 @@ const AddProject: React.FC = () => {
                   id="stakeholder"
                   type="text"
                   name="stakeholder"
+                  value={stakeholderKeyword}
                   onChange={handleChange}
                   placeholder="Stakeholder"
                   className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
+              </div>
+              <div className="w-full -mt-3 relative">
+                <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                  <div className="col-span-1"></div>
+                  <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                    {activeStakeholder && stakeholderKeyword != "" ? (
+                      stakeholders && stakeholders.length > 0 ? (
+                        stakeholders.map((stakeholder) => (
+                          <div
+                            onClick={() =>
+                              handleClick(
+                                "stakeholder",
+                                stakeholder.id,
+                                stakeholder.nama
+                              )
+                            }
+                            key={stakeholder.id}
+                          >
+                            <SearchResult name={stakeholder.nama} />
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <SearchResult name="No Stakeholder Found" />
+                        </div>
+                      )
+                    ) : null}
+                  </div>
+                </div>
               </div>
               <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
@@ -358,10 +484,36 @@ const AddProject: React.FC = () => {
                   id="group-name"
                   type="text"
                   placeholder="Team Name"
+                  value={teamKeyword}
                   onChange={handleChange}
                   name="team"
                   className=" placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
                 />
+              </div>
+              <div className="w-full -mt-3 relative">
+                <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                  <div className="col-span-1"></div>
+                  <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                    {activeTeam && teamKeyword != "" ? (
+                      teams && teams.length > 0 ? (
+                        teams.map((team) => (
+                          <div
+                            onClick={() =>
+                              handleClick("team", team.id, team.nama_tim)
+                            }
+                            key={team.id}
+                          >
+                            <SearchResult name={team.nama_tim} />
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <SearchResult name="No teams Found" />
+                        </div>
+                      )
+                    ) : null}
+                  </div>
+                </div>
               </div>
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label
@@ -500,7 +652,7 @@ const AddProject: React.FC = () => {
                   <button
                     data-modal-hide="successModal"
                     type="button"
-                    onClick={() => router.push("/home/project")}
+                    onClick={() => router.push(`/home/project?id=${id}`)}
                     className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
                     Close

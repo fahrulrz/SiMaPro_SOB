@@ -14,6 +14,8 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import myImageLoader from "@/lib/loader";
+import { useAuth } from "@/contexts/AuthContext";
+import { deleteTeam } from "@/lib/Team";
 
 interface Images {
   id: number;
@@ -52,7 +54,7 @@ const Team = () => {
   // http://127.0.0.1:8000/api/
 
   const router = useRouter();
-
+  const { user } = useAuth();
   const [teamId, setTeamId] = useState<string>(" ");
 
   useEffect(() => {
@@ -85,6 +87,17 @@ const Team = () => {
       });
   }, [teamId]);
 
+  const deleteHandler = async (id: number) => {
+    try {
+      const res = await deleteTeam(id);
+      if (res.status === 200) {
+        router.push("/home");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const clickHandler = (id: number) => {
     router.push(`/mahasiswa/detail-mahasiswa?id=${id}`);
   };
@@ -105,9 +118,11 @@ const Team = () => {
                 onClick={() => clickHandler(member.member.id)}
                 data-aos="flip-left"
                 data-aos-duration="1000"
-                className="w-full h-full z-10 hover:z-40 relative">
+                className="w-full h-full z-10 hover:z-40 relative"
+              >
                 <div
-                  className={`bg-[#FBF9F1] h-[36rem] max-sm:h-[24rem] flex flex-col justify-center items-center cursor-pointer hover:scale-110 hover:shadow-lg  transition duration-500 ease-in-out`}>
+                  className={`bg-[#FBF9F1] h-[36rem] max-sm:h-[24rem] flex flex-col justify-center items-center cursor-pointer hover:scale-110 hover:shadow-lg  transition duration-500 ease-in-out`}
+                >
                   <div className="flex flex-col w-full h-full justify-center items-center mb-10 max-sm:mb-0">
                     <div className="flex w-full h-full p-8">
                       <div className="flex relative h-full w-full">
@@ -135,29 +150,32 @@ const Team = () => {
             ))}
           </div>
           {/* project */}
-          <div className=" flex w-full gap-4 justify-end px-11 max-sm:px-0 max-sm:justify-center max-sm:mt-8">
-            <div>
-              <Link href={`/team/edit-profile-team?id=${teamId}`}>
-                <button className="bg-primary flex w-full text-lg hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 text-white rounded-md">
-                  {" "}
-                  <FontAwesomeIcon
-                    icon={faPenToSquare}
-                    size="xl"
-                    className="me-2"
-                  />
-                  Edit Tim
-                </button>
-              </Link>
+          {user?.role == "admin" ? (
+            <div className=" flex w-full gap-4 justify-end px-11 max-sm:px-0 max-sm:justify-center max-sm:mt-8">
+              <div>
+                <Link href={`/team/edit-profile-team?id=${teamId}`}>
+                  <button className="bg-primary flex w-full text-lg hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 text-white rounded-md">
+                    {" "}
+                    <FontAwesomeIcon
+                      icon={faPenToSquare}
+                      size="xl"
+                      className="me-2"
+                    />
+                    Edit Tim
+                  </button>
+                </Link>
+              </div>
+              <div>
+                <div
+                  onClick={() => deleteHandler(team?.id as number)}
+                  className="bg-primary w-full flex text-lg cursor-pointer hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 text-white rounded-md"
+                >
+                  <FontAwesomeIcon icon={faTrash} size="xl" />
+                  Delete Tim
+                </div>
+              </div>
             </div>
-            <div>
-              <a
-                href="#"
-                className="bg-primary w-full flex text-lg hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 text-white rounded-md">
-                <FontAwesomeIcon icon={faTrash} size="xl" />
-                Delete Tim
-              </a>
-            </div>
-          </div>
+          ) : null}
         </div>
         <div></div>
         <div className=" w-full flex flex-col py-12 px-20 max-sm:px-6">

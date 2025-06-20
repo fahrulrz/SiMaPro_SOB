@@ -204,7 +204,7 @@ export default function Dashboard() {
             <Carousel />
           </div>
 
-          <div className="flex flex-col w-full h-fit px-28 max-sm:px-4 mt-10">
+          <div className="flex flex-col w-full h-fit px-8 max-sm:px-4 mt-10">
             <div className="flex h-20 w-full gap-6 max-sm:h-10 ps-12 max-sm:flex-col max-sm:ps-0 max-sm:relative">
               {/* dropdown filter pad */}
               <div
@@ -782,7 +782,7 @@ export default function Dashboard() {
 
             {/* card start */}
             <div className="">
-              <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4 max-sm:gap-0 w-full">
+              <div className="grid grid-cols-2 max-sm:grid-cols-1 max-sm:gap-0 w-full">
                 {/* card yang dibuat perulangan */}
                 {projects.map((project) => (
                   <Card

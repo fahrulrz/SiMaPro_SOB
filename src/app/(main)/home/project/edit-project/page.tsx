@@ -21,6 +21,7 @@ import "@/app/styles/style.css";
 import { searchStakeholder } from "@/lib/Stakeholder";
 import SearchResult from "@/components/SearchResult";
 import { updateProject } from "@/lib/Project";
+import { searchTeam } from "@/lib/Team";
 
 // import "flowbite";
 
@@ -111,6 +112,11 @@ const EditProject: React.FC = () => {
   });
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
 
+  // Team
+  const [activeTeam, setActiveTeam] = useState(false);
+  const [teams, setTeams] = useState<Team[]>();
+  const [teamKeyword, setTeamKeyword] = useState<string>("");
+
   // State untuk menyimpan file dan URL file untuk setiap input
   const [selectedFiles, setSelectedFiles] = useState<(File | null)[]>([
     null,
@@ -152,6 +158,7 @@ const EditProject: React.FC = () => {
         const images = response.data.data.image;
         setProjects(response.data.data);
         setStakeholderKeyword(response.data.data.stakeholder.nama);
+        setTeamKeyword(response.data.data.team.nama_tim);
         setIsLoading(false);
         setFormData({
           projectName: response.data.data.nama_proyek,
@@ -193,9 +200,19 @@ const EditProject: React.FC = () => {
     return Promise.all(
       urls.map(async (url) => {
         if (!url) return null;
-        const res = await fetch(url);
-        const blob = await res.blob();
-        return new File([blob], "image.jpg", { type: blob.type });
+
+        try {
+          const res = await fetch(
+            `/api/image-proxy?url=${encodeURIComponent(url)}`
+          );
+          if (!res.ok) throw new Error("Failed to fetch image");
+
+          const blob = await res.blob();
+          return new File([blob], "image.jpg", { type: blob.type });
+        } catch (err) {
+          console.error("Gagal convert URL jadi file:", err);
+          return null;
+        }
       })
     );
   };
@@ -259,6 +276,34 @@ const EditProject: React.FC = () => {
             setError(err);
           });
       }, 500);
+    } else if (name == "team") {
+      setTeamKeyword(value);
+
+      if (value == "") {
+        setActiveTeam(false);
+        // Clear timeout jika ada
+        if (searchTimeoutRef.current) {
+          clearTimeout(searchTimeoutRef.current);
+          searchTimeoutRef.current = null;
+        }
+        return;
+      }
+
+      // Clear timeout sebelumnya
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      searchTimeoutRef.current = setTimeout(() => {
+        searchTeam(value)
+          .then((data) => {
+            setTeams(data);
+            setActiveTeam(true);
+          })
+          .catch((err) => {
+            setError(err);
+          });
+      }, 500);
     } else {
       setFormData({
         ...formData,
@@ -275,8 +320,15 @@ const EditProject: React.FC = () => {
         stakeholder: id,
       });
       setStakeholderKeyword(fullName);
-      setStakeholderKeyword(fullName);
       setStakeholders([]);
+    } else if (name == "team") {
+      setActiveTeam(false);
+      setFormData({
+        ...formData,
+        team: id,
+      });
+      setTeamKeyword(fullName);
+      setTeams([]);
     }
   };
 
@@ -570,6 +622,31 @@ const EditProject: React.FC = () => {
                   className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
                 />
               </div>
+              <div className="w-full -mt-3 relative">
+                <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                  <div className="col-span-1"></div>
+                  <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                    {activeTeam && teamKeyword != "" ? (
+                      teams && teams.length > 0 ? (
+                        teams.map((team) => (
+                          <div
+                            onClick={() =>
+                              handleClick("team", team.id, team.nama_tim)
+                            }
+                            key={team.id}
+                          >
+                            <SearchResult name={team.nama_tim} />
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <SearchResult name="No teams Found" />
+                        </div>
+                      )
+                    ) : null}
+                  </div>
+                </div>
+              </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
                   htmlFor="description"
@@ -705,7 +782,7 @@ const EditProject: React.FC = () => {
                     </h3>
 
                     <button
-                      type="submit"
+                      onClick={() => router.push(`/home/project?id=${id}`)}
                       className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     >
                       Close

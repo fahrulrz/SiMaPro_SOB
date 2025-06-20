@@ -22,12 +22,15 @@ import axios from "axios";
 
 import Comment from "@/components/Comment";
 import {
+  deleteProject,
   getComments,
   getLikeCount,
   getLikeStatus,
   likeProject,
   submitComment,
 } from "@/lib/Project";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 // import Aos from "aos";
 // import "aos/dist/aos.css";
@@ -105,11 +108,13 @@ const Content = () => {
   const [clickComment, setClickComment] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const [likes, setLike] = useState<number>(0);
+  const { user } = useAuth();
   const [isHoveredLike, setIsHoveredLike] = useState<boolean>(false);
   const [isHoveredComment, setIsHoveredComment] = useState<boolean>(false);
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
   const [images, setImages] = useState<Image[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const idUrl = window
@@ -172,6 +177,18 @@ const Content = () => {
         }
       }
       console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteProject = async (projectId: number) => {
+    try {
+      const res = await deleteProject(projectId);
+      if (res.status === 200) {
+        router.push("/home");
+      }
+      console.log(res); // ini nantinya harusnya dihapus pas production
     } catch (error) {
       console.log(error);
     }
@@ -241,7 +258,8 @@ const Content = () => {
                 <div
                   key={index}
                   className="flex justify-center items-center cursor-pointer max-h-[20vh] bg-blue-500 overflow-hidden relative"
-                  onClick={() => handleImageClick(index)}>
+                  onClick={() => handleImageClick(index)}
+                >
                   <Image
                     src={img.link_gambar}
                     alt={`Picture ${index + 1}`}
@@ -278,11 +296,13 @@ const Content = () => {
           <div className="flex bottom-0 start-0 z-30 absolute w-full p-4 justify-between bg-primary text-white">
             <form
               onSubmit={handleClickComment}
-              className="flex w-full gap-4 justify-between items-center">
+              className="flex w-full gap-4 justify-between items-center"
+            >
               <label htmlFor="comment" className="max-sm:hidden">
                 <span
                   onMouseEnter={() => setIsHoveredComment(true)}
-                  onMouseLeave={() => setIsHoveredComment(false)}>
+                  onMouseLeave={() => setIsHoveredComment(false)}
+                >
                   <FontAwesomeIcon
                     icon={isHoveredComment ? faComment : faCommentRegular}
                     size="2xl"
@@ -364,7 +384,8 @@ const Content = () => {
           <div className="flex bottom-0 start-0 z-30 absolute w-full p-2 justify-between bg-primary text-white">
             <form
               onSubmit={handleClickComment}
-              className="flex w-full gap-4 justify-between items-center">
+              className="flex w-full gap-4 justify-between items-center"
+            >
               <input
                 type="text"
                 placeholder="Tulis Komentar"
@@ -401,7 +422,8 @@ const Content = () => {
               Stakeholder :{" "}
               <Link
                 href={`/stakeholder/detail-stakeholder?id=${projects?.stakeholder.id}`}
-                className="hover:underline">
+                className="hover:underline"
+              >
                 {projects?.stakeholder.nama}
               </Link>
             </div>
@@ -409,7 +431,8 @@ const Content = () => {
               Nama Tim :{" "}
               <Link
                 href={`/team?id=${projects?.team.id}`}
-                className="hover:underline">
+                className="hover:underline"
+              >
                 {projects?.team.nama_tim}
               </Link>
             </div>
@@ -418,7 +441,8 @@ const Content = () => {
               <li>
                 <Link
                   href={`/mahasiswa/detail-mahasiswa?id=${projects?.team.team_member.find((member) => member.role == "pm")?.member.id}`}
-                  className="hover:underline">
+                  className="hover:underline"
+                >
                   {" "}
                   {
                     projects?.team.team_member.find(
@@ -431,7 +455,8 @@ const Content = () => {
               <li>
                 <Link
                   href={`/mahasiswa/detail-mahasiswa?id=${projects?.team.team_member.find((member) => member.role == "fe")?.member.id}`}
-                  className="hover:underline">
+                  className="hover:underline"
+                >
                   {
                     projects?.team.team_member.find(
                       (member) => member.role == "fe"
@@ -443,7 +468,8 @@ const Content = () => {
               <li>
                 <Link
                   href={`/mahasiswa/detail-mahasiswa?id=${projects?.team.team_member.find((member) => member.role == "be")?.member.id}`}
-                  className="hover:underline">
+                  className="hover:underline"
+                >
                   {
                     projects?.team.team_member.find(
                       (member) => member.role == "be"
@@ -455,7 +481,8 @@ const Content = () => {
               <li>
                 <Link
                   href={`/mahasiswa/detail-mahasiswa?id=${projects?.team.team_member.find((member) => member.role == "ui_ux")?.member.id}`}
-                  className="hover:underline">
+                  className="hover:underline"
+                >
                   {
                     projects?.team.team_member.find(
                       (member) => member.role == "ui_ux"
@@ -471,27 +498,32 @@ const Content = () => {
             <p>{projects?.deskripsi}</p>
           </div>
         </div>
-        <div className="w-full flex justify-end gap-6">
-          <Link href={`/home/project/edit-project?id=${projects?.id}`}>
-            <button className="bg-white text-primary hover:bg-primary hover:text-white flex items-center gap-3 p-2 px-6 max-sm:px-2  rounded-md">
-              <FontAwesomeIcon
-                icon={faPenToSquare}
-                style={{ fontSize: "max-sm:1rem 1.3rem" }}
-              />
-              Edit Proyek
-            </button>
-          </Link>
+        {user?.role == "admin" ? (
+          <div className="w-full flex justify-end gap-6">
+            <Link href={`/home/project/edit-project?id=${projects?.id}`}>
+              <button className="bg-white text-primary hover:bg-primary hover:text-white flex items-center gap-3 p-2 px-6 max-sm:px-2  rounded-md">
+                <FontAwesomeIcon
+                  icon={faPenToSquare}
+                  style={{ fontSize: "max-sm:1rem 1.3rem" }}
+                />
+                Edit Proyek
+              </button>
+            </Link>
 
-          <a href="#" className="">
-            <button className="bg-white flex hover:bg-primary hover:text-white items-center gap-3 p-2 px-6 max-sm:px-2 text-primary rounded-md">
-              <FontAwesomeIcon
-                icon={faTrash}
-                style={{ fontSize: "max-sm:1rem 1.3rem" }}
-              />
-              Hapus Proyek
-            </button>
-          </a>
-        </div>
+            <div>
+              <button
+                className="bg-white flex hover:bg-primary hover:text-white items-center gap-3 p-2 px-6 max-sm:px-2 text-primary rounded-md"
+                onClick={() => handleDeleteProject(projects?.id || 0)}
+              >
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  style={{ fontSize: "max-sm:1rem 1.3rem" }}
+                />
+                Hapus Proyek
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_ROUTES = ["/login", "/register", "/reset-password"];
+const PUBLIC_ROUTES = ["/login", "/register", "/reset-password", "/login-success"];
 const DEFAULT_AUTHENTICATED_REDIRECT = "/home";
 
 export function authMiddleware(request: NextRequest): NextResponse | null {

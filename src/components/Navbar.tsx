@@ -19,6 +19,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import AvatarInisial from "./AvatarInisial";
 
 interface NavigationItem {
   name: string;
@@ -60,7 +61,8 @@ const Navbar: React.FC = () => {
   return (
     <Disclosure
       as="nav"
-      className="bg-primary flex flex-col items-center justify-center">
+      className="bg-primary flex flex-col items-center justify-center"
+    >
       {({ open }) => (
         <>
           <div className="mx-auto w-full px-2 sm:px-6 lg:px-8 ">
@@ -106,7 +108,8 @@ const Navbar: React.FC = () => {
                               : " text-white hover:bg-white hover:text-primary ease-in-out duration-300",
                             "rounded-md px-3 py-2 text-lg "
                           )}
-                          aria-current={item.current ? "page" : undefined}>
+                          aria-current={item.current ? "page" : undefined}
+                        >
                           {item.name}
                         </a>
                       ))}
@@ -124,11 +127,21 @@ const Navbar: React.FC = () => {
                     <MenuButton className="relative  flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
-                      <img
+                      {/* <img
                         className="h-10 w-10 rounded-full"
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt="Profile Photo"
-                      />
+                      /> */}
+                      {user ? (
+                        <AvatarInisial name={user.name} size={40} />
+                      ) : (
+                        // <img
+                        //   className="h-10 w-10 rounded-full"
+                        //   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        //   alt="Profile Photo"
+                        // />
+                        <div className="h-10 w-10 rounded-full bg-black"></div>
+                      )}
                     </MenuButton>
                   </div>
 
@@ -148,7 +161,8 @@ const Navbar: React.FC = () => {
                             className={classNames(
                               active ? "bg-gray-100 hover:cursor-pointer" : "",
                               "block px-4 py-2 text-sm text-gray-700"
-                            )}>
+                            )}
+                          >
                             Logout
                           </a>
                         )}
@@ -163,7 +177,8 @@ const Navbar: React.FC = () => {
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
-                            )}>
+                            )}
+                          >
                             Login
                           </a>
                         )}
@@ -188,7 +203,8 @@ const Navbar: React.FC = () => {
                       : "text-white hover:bg-gray-700 hover:text-white",
                     "block rounded-md px-3 py-2 text-base font-medium"
                   )}
-                  aria-current={item.current ? "page" : undefined}>
+                  aria-current={item.current ? "page" : undefined}
+                >
                   {item.name}
                 </DisclosureButton>
               ))}

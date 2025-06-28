@@ -9,9 +9,18 @@ import { useState, useRef, useEffect } from "react";
 interface CommentProps {
   id: number;
   isi_komen: string;
+  userId: number;
+  userComment: number;
+  role: string;
 }
 
-const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
+const Comment: React.FC<CommentProps> = ({
+  id,
+  isi_komen,
+  userId,
+  userComment,
+  role,
+}) => {
   const [isOtherSetting, setIsOtherSetting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -56,8 +65,11 @@ const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
           <div
             ref={menuRef}
             onClick={handleOtherSetting}
-            className="flex flex-col ml-auto border-b-2 hover:text-primary cursor-pointer">
-            <FontAwesomeIcon icon={faEllipsisVertical} size="lg" />
+            className="flex flex-col ml-auto border-b-2 hover:text-primary cursor-pointer"
+          >
+            {role == "admin" && userComment === userId ? (
+              <FontAwesomeIcon icon={faEllipsisVertical} size="lg" />
+            ) : null}
           </div>
         </div>
 
@@ -65,13 +77,15 @@ const Comment: React.FC<CommentProps> = ({ id, isi_komen }) => {
           <div className="bg-violet-600 flex absolute z-20 top-4 right-2">
             <div className="flex flex-col bg-yellow-500 w-full justify-end">
               <Link
-                className="bg-primary p-1 px-2 flex justify-center items-center text-white hover:bg-white hover:text-black"
-                href={`/home`}>
+                className="bg-primary hidden p-1 px-2 justify-center items-center text-white hover:bg-white hover:text-black"
+                href={`/home`}
+              >
                 Edit
               </Link>
               <Link
                 className="p-1 px-2 flex justify-center items-center bg-primary text-white hover:bg-white hover:text-black"
-                href={`/mahasiswa`}>
+                href={`/mahasiswa`}
+              >
                 Delete
               </Link>
             </div>

@@ -1,9 +1,14 @@
-// import { useAuth } from "@/contexts/AuthContext";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
-export default function LoginSuccess() {
-  // const { getUserData } = useAuth();
-  return;
-  <div className="flex justify-center items-center h-full w-full bg-black">
-    jwgaygdau
-  </div>;
+const LoginComponent = dynamic(() => import("@/components/LoginComponent"), {
+  ssr: false, 
+});
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginComponent />
+    </Suspense>
+  );
 }

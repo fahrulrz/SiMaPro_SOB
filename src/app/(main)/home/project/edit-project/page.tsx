@@ -82,6 +82,7 @@ interface Project {
   year: Year[];
   stakeholder: Stakeholder;
   team: Team;
+  link_proyek: string;
   categories: Category[];
 }
 
@@ -107,6 +108,7 @@ const EditProject: React.FC = () => {
     stakeholder: 0,
     team: 0,
     year: 0,
+    link_proyek: "",
     description: "",
     projectCategory: 0,
   });
@@ -165,6 +167,7 @@ const EditProject: React.FC = () => {
           stakeholder: response.data.data.stakeholder.id,
           team: response.data.data.team.id,
           year: response.data.data.year[0].tahun,
+          link_proyek: response.data.data.link_proyek,
           description: response.data.data.deskripsi,
           projectCategory: response.data.data.categories[0].id,
         });
@@ -343,6 +346,7 @@ const EditProject: React.FC = () => {
     data.append("stakeholder_id", formData.stakeholder.toString());
     data.append("team_id", formData.team.toString());
     data.append("year", formData.year.toString());
+    data.append("link_proyek", formData.link_proyek);
     data.append("deskripsi", formData.description);
     data.append("category_project", formData.projectCategory.toString());
     data.append("_method", "put");
@@ -646,6 +650,23 @@ const EditProject: React.FC = () => {
                     ) : null}
                   </div>
                 </div>
+              </div>
+              <div className="grid grid-cols-4 gap-4 w-full">
+                <label
+                  htmlFor="link_proyek"
+                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
+                  Project Link
+                </label>
+                <input
+                  id="link_proyek"
+                  type="text"
+                  value={formData.link_proyek}
+                  name="link_proyek"
+                  onChange={handleChange}
+                  placeholder="Project Link"
+                  className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
+                />
               </div>
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label

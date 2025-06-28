@@ -39,11 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const getUserData = async () => {
     try {
       const res = await getUser();
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login gagal");
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("user", JSON.stringify(data.data));
-      document.cookie = `auth-token=${data.data.token}; path=/`;
+      localStorage.setItem("user", JSON.stringify(res.data));
       window.location.href = "/home";
     } catch (error) {
       console.error("Login error:", error);
@@ -110,7 +106,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         register,
         getUserData,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

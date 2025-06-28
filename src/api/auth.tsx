@@ -1,20 +1,19 @@
+import axios from "axios";
+
 export const googleLogin = () => {
   // Arahkan langsung ke backend buat redirect ke Google
   window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/redirect`;
 };
 
 export const getUser = async () => {
-  const response = await fetch("http://localhost:8000/api/user", {
-    method: "GET",
-    credentials: "include", // Biar cookie otomatis dikirim
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch user");
-  }
-
-  const data = await response.json();
-  return data;
+  // const data = await res.json();
+  console.info("isi dari response google->>>>", res);
+  return res.data;
 };
 
 export const register = async (

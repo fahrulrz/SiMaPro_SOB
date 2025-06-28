@@ -8,7 +8,6 @@ const Search = () => {
   const pathname = usePathname();
 
   const path = pathname.split("/");
-  console.info("ini adalah info -> ", path);
   let search = "";
 
   if (path[path.length - 1] == "home") {

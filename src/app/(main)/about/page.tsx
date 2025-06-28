@@ -1,8 +1,10 @@
 "use client";
 import myImageLoader from "@/lib/loader";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const About = () => {
+  const router = useRouter();
   return (
     <>
       <div className="flex bg-inputAddProject p-72">
@@ -19,7 +21,7 @@ const About = () => {
       <div className="flex bg-primary py-12 px-48 gap-48">
         <div className="flex relative h-[30rem] min-w-96">
           <Image
-            src="/assets/photoProfile.png"
+            src="/assets/about/syafiq.jpg"
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
@@ -36,9 +38,15 @@ const About = () => {
             Agile, saya mengelola komunikasi tim, membagi tugas, dan memastikan
             kualitas hasil akhir sesuai dengan ekspektasi.
           </p>
-          <p className="text-2xl tracking-wide text-center">
-            EMAIL | LINKED IN
-          </p>
+          <div className="text-2xl tracking-wide w-full flex items-center justify-center text-center">
+            syafiqabdillahhabib@mail.ugm.ac.id <span className="mx-2">|</span>
+            <div
+              className="cursor-pointer hover:underline"
+              onClick={() => router.push("#")}
+            >
+              LINKED IN
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex bg-inputAddProject py-12 px-48 gap-48">
@@ -52,13 +60,19 @@ const About = () => {
             yang tidak hanya estetis tetapi juga fungsional, memastikan setiap
             desain memberikan dampak positif bagi pengguna.
           </p>
-          <p className="text-2xl tracking-wide text-center">
-            EMAIL | LINKED IN
-          </p>
+          <div className="text-2xl tracking-wide w-full flex items-center justify-center text-center">
+            alinseptianinuraisyah@mail.ugm.ac.id <span className="mx-2">|</span>
+            <div
+              className="cursor-pointer hover:underline"
+              onClick={() => router.push("#")}
+            >
+              LINKED IN
+            </div>
+          </div>
         </div>
         <div className="flex relative h-[30rem] min-w-96">
           <Image
-            src="/assets/photoProfile.png"
+            src="/assets/about/alin.jpg"
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
@@ -69,7 +83,7 @@ const About = () => {
       <div className="flex bg-primary py-12 px-48 gap-24 text-inputAddProject">
         <div className="flex relative h-[30rem] min-w-96">
           <Image
-            src="/assets/photoProfile.png"
+            src="/assets/about/fahrul.jpeg"
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"
@@ -86,9 +100,19 @@ const About = () => {
             seperti React dan Tailwind CSS, saya memastikan setiap desain yang
             dibuat dapat diimplementasikan dengan efisien dan optimal.
           </p>
-          <p className="text-2xl tracking-wide text-center">
-            EMAIL | LINKED IN
-          </p>
+          <div className="text-2xl tracking-wide w-full flex items-center justify-center text-center">
+            muhamadfahrulrazi@mail.ugm.ac.id <span className="mx-2">|</span>
+            <div
+              className="cursor-pointer hover:underline"
+              onClick={() =>
+                router.push(
+                  "https://www.linkedin.com/in/muhamad-fahrul-razi-6a2706290"
+                )
+              }
+            >
+              LINKED IN
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex  bg-inputAddProject py-12 px-48 gap-24 ">
@@ -102,13 +126,19 @@ const About = () => {
             memastikan data terkelola dengan baik dan API yang dibuat dapat
             berjalan dengan stabil dan cepat.
           </p>
-          <p className="text-2xl tracking-wide text-center">
-            EMAIL | LINKED IN
-          </p>
+          <div className="text-2xl tracking-wide w-full flex items-center justify-center text-center">
+            rifqirenaldo@mail.ugm.ac.id <span className="mx-2">|</span>
+            <div
+              className="cursor-pointer hover:underline"
+              onClick={() => router.push("#")}
+            >
+              LINKED IN
+            </div>
+          </div>
         </div>
         <div className="flex relative h-[30rem] min-w-96">
           <Image
-            src="/assets/photoProfile.png"
+            src="/assets/about/naldo.jpg"
             alt="Tim Pengembang SimaPro.id"
             layout="fill"
             objectFit="cover"

@@ -50,6 +50,7 @@ const AddProject: React.FC = () => {
     stakeholder: 0,
     team: 0,
     year: 0,
+    link_proyek: "",
     description: "",
     projectCategory: 0,
   });
@@ -232,6 +233,7 @@ const AddProject: React.FC = () => {
     data.append("nama_proyek", formData.projectName);
     data.append("stakeholder_id", formData.stakeholder.toString());
     data.append("team_id", formData.team.toString());
+    data.append("link_proyek", formData.link_proyek);
     data.append("year", formData.year.toString());
     data.append("deskripsi", formData.description);
     data.append("category_project", formData.projectCategory.toString());
@@ -514,6 +516,22 @@ const AddProject: React.FC = () => {
                     ) : null}
                   </div>
                 </div>
+              </div>
+              <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                <label
+                  htmlFor="project-link"
+                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
+                  Project Link
+                </label>
+                <input
+                  id="project-link"
+                  type="text"
+                  placeholder="Project Link"
+                  onChange={handleChange}
+                  name="link_proyek"
+                  className=" placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
+                />
               </div>
               <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
                 <label

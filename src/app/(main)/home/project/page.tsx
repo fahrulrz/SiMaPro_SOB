@@ -95,6 +95,7 @@ interface Project {
   deskripsi: string;
   image: Image[];
   comments: Comment[];
+  link_proyek: string;
   year: Year[];
   stakeholder: Stakeholder;
   team: Team;
@@ -289,6 +290,9 @@ const Content = () => {
                   key={comment.id}
                   isi_komen={JSON.stringify(comment.isi_komen)}
                   id={comment.id}
+                  userId={comment.user.id}
+                  userComment={comment.user.id}
+                  role={user?.role || ""}
                 />
               ))}
             </div>
@@ -377,6 +381,9 @@ const Content = () => {
                   key={comment.id}
                   isi_komen={JSON.stringify(comment.isi_komen)}
                   id={comment.id}
+                  userId={comment.user.id}
+                  userComment={comment.user.id}
+                  role={user?.role || ""}
                 />
               ))}
             </div>
@@ -498,6 +505,22 @@ const Content = () => {
             <p>{projects?.deskripsi}</p>
           </div>
         </div>
+        {projects?.link_proyek ? (
+          <div className="justify-end items-end flex">
+            <button
+              className="bg-white flex hover:bg-primary hover:text-white items-center gap-3 p-2 px-6 max-sm:px-2 text-primary rounded-md"
+              onClick={() => router.push(projects?.link_proyek || "")}
+            >
+              Lihat Website
+            </button>
+          </div>
+        ) : (
+          <div className="justify-end items-end flex">
+            <button className="bg-white flex hover:bg-primary hover:text-white items-center gap-3 p-2 px-6 max-sm:px-2 text-primary rounded-md">
+              Belum ada link
+            </button>
+          </div>
+        )}
         {user?.role == "admin" ? (
           <div className="w-full flex justify-end gap-6">
             <Link href={`/home/project/edit-project?id=${projects?.id}`}>

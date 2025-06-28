@@ -204,32 +204,38 @@ export default function Dashboard() {
             <Carousel />
           </div>
 
-          <div className="flex flex-col w-full h-fit px-8 max-sm:px-4 mt-10">
+          <div className="flex flex-col w-full h-fit px-8 max-sm:px-4 mt-10 bg-red-500">
             <div className="flex h-20 w-full gap-6 max-sm:h-10 ps-12 max-sm:flex-col max-sm:ps-0 max-sm:relative">
               {/* dropdown filter pad */}
               <div
                 ref={menuRefFilter}
-                className="sm:hidden w-60 h-full flex max-sm:relative gap-4">
+                className="sm:hidden w-60 h-full flex max-sm:relative gap-4"
+              >
                 <div
                   className="btn bg-primary h-ful w-full flex justify-center items-center text-white rounded-[5px] cursor-pointer"
-                  onClick={handleClickFilter}>
+                  onClick={handleClickFilter}
+                >
                   Filter
                 </div>
 
                 {/* mobile */}
                 {clickFilter && (
                   <div
-                    className={`flex max-sm:flex-col w-full sm:hidden max-sm:gap-1 gap-4 max-sm:absolute z-20 mt-11`}>
+                    className={`flex max-sm:flex-col w-full sm:hidden max-sm:gap-1 gap-4 max-sm:absolute z-20 mt-11`}
+                  >
                     <div
                       ref={menuRefPad}
-                      className="relative inline-flex w-full text-left cursor-pointer">
+                      className="relative inline-flex w-full text-left cursor-pointer"
+                    >
                       <div
                         data-aos="fade-up"
                         data-aos-duration="700"
-                        className="flex w-full flex-col">
+                        className="flex w-full flex-col"
+                      >
                         <div
                           className="inline-flex w-full hover:bg-white hover:text-primary h-10  items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
-                          onClick={toggleFilterPad}>
+                          onClick={toggleFilterPad}
+                        >
                           <FontAwesomeIcon
                             icon={faFilter}
                             style={{ fontSize: "1rem" }}
@@ -295,14 +301,17 @@ export default function Dashboard() {
 
                     <div
                       ref={menuRefYear}
-                      className="relative inline-flex w-full text-left cursor-pointer">
+                      className="relative inline-flex w-full text-left cursor-pointer"
+                    >
                       <div
                         data-aos="fade-up"
                         data-aos-duration="800"
-                        className="flex w-full">
+                        className="flex w-full"
+                      >
                         <div
                           className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
-                          onClick={toggleFilterYear}>
+                          onClick={toggleFilterYear}
+                        >
                           <FontAwesomeIcon
                             icon={faFilter}
                             style={{ fontSize: "1rem" }}
@@ -437,15 +446,18 @@ export default function Dashboard() {
                     {user?.role == "admin" ? (
                       <>
                         <div
-                          data-aos="fade-up"
-                          data-aos-duration="900"
-                          className="flex w-full">
+                          // data-aos="fade-up"
+                          // data-aos-duration="900"
+                          className="flex w-full"
+                        >
                           <a
                             href="home/project/add-project"
-                            className="flex w-full">
+                            className="flex w-full"
+                          >
                             <button
                               type="submit"
-                              className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                            >
                               <FontAwesomeIcon
                                 icon={faFileCirclePlus}
                                 style={{ fontSize: "1rem" }}
@@ -457,15 +469,18 @@ export default function Dashboard() {
                         </div>
 
                         <div
-                          data-aos="fade-up"
-                          data-aos-duration="1000"
-                          className="flex w-full">
+                          // data-aos="fade-up"
+                          // data-aos-duration="1000"
+                          className="flex w-full"
+                        >
                           <a
                             href="mahasiswa/add-mahasiswa"
-                            className="flex w-full">
+                            className="flex w-full"
+                          >
                             <button
                               type="submit"
-                              className="w-full h-10 bg-primary ps-4 gap-0 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              className="w-full h-10 bg-primary ps-4 gap-0 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                            >
                               <FontAwesomeIcon
                                 icon={faFileCirclePlus}
                                 style={{ fontSize: "1rem" }}
@@ -477,15 +492,18 @@ export default function Dashboard() {
                         </div>
 
                         <div
-                          data-aos="fade-up"
-                          data-aos-duration="1100"
-                          className="flex w-full">
+                          // data-aos="fade-up"
+                          // data-aos-duration="1100"
+                          className="flex w-full"
+                        >
                           <a
                             className="flex w-full"
-                            href="/team/add-profile-team">
+                            href="/team/add-profile-team"
+                          >
                             <button
                               type="submit"
-                              className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                            >
                               <FontAwesomeIcon
                                 icon={faFileCirclePlus}
                                 style={{ fontSize: "1rem" }}
@@ -497,15 +515,18 @@ export default function Dashboard() {
                         </div>
 
                         <div
-                          data-aos="fade-up"
-                          data-aos-duration="1200"
-                          className="flex w-full">
+                          // data-aos="fade-up"
+                          // data-aos-duration="1200"
+                          className="flex w-full"
+                        >
                           <a
                             href="stakeholder/add-stakeholder"
-                            className="flex w-full">
+                            className="flex w-full"
+                          >
                             <button
                               type="submit"
-                              className="w-full h-10 bg-primary ps-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              className="w-full h-10 bg-primary ps-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                            >
                               <FontAwesomeIcon
                                 icon={faFileCirclePlus}
                                 style={{ fontSize: "1rem" }}
@@ -526,11 +547,13 @@ export default function Dashboard() {
               <div className={`flex gap-4 max-sm:hidden`}>
                 <div
                   ref={menuRefPad}
-                  className="relative inline-block w-44 text-left cursor-pointer">
+                  className="relative inline-block w-44 text-left cursor-pointer"
+                >
                   <div data-aos="fade-up" data-aos-duration="700">
                     <div
                       className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
-                      onClick={toggleFilterPad}>
+                      onClick={toggleFilterPad}
+                    >
                       <FontAwesomeIcon
                         icon={faFilter}
                         style={{ fontSize: "1.2rem" }}
@@ -592,11 +615,15 @@ export default function Dashboard() {
 
                 <div
                   ref={menuRefYear}
-                  className="relative inline-block w-44 text-left cursor-pointer">
-                  <div data-aos="fade-up" data-aos-duration="700">
+                  className="relative inline-block w-44 text-left cursor-pointer"
+                >
+                  <div
+                  // data-aos="fade-up" data-aos-duration="700"
+                  >
                     <div
                       className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
-                      onClick={toggleFilterYear}>
+                      onClick={toggleFilterYear}
+                    >
                       <FontAwesomeIcon
                         icon={faFilter}
                         style={{ fontSize: "1.2rem" }}
@@ -715,11 +742,15 @@ export default function Dashboard() {
                 {/* dropdown filter tahun end */}
                 {user?.role == "admin" ? (
                   <>
-                    <div data-aos="fade-up" data-aos-duration="800">
+                    <div
+                    // data-aos="fade-up"
+                    // data-aos-duration="800"
+                    >
                       <a href="home/project/add-project">
                         <button
                           type="submit"
-                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                        >
                           <FontAwesomeIcon
                             icon={faFileCirclePlus}
                             style={{ fontSize: "1.2rem" }}
@@ -729,11 +760,15 @@ export default function Dashboard() {
                         </button>
                       </a>
                     </div>
-                    <div data-aos="fade-up" data-aos-duration="900">
+                    <div
+                    // data-aos="fade-up"
+                    // data-aos-duration="900"
+                    >
                       <a href="mahasiswa/add-mahasiswa">
                         <button
                           type="submit"
-                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                        >
                           <FontAwesomeIcon
                             icon={faFileCirclePlus}
                             style={{ fontSize: "1.2rem" }}
@@ -743,11 +778,15 @@ export default function Dashboard() {
                         </button>
                       </a>
                     </div>
-                    <div data-aos="fade-up" data-aos-duration="1000">
+                    <div
+                    // data-aos="fade-up"
+                    // data-aos-duration="1000"
+                    >
                       <a className="" href="/team/add-profile-team">
                         <button
                           type="submit"
-                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                        >
                           <FontAwesomeIcon
                             icon={faFileCirclePlus}
                             style={{ fontSize: "1.2rem" }}
@@ -757,11 +796,15 @@ export default function Dashboard() {
                         </button>
                       </a>
                     </div>
-                    <div data-aos="fade-up" data-aos-duration="1100">
+                    <div
+                    // data-aos="fade-up"
+                    // data-aos-duration="1100"
+                    >
                       <a href="stakeholder/add-stakeholder">
                         <button
                           type="submit"
-                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                        >
                           <FontAwesomeIcon
                             icon={faFileCirclePlus}
                             style={{ fontSize: "1.2rem" }}

@@ -22,7 +22,7 @@
 }
 
 html {
-  overflow: auto !important;
+  overflow-x: hidden !important;
   scroll-behavior: smooth;
 }
 

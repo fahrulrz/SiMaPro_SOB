@@ -18,76 +18,23 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 
 import axios from "axios";
 import { filterProjects } from "@/api/filter";
-
-// interface Category {
-//   id: number;
-//   nama_kategori: string;
-// }
-
-// interface Year {
-//   id: number;
-//   tahun: string;
-// }
-
-// interface Stakeholder {
-//   id: number;
-//   nama: string;
-//   kategori: string;
-//   nomor_telepon: string;
-//   email: string;
-//   foto: string;
-// }
-
-// interface Team {
-//   id: number;
-//   nama: string;
-// }
-
-// interface Anggota {
-//   id: number;
-//   nama_lengkap: string;
-//   NIM: string;
-//   foto: string;
-// }
-
-// interface AnggotaTeam {
-//   id: number;
-//   role: string;
-//   team: Team;
-//   member: Anggota;
-// }
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Image {
   id: number;
   link_gambar: string;
 }
 
-// interface Comment {
-//   id: number;
-//   isi_komen: string;
-//   user: User;
-// }
-
-// interface User {
-//   id: number;
-//   name: string;
-//   email: string;
-// }
-
 interface Project {
   id: number;
   nama_proyek: string;
-  // categories: Category[];
-  // year: Year[];
   image: Image[];
-  // comment: Comment;
-  // stakeholder: Stakeholder;
-  // team: AnggotaTeam;
 }
 
 export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
   console.error(error);
 
   const [filterPad, setFilterPad] = useState(false);
@@ -106,7 +53,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     axios
-      .get("https://be-pad.trpl.space/api/projects") // api mengambil semua data project
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects`) // api mengambil semua data project
       .then((response) => {
         setProjects(response.data.data);
       })
@@ -114,8 +61,6 @@ export default function Dashboard() {
         setError(error);
       });
   }, []);
-
-  // const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const toggleFilterPad = () => {
     setFilterPad(!filterPad);
@@ -146,10 +91,6 @@ export default function Dashboard() {
       setCheckedFilterPads([...checkedFilterPads, pad]);
     }
   };
-
-  console.info("filter year sek di anu ->", checkedFilterYears);
-
-  console.info("filter pad sek di anu ->", checkedFilterPads);
 
   // menggunakan filter dengan api
   const filteredProjects = useCallback(async () => {
@@ -263,8 +204,7 @@ export default function Dashboard() {
             <Carousel />
           </div>
 
-          <div className="flex flex-col w-full h-fit px-28 max-sm:px-4 mt-10">
-            {/* menampung button diatas */}
+          <div className="flex flex-col w-full h-fit px-8 max-sm:px-4 mt-10">
             <div className="flex h-20 w-full gap-6 max-sm:h-10 ps-12 max-sm:flex-col max-sm:ps-0 max-sm:relative">
               {/* dropdown filter pad */}
               <div
@@ -492,82 +432,92 @@ export default function Dashboard() {
                     </div>
                     {/* dropdown filter tahun end */}
 
+                    {/* dari admin */}
                     {/* button add start */}
-                    <div
-                      data-aos="fade-up"
-                      data-aos-duration="900"
-                      className="flex w-full">
-                      <a
-                        href="home/project/add-project"
-                        className="flex w-full">
-                        <button
-                          type="submit"
-                          className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                          <FontAwesomeIcon
-                            icon={faFileCirclePlus}
-                            style={{ fontSize: "1rem" }}
-                            className="me-2"
-                          />
-                          Add New Project
-                        </button>
-                      </a>
-                    </div>
+                    {user?.role == "admin" ? (
+                      <>
+                        <div
+                          data-aos="fade-up"
+                          data-aos-duration="900"
+                          className="flex w-full">
+                          <a
+                            href="home/project/add-project"
+                            className="flex w-full">
+                            <button
+                              type="submit"
+                              className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              <FontAwesomeIcon
+                                icon={faFileCirclePlus}
+                                style={{ fontSize: "1rem" }}
+                                className="me-2"
+                              />
+                              Add New Project
+                            </button>
+                          </a>
+                        </div>
 
-                    <div
-                      data-aos="fade-up"
-                      data-aos-duration="1000"
-                      className="flex w-full">
-                      <a href="mahasiswa/add-mahasiswa" className="flex w-full">
-                        <button
-                          type="submit"
-                          className="w-full h-10 bg-primary ps-4 gap-0 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                          <FontAwesomeIcon
-                            icon={faFileCirclePlus}
-                            style={{ fontSize: "1rem" }}
-                            className="me-2"
-                          />
-                          Add Profil Mahasiswa
-                        </button>
-                      </a>
-                    </div>
+                        <div
+                          data-aos="fade-up"
+                          data-aos-duration="1000"
+                          className="flex w-full">
+                          <a
+                            href="mahasiswa/add-mahasiswa"
+                            className="flex w-full">
+                            <button
+                              type="submit"
+                              className="w-full h-10 bg-primary ps-4 gap-0 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              <FontAwesomeIcon
+                                icon={faFileCirclePlus}
+                                style={{ fontSize: "1rem" }}
+                                className="me-2"
+                              />
+                              Add Profil Mahasiswa
+                            </button>
+                          </a>
+                        </div>
 
-                    <div
-                      data-aos="fade-up"
-                      data-aos-duration="1100"
-                      className="flex w-full">
-                      <a className="flex w-full" href="/team/add-profile-team">
-                        <button
-                          type="submit"
-                          className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                          <FontAwesomeIcon
-                            icon={faFileCirclePlus}
-                            style={{ fontSize: "1rem" }}
-                            className="me-2"
-                          />
-                          Add Team
-                        </button>
-                      </a>
-                    </div>
+                        <div
+                          data-aos="fade-up"
+                          data-aos-duration="1100"
+                          className="flex w-full">
+                          <a
+                            className="flex w-full"
+                            href="/team/add-profile-team">
+                            <button
+                              type="submit"
+                              className="w-full h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              <FontAwesomeIcon
+                                icon={faFileCirclePlus}
+                                style={{ fontSize: "1rem" }}
+                                className="me-2"
+                              />
+                              Add Team
+                            </button>
+                          </a>
+                        </div>
 
-                    <div
-                      data-aos="fade-up"
-                      data-aos-duration="1200"
-                      className="flex w-full">
-                      <a
-                        href="stakeholder/add-stakeholder"
-                        className="flex w-full">
-                        <button
-                          type="submit"
-                          className="w-full h-10 bg-primary ps-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                          <FontAwesomeIcon
-                            icon={faFileCirclePlus}
-                            style={{ fontSize: "1rem" }}
-                            className="me-2"
-                          />
-                          Add Profil Stakeholder
-                        </button>
-                      </a>
-                    </div>
+                        <div
+                          data-aos="fade-up"
+                          data-aos-duration="1200"
+                          className="flex w-full">
+                          <a
+                            href="stakeholder/add-stakeholder"
+                            className="flex w-full">
+                            <button
+                              type="submit"
+                              className="w-full h-10 bg-primary ps-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                              <FontAwesomeIcon
+                                icon={faFileCirclePlus}
+                                style={{ fontSize: "1rem" }}
+                                className="me-2"
+                              />
+                              Add Profil Stakeholder
+                            </button>
+                          </a>
+                        </div>
+                        {/* admin berakhir */}
+                      </>
+                    ) : null}
                   </div>
                 )}
               </div>
@@ -763,75 +713,76 @@ export default function Dashboard() {
                   )}
                 </div>
                 {/* dropdown filter tahun end */}
-
-                {/* button add start */}
-                <div data-aos="fade-up" data-aos-duration="800">
-                  <a href="home/project/add-project">
-                    <button
-                      type="submit"
-                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                      <FontAwesomeIcon
-                        icon={faFileCirclePlus}
-                        style={{ fontSize: "1.2rem" }}
-                        className="me-2"
-                      />
-                      Add New Project
-                    </button>
-                  </a>
-                </div>
-
-                <div data-aos="fade-up" data-aos-duration="900">
-                  <a href="mahasiswa/add-mahasiswa">
-                    <button
-                      type="submit"
-                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                      <FontAwesomeIcon
-                        icon={faFileCirclePlus}
-                        style={{ fontSize: "1.2rem" }}
-                        className="me-2"
-                      />
-                      Add Profil Mahasiswa
-                    </button>
-                  </a>
-                </div>
-
-                <div data-aos="fade-up" data-aos-duration="1000">
-                  <a className="" href="/team/add-profile-team">
-                    <button
-                      type="submit"
-                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                      <FontAwesomeIcon
-                        icon={faFileCirclePlus}
-                        style={{ fontSize: "1.2rem" }}
-                        className="me-2"
-                      />
-                      Add Team
-                    </button>
-                  </a>
-                </div>
-
-                <div data-aos="fade-up" data-aos-duration="1100">
-                  <a href="stakeholder/add-stakeholder">
-                    <button
-                      type="submit"
-                      className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
-                      <FontAwesomeIcon
-                        icon={faFileCirclePlus}
-                        style={{ fontSize: "1.2rem" }}
-                        className="me-2"
-                      />
-                      Add Profil Stakeholder
-                    </button>
-                  </a>
-                </div>
+                {user?.role == "admin" ? (
+                  <>
+                    <div data-aos="fade-up" data-aos-duration="800">
+                      <a href="home/project/add-project">
+                        <button
+                          type="submit"
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1.2rem" }}
+                            className="me-2"
+                          />
+                          Add New Project
+                        </button>
+                      </a>
+                    </div>
+                    <div data-aos="fade-up" data-aos-duration="900">
+                      <a href="mahasiswa/add-mahasiswa">
+                        <button
+                          type="submit"
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1.2rem" }}
+                            className="me-2"
+                          />
+                          Add Profil Mahasiswa
+                        </button>
+                      </a>
+                    </div>
+                    <div data-aos="fade-up" data-aos-duration="1000">
+                      <a className="" href="/team/add-profile-team">
+                        <button
+                          type="submit"
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1.2rem" }}
+                            className="me-2"
+                          />
+                          Add Team
+                        </button>
+                      </a>
+                    </div>
+                    <div data-aos="fade-up" data-aos-duration="1100">
+                      <a href="stakeholder/add-stakeholder">
+                        <button
+                          type="submit"
+                          className="w-fit h-10 bg-primary ps-4 pe-4 shadow-md text-white flex justify-center items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300">
+                          <FontAwesomeIcon
+                            icon={faFileCirclePlus}
+                            style={{ fontSize: "1.2rem" }}
+                            className="me-2"
+                          />
+                          Add Profil Stakeholder
+                        </button>
+                      </a>
+                    </div>
+                  </>
+                ) : null}
               </div>
 
               {/* button add end */}
             </div>
 
+            {/* menampung button diatas */}
+
             {/* card start */}
             <div className="">
-              <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4 max-sm:gap-0 w-full">
+              <div className="grid grid-cols-2 max-sm:grid-cols-1 max-sm:gap-0 w-full">
                 {/* card yang dibuat perulangan */}
                 {projects.map((project) => (
                   <Card
@@ -839,7 +790,7 @@ export default function Dashboard() {
                     id={project.id}
                     dataAos="fade-up"
                     name={project.nama_proyek}
-                    imageUrl={project.image[0].link_gambar}
+                    imageUrl={project.image[0]?.link_gambar}
                   />
                 ))}
               </div>

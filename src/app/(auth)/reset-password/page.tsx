@@ -1,9 +1,12 @@
+"use client";
+export const dynamic = "force-dynamic";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 import "../../styles/style.css";
 
 import Image from "next/image";
+import myImageLoader from "@/lib/loader";
 
 export default function ResetPassword() {
   return (
@@ -13,6 +16,7 @@ export default function ResetPassword() {
           <Image
             src="/assets/logo.png"
             alt="Logo SiMaPro"
+            loader={myImageLoader}
             width={500}
             height={500}
             className="bg-white flex justify-center items-center text-black max-sm:mb-0 max-sm:mt-auto"

@@ -1,16 +1,190 @@
 "use client";
 
+import SearchResult from "@/components/SearchResult";
+import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
+import { submitTeam, TeamMember } from "@/lib/Team";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-// import 'flowbite';
+import { useEffect, useState } from "react";
 
 const AddProfileTeam = () => {
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showFailedModal, setShowFailedModal] = useState(false);
+
+  const [pmKeyword, setPmKeyword] = useState("");
+  const [feKeyword, setFeKeyword] = useState("");
+  const [beKeyword, setBeKeyword] = useState("");
+  const [uiuxKeyword, setUiuxKeyword] = useState("");
+
+  const [activePM, setActivePM] = useState(false);
+  const [activeFE, setActiveFE] = useState(false);
+  const [activeBE, setActiveBE] = useState(false);
+  const [activeUIUX, setActiveUIUX] = useState(false);
+
+  const [mahasiswas, setMahasiswas] = useState<Mahasiswa[]>([]);
+
+  const [formData, setFormData] = useState<TeamMember>({
+    nama_tim: "",
+    member_pm: 0,
+    member_fe: 0,
+    member_be: 0,
+    member_ui_ux: 0,
+  });
+
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
 
-  const submitHandler = (event: React.FormEvent) => {
-    event.preventDefault();
-    router.push("/home");
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+
+    if (showFailedModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    }
+    if (showSuccessModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+      console.log("dipanggil terus");
+    };
+  }, [showFailedModal, showSuccessModal]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name == "pm") {
+      setPmKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActivePM(true);
+    } else if (name == "fe") {
+      setFeKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveFE(true);
+    } else if (name == "be") {
+      setBeKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveBE(true);
+    } else if (name == "uiux") {
+      setUiuxKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveUIUX(true);
+    } else if (name == "teamName") {
+      setFormData({
+        ...formData,
+        nama_tim: value,
+      });
+    }
   };
-  
+
+  const handleClick = (name: string, id: number, fullName: string) => {
+    if (name == "pm") {
+      setActivePM(false);
+      setFormData({
+        ...formData,
+        member_pm: id,
+      });
+      // setPm(fullName);
+      setPmKeyword(fullName);
+      setMahasiswas([]);
+    } else if (name == "fe") {
+      setActiveFE(false);
+      setFormData({
+        ...formData,
+        member_fe: id,
+      });
+      // setFe(fullName);
+      setFeKeyword(fullName);
+      setMahasiswas([]);
+    } else if (name == "be") {
+      setActiveBE(false);
+      setFormData({
+        ...formData,
+        member_be: id,
+      });
+      // setBe(fullName);
+      setBeKeyword(fullName);
+      setMahasiswas([]);
+    } else if (name == "uiux") {
+      setActiveUIUX(false);
+      setFormData({
+        ...formData,
+        member_ui_ux: id,
+      });
+      // setUiux(fullName);
+      setUiuxKeyword(fullName);
+      setMahasiswas([]);
+    }
+  };
+
+  const submitHandler = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const res = await submitTeam(formData);
+      console.log("Berhasil upload:", res);
+      setShowSuccessModal(true);
+    } catch (error) {
+      setShowFailedModal(true);
+      console.error("Gagal upload:", error);
+    }
+  };
+
+  console.log(error);
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
+
+  const closeFailedModal = () => {
+    setShowFailedModal(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
   return (
     <>
       <form onSubmit={submitHandler}>
@@ -24,13 +198,16 @@ const AddProfileTeam = () => {
             <div className="w-full mt-8 flex flex-col gap-4 max-sm:gap-0 h-full">
               <div className=" grid grid-cols-4 gap-4 w-full">
                 <label
-                  htmlFor="mahasiswaName"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                  htmlFor="teamName"
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
                   Nama Team
                 </label>
                 <input
-                  id="mahasiswaName"
+                  id="teamName"
+                  name="teamName"
                   type="text"
+                  onChange={handleChange}
                   placeholder="Team Name"
                   className=" placeholder:text-hint py-3 max-sm:py-2 max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
                 />
@@ -41,18 +218,51 @@ const AddProfileTeam = () => {
                     Project Manager
                   </p>
                 </div>
-                <div className=" grid grid-cols-4 gap-4 w-full">
+                <div className="grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="projectManager"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
                     id="projectManager"
+                    name="pm"
+                    onChange={handleChange}
+                    value={pmKeyword}
                     type="text"
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activePM && pmKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "pm",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
@@ -64,15 +274,48 @@ const AddProfileTeam = () => {
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="frontEnd"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
                     id="frontEnd"
+                    name="fe"
+                    onChange={handleChange}
+                    value={feKeyword}
                     type="text"
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeFE && feKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "fe",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
@@ -84,15 +327,48 @@ const AddProfileTeam = () => {
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="backEnd"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
                     id="backEnd"
+                    name="be"
                     type="text"
+                    onChange={handleChange}
+                    value={beKeyword}
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeBE && beKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "be",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
@@ -104,15 +380,48 @@ const AddProfileTeam = () => {
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="uiux"
-                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
                     Nama
                   </label>
                   <input
                     id="uiux"
+                    name="uiux"
                     type="text"
+                    onChange={handleChange}
+                    value={uiuxKeyword}
                     placeholder="Nama Mahasiswa"
                     className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeUIUX && uiuxKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "uiux",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
+                              }
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -121,13 +430,15 @@ const AddProfileTeam = () => {
                   type="button"
                   data-modal-toggle="confirmModal"
                   data-modal-target="confirmModal"
-                  className="bg-primary px-10 py-2 max-sm:px-4 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject">
+                  className="bg-primary px-10 py-2 max-sm:px-4 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+                >
                   Upload
                 </button>
                 <button
                   type="button"
                   className="bg-white px-10 py-2 max-sm:px-4 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
-                  onClick={() => router.push("/home")}>
+                  onClick={() => router.push("/home")}
+                >
                   Cancel
                 </button>
               </div>
@@ -139,20 +450,23 @@ const AddProfileTeam = () => {
         <div
           id="confirmModal"
           tabIndex={-1}
-          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        >
           <div className="relative p-4 w-full max-w-md max-h-full">
             <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
               <button
                 type="button"
                 className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 //close modal
-                data-modal-hide="confirmModal">
+                data-modal-hide="confirmModal"
+              >
                 <svg
                   className="w-3 h-3"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 14 14">
+                  viewBox="0 0 14 14"
+                >
                   <path
                     stroke="currentColor"
                     stroke-linecap="round"
@@ -176,7 +490,8 @@ const AddProfileTeam = () => {
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 20 20">
+                  viewBox="0 0 20 20"
+                >
                   <path
                     stroke="currentColor"
                     stroke-linecap="round"
@@ -192,14 +507,81 @@ const AddProfileTeam = () => {
                 <button
                   data-modal-hide="confirmModal"
                   type="submit"
-                  className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                  className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                >
                   Yes, Im sure
                 </button>
                 <button
                   data-modal-hide="confirmModal"
                   type="button"
-                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
                   No, cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* modal success */}
+        <div
+          className={`${
+            showSuccessModal ? "flex" : "hidden"
+          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          onClick={(e) => handleBackdropClick(e, closeSuccessModal)}
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <div className="p-4 md:p-5 text-center">
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  size="6x"
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                />
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Team successfully added!
+                </h3>
+
+                <button
+                  data-modal-hide="successModal"
+                  type="button"
+                  onClick={() => router.push("/home")}
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* modal failed */}
+        <div
+          id="failedModal"
+          tabIndex={-1}
+          className={`${
+            showFailedModal ? "flex" : "hidden"
+          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          onClick={(e) => handleBackdropClick(e, closeFailedModal)}
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <div className="p-4 md:p-5 text-center">
+                <FontAwesomeIcon
+                  icon={faXmark}
+                  size="6x"
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                />
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Team failed to upload!
+                </h3>
+
+                <button
+                  onClick={closeFailedModal}
+                  type="button"
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
                 </button>
               </div>
             </div>

@@ -7,38 +7,41 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/style.css";
 
 import Image from "next/image";
-// import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { login } from "@/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import myImageLoader from "@/lib/loader";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const { login, googleLogin } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [incorrect, setIncorrect] = useState(false);
 
-  console.log("test", email, password);
-
-  const { login: setUser } = useAuth();
-
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const data = await login(email, password);
-      console.log("api response", data);
-      if (data) {
-        console.log("Login success:", data);
-        console.log(data.name);
-        // Lakukan navigasi ke halaman selanjutnya
-        setUser(data.name);
-        alert("Login successful!");
-        router.push("/home");
-      }
+      const res = await login(email, password); // login dari context
+      console.log("Login success ", res);
+      setIncorrect(false);
     } catch (error) {
       console.error("Login error:", error);
-      alert(`Login failed. ${error}`);
+      setIncorrect(true);
+      // alert("Login failed");
     }
   };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.error("Google login failed:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (user) router.push("/home");
+  // }, [user]);
 
   return (
     <div className="w-screen h-screen flex justify-center bg-[#FBF9F1]">
@@ -48,6 +51,7 @@ export default function Login() {
             src="/assets/logo.png"
             alt="Logo SiMaPro"
             width={500}
+            loader={myImageLoader}
             height={500}
             className="bg-white flex justify-center items-center text-black"
           />
@@ -55,12 +59,15 @@ export default function Login() {
         <form
           // action="/home"
           // method="post"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin();
-          }}
-          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10">
-          <div className="flex flex-col h-1/4 gap-4 justify-center ">
+          onSubmit={handleLogin}
+          className="flex flex-1 h-1/2 max-sm:h-full max-sm:w-full max-sm:mt-10 flex-col gap-4 justify-center max-sm:justify-normal px-52 max-sm:px-10"
+        >
+          <div
+            className={`text-red-500 ${incorrect ? "block" : "hidden"} text-lg`}
+          >
+            Incorrect email or password*
+          </div>
+          <div className="flex flex-col h-1/4 gap-4 justify-center">
             <div className="flex flex-auto">
               <label htmlFor="username" className="w-full relative block">
                 <span className="absolute inset-y-0 left-4 flex items-center">
@@ -72,9 +79,9 @@ export default function Login() {
                 </span>
                 <input
                   type="text"
-                  id="username"
-                  name="username"
-                  placeholder="username"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
                   onChange={(e) => setEmail(e.target.value)}
                   style={{ color: "var(--primary)" }}
                   className="w-full h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:ring-2 focus:outline-none focus:ring-[var(--border)]"
@@ -83,34 +90,46 @@ export default function Login() {
             </div>
             <div className="flex flex-auto">
               <label htmlFor="password" className="w-full relative block">
-                <span className="absolute inset-y-0 left-4 flex items-center">
-                  <FontAwesomeIcon
-                    icon={faLock}
-                    style={{ fontSize: "1.5rem" }}
-                    className="text-primary"
+                <div className="relative w-full h-full">
+                  <span className="absolute inset-y-0 left-4 flex items-center">
+                    <FontAwesomeIcon
+                      icon={faLock}
+                      style={{ fontSize: "1.5rem" }}
+                      className="text-primary"
+                    />
+                  </span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-[var(--border)] pr-12"
                   />
-                </span>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-full border-none rounded-[5px] placeholder:text-[var(--hint)] placeholder:font-bold placeholder:tracking-wide ps-12 font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-[var(--border)]"
-                />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
               </label>
             </div>
           </div>
           <div className="flex justify-center items-center h-12 gap-5 ">
             <button
-              type="submit"
-              className="bg-white h-full gap-3 max-sm:text-sm text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
+              type="button"
+              onClick={handleGoogleLogin}
+              className="bg-white h-full gap-3 max-sm:text-sm text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide"
+            >
               <span className="max-sm:ms-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="1.6em"
                   height="1.6em"
-                  viewBox="0 0 256 262">
+                  viewBox="0 0 256 262"
+                >
                   <path
                     fill="#4285f4"
                     d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
@@ -132,8 +151,9 @@ export default function Login() {
               Sign in with Google
             </button>
             <button
-              onClick={handleLogin}
-              className="w-1/2 h-full bg-white text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide">
+              type="submit"
+              className="w-1/2 h-full bg-white text-primary flex flex-1 justify-center items-center rounded-[20px] font-bold tracking-wide"
+            >
               Login
             </button>
           </div>
@@ -142,7 +162,8 @@ export default function Login() {
               Don&apos;t have an account?
               <a
                 href="register"
-                className="text-blue-500 hover:underline font-black ms-2">
+                className="text-blue-500 hover:underline font-black ms-2"
+              >
                 Sign up
               </a>
             </div>

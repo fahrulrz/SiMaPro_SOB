@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -25,7 +25,6 @@ interface Project {
   deskripsi: string;
 }
 
-
 const Stakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder[]>([]);
   const [error, setError] = useState(null);
@@ -34,7 +33,11 @@ const Stakeholder = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://be-pad.trpl.space/api/stakeholders/")
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/stakeholders`, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
       .then((response) => {
         setStakeholder(response.data.data);
         setIsLoading(false);
@@ -45,24 +48,23 @@ const Stakeholder = () => {
       });
   }, []);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const clickHandler = (stakeholder: number) => {
-      router.push(`/stakeholder/detail-stakeholder?id=${stakeholder}`);
-    };
+  const clickHandler = (stakeholder: number) => {
+    router.push(`/stakeholder/detail-stakeholder?id=${stakeholder}`);
+  };
 
-    console.log(error);
+  console.log(error);
 
-    if (isLoading) {
-      return (
-        <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
-          
-          <div className="text-4xl text-primary font-bold animate-pulse">
-            Loading....
-          </div>
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Loading....
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
   return (
     <>
@@ -73,24 +75,31 @@ const Stakeholder = () => {
               key={stakeholder.id}
               onClick={() => clickHandler(stakeholder.id)}
               className="bg-[#FBF9F1] cursor-pointer h-[36rem] max-sm:h-80 flex flex-col justify-center items-center hover:scale-110 duration-300 ease-in-out transition">
-              <div className="flex flex-col w-full h-full justify-center items-center mb-10">
-                <div className="flex w-full h-full p-8">
-                  <div className="flex relative h-full max-sm:h-52 w-full">
-                    <Image
-                      src={stakeholder.foto}
-                      alt="Picture of the author"
-                      // width={720}
-                      // height={700}
-                      layout="fill"
-                      objectFit="cover"
-                      className={isLoading ? "animate-pulse bg-slate-700" : ""}
-                    />
+              {stakeholder.foto ? (
+                <div className="flex flex-col w-full h-full justify-center items-center mb-10">
+                  <div className="flex w-full h-full p-8">
+                    <div className="flex relative h-full max-sm:h-52 w-full">
+                      <Image
+                        src={stakeholder.foto}
+                        alt={"Photo of " + stakeholder.nama}
+                        unoptimized
+                        layout="fill"
+                        objectFit="cover"
+                        className={
+                          isLoading ? "animate-pulse bg-slate-700" : ""
+                        }
+                      />
+                    </div>
                   </div>
+                  <h1 className="text-primary font-bold text-xl mb-10 max-sm:mb-0">
+                    {stakeholder.nama}
+                  </h1>
                 </div>
-                <h1 className="text-primary font-bold text-xl mb-10 max-sm:mb-0">
-                  {stakeholder.nama}
-                </h1>
-              </div>
+              ) : (
+                <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                  No Image
+                </div>
+              )}
             </div>
           ))}
         </div>

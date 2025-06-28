@@ -12,33 +12,15 @@ import Card from "@/components/Card";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-
-interface Stakeholder {
-  id: number;
-  nama: string;
-  kategori: string;
-  nomor_telepon: string;
-  email: string;
-  foto: string;
-  projects: Project[];
-}
-
-interface Image {
-  id: number;
-  link_gambar: string;
-}
-
-interface Project {
-  id: number;
-  nama_proyek: string;
-  logo: string;
-  deskripsi: string;
-  image: Image[];
-}
+import { deleteStakeholder, Stakeholder } from "@/lib/Stakeholder";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const DetailStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder>();
   const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const [id, setId] = useState<string>(" ");
 
@@ -46,9 +28,9 @@ const DetailStakeholder = () => {
     const idUrl = window
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
-      setId(idUrl);
-      axios
-      .get(`https://be-pad.trpl.space/api/stakeholders/${idUrl}`)
+    setId(idUrl);
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/stakeholders/${idUrl}`)
       .then((response) => {
         setStakeholder(response.data.data);
       })
@@ -56,6 +38,17 @@ const DetailStakeholder = () => {
         setError(error);
       });
   }, []);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await deleteStakeholder(id);
+      if (res.status === 200) {
+        router.push("/stakeholder");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   console.log(error);
 
@@ -73,6 +66,7 @@ const DetailStakeholder = () => {
                   src={stakeholder?.foto || ""}
                   alt="Picture of the author"
                   layout="fill"
+                  unoptimized
                   objectFit="cover"
                   sizes="80vh"
                 />
@@ -92,49 +86,52 @@ const DetailStakeholder = () => {
                 <div>: {stakeholder?.nomor_telepon}</div>
               </div>
             </div>
-            <div className="gap-4 mt-10 w-full grid grid-cols-2 px-24 max-sm:px-8">
-              <div>
-                <Link href={`/stakeholder/edit-stakeholder?id=${id}`}>
-                  <button className="bg-primary flex w-full text-lg max-sm:text-sm hover:bg-white hover:text-primary items-center gap-3 p-2 max-sm:px-2 max-sm:py-3 px-6 text-white rounded-md">
-                    {" "}
-                    <span className="me-2 max-sm:hidden">
-                      <FontAwesomeIcon icon={faPenToSquare} size="xl" />
+            {user?.role == "admin" ? (
+              <div className="gap-4 mt-10 w-full grid grid-cols-2 px-24 max-sm:px-8">
+                <div>
+                  <Link href={`/stakeholder/edit-stakeholder?id=${id}`}>
+                    <button className="bg-primary flex w-full text-lg max-sm:text-sm hover:bg-white hover:text-primary items-center gap-3 p-2 max-sm:px-2 max-sm:py-3 px-6 text-white rounded-md">
+                      {" "}
+                      <span className="me-2 max-sm:hidden">
+                        <FontAwesomeIcon icon={faPenToSquare} size="xl" />
+                      </span>
+                      <span className="me-2 sm:hidden">
+                        <FontAwesomeIcon icon={faPenToSquare} size="lg" />
+                      </span>
+                      Edit Profile
+                    </button>
+                  </Link>
+                </div>
+                <div>
+                  <div
+                    onClick={() => handleDelete(stakeholder?.id as number)}
+                    className="bg-primary w-full flex text-lg max-sm:text-sm max-sm:px-2 hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 max-sm:py-3 text-white rounded-md"
+                  >
+                    <span className="max-sm:hidden">
+                      <FontAwesomeIcon icon={faTrash} size="xl" />
                     </span>
-                    <span className="me-2 sm:hidden">
-                      <FontAwesomeIcon icon={faPenToSquare} size="lg" />
+                    <span className="sm:hidden">
+                      <FontAwesomeIcon icon={faTrash} size="lg" />
                     </span>
-                    Edit Profile
-                  </button>
-                </Link>
+                    Delete Profile
+                  </div>
+                </div>
               </div>
-              <div>
-                <a
-                  href="#"
-                  className="bg-primary w-full flex text-lg max-sm:text-sm max-sm:px-2 hover:bg-white hover:text-primary items-center gap-3 p-2 px-6 max-sm:py-3 text-white rounded-md">
-                  <span className="max-sm:hidden">
-                    <FontAwesomeIcon icon={faTrash} size="xl" />
-                  </span>
-                  <span className="sm:hidden">
-                    <FontAwesomeIcon icon={faTrash} size="lg" />
-                  </span>
-                  Delete Profile
-                </a>
-              </div>
-            </div>
+            ) : null}
           </div>
         </div>
         <div className="h-screen flex flex-col w-3/5 max-sm:w-full max-sm:px-4 px-20 py-14">
           <div>
             <div className="text-2xl font-bold text-primary">List Project</div>
             <div className="flex h-[80vh] overflow-scroll">
-              <div className=" flex flex-col gap-4 w-full overflow-y-scroll h-full">
+              <div className=" flex flex-col gap-4 w-full overflow-y-scroll pb-5 h-full">
                 {stakeholder?.projects.map((project) => (
                   <Card
                     key={project.id}
                     id={project.id}
                     dataAos=""
                     name={project.nama_proyek}
-                    imageUrl={project.image[0].link_gambar}
+                    imageUrl={project.image[0]?.link_gambar}
                     // year={project.year.map((item) => item.tahun).join(", ")}
                     // comment={JSON.stringify(project.image)}
                     // comment={project.comments.map((isi) => isi.isi_komen).join(', ')}

@@ -17,12 +17,10 @@ interface CardProps {
   name: string;
   imageUrl: string;
   dataAos: string;
-
 }
 
-const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
+const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos }) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
-
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -34,26 +32,22 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   Aos.init();
-  // }, []);
-
   if (typeof window != "undefined") {
     import("aos").then((Aos) => {
-        Aos.init();
+      Aos.init();
     });
-}
+  }
 
   const clickHandler = (id: number) => {
     router.push(`/home/project?id=${id}`);
   };
 
   return (
-    <Link href={`/home/project?id=${id}`} 
-    onMouseEnter={handleMouseEnter}
-    onMouseLeave={handleMouseLeave}
-    className="mt-10"
-    >
+    <Link
+      href={`/home/project?id=${id}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="mt-10">
       <div className=" flex flex-col justify-between px-12 max-sm:px-0">
         {/* card yang dibuat perulangan */}
         <div
@@ -69,6 +63,7 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
               alt="Picture of the author"
               layout="fill"
               objectFit="cover"
+              unoptimized
             />
 
             <div
@@ -85,4 +80,3 @@ const Card: React.FC<CardProps> = ({ id, name, imageUrl, dataAos}) => {
 };
 
 export default Card;
-

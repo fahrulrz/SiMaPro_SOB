@@ -2,28 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
-
-import axios from "axios";
-
-interface Stakeholder {
-  id: number;
-  nama: string;
-  kategori: string;
-  nomor_telepon: string;
-  email: string;
-  foto: string;
-  projects: Project[];
-}
-
-interface Project {
-  id: number;
-  nama_proyek: string;
-  logo: string;
-  deskripsi: string;
-}
+import { searchStakeholder, Stakeholder } from "@/lib/Stakeholder";
 
 const SearchStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder[]>([]);
@@ -35,20 +17,19 @@ const SearchStakeholder = () => {
     const keywordUrl = window
       ? new URLSearchParams(window.location.search).get("query") || " "
       : " ";
-      setKeyword(keywordUrl);
+    setKeyword(keywordUrl);
   }, []);
 
   // const keyword = useSearchParams()?.get("query");
 
   useEffect(() => {
     if (keyword) {
-      axios
-        .get(`https://be-pad.trpl.space/api/stakeholders/search/${keyword}`)
-        .then((response) => {
-          setStakeholder(response.data.data);
+      searchStakeholder(keyword)
+        .then((data) => {
+          setStakeholder(data);
         })
-        .catch((error) => {
-          setError(error);
+        .catch((err) => {
+          setError(err);
         });
     }
   }, [keyword]);
@@ -76,9 +57,10 @@ const SearchStakeholder = () => {
                     <div className="flex relative h-full max-sm:h-52 w-full">
                       <Image
                         src={stakeholder.foto}
-                        alt="Picture of the author"
+                        alt={"Photo of " + stakeholder.nama}
                         layout="fill"
                         objectFit="cover"
+                        unoptimized
                         className="bg-red-500"
                       />
                     </div>

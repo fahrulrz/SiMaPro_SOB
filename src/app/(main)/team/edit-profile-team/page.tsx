@@ -1,33 +1,41 @@
 "use client";
 
-import { useRouter} from "next/navigation";
-// import "flowbite";
-
+import SearchResult from "@/components/SearchResult";
+import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
+import { TeamRequest, updateTeam } from "@/lib/Team";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface Member {
-  id: number;
-  nama_lengkap: string;
-  NIM: string;
-  foto: string;
-}
-
-interface TeamMember {
-  id: number;
-  role: string;
-  team_id: number;
-  member_id: number;
-  member: Member;
-}
-
-interface Team {
-  id: number;
-  nama_tim: string;
-  team_member: TeamMember[];
-}
-
 const EditProfileTeam = () => {
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showFailedModal, setShowFailedModal] = useState(false);
+
+  const [pmKeyword, setPmKeyword] = useState("");
+  const [feKeyword, setFeKeyword] = useState("");
+  const [beKeyword, setBeKeyword] = useState("");
+  const [uiuxKeyword, setUiuxKeyword] = useState("");
+
+  const [activePM, setActivePM] = useState(false);
+  const [activeFE, setActiveFE] = useState(false);
+  const [activeBE, setActiveBE] = useState(false);
+  const [activeUIUX, setActiveUIUX] = useState(false);
+
+  const [mahasiswas, setMahasiswas] = useState<Mahasiswa[]>([]);
+
+  const [formData, setFormData] = useState<TeamRequest>({
+    nama_tim: "",
+    member_pm: 0,
+    member_fe: 0,
+    member_be: 0,
+    member_ui_ux: 0,
+    _method: "put",
+  });
+
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
 
   const [teamId, setTeamId] = useState<string>(" ");
@@ -36,352 +44,580 @@ const EditProfileTeam = () => {
     const teamIdUrl = window
       ? new URLSearchParams(window.location.search).get("id") || " "
       : " ";
-      setTeamId(teamIdUrl);
+    setTeamId(teamIdUrl);
   }, []);
-
-  // const teamId = useSearchParams().get("id");
-  const idTeam = teamId ? parseInt(teamId) : null;
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [team, setTeam] = useState<Team>();
-  const [error, setError] = useState(null);
-  console.error(error);
 
   useEffect(() => {
     axios
-      .get(`https://be-pad.trpl.space/api/teams/${teamId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`)
       .then((response) => {
-        setTeam(response.data.data);
+        setPmKeyword(response.data.data.team_member[0].member.nama_lengkap);
+        setFeKeyword(response.data.data.team_member[1].member.nama_lengkap);
+        setBeKeyword(response.data.data.team_member[2].member.nama_lengkap);
+        setUiuxKeyword(response.data.data.team_member[3].member.nama_lengkap);
+        setFormData({
+          nama_tim: response.data.data.nama_tim,
+          member_pm: response.data.data.team_member[0].member_id,
+          member_be: response.data.data.team_member[2].member_id,
+          member_fe: response.data.data.team_member[1].member_id,
+          member_ui_ux: response.data.data.team_member[3].member_id,
+          _method: "put",
+        });
       })
       .catch((error) => {
         setError(error);
       });
   }, [teamId]);
 
-  const submitHandler = (event: React.FormEvent) => {
-    event.preventDefault();
-    router.push(`/team?id=${idTeam}`);
+  useEffect(() => {
+    const initializeFlowbite = async () => {
+      if (typeof window !== "undefined") {
+        const { initFlowbite } = await import("flowbite");
+        initFlowbite();
+      }
+    };
+
+    initializeFlowbite();
+
+    if (showFailedModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    }
+    if (showSuccessModal) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px";
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+      console.log("dipanggil terus");
+    };
+  }, [showFailedModal, showSuccessModal]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name == "pm") {
+      setPmKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActivePM(true);
+    } else if (name == "fe") {
+      setFeKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveFE(true);
+    } else if (name == "be") {
+      setBeKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveBE(true);
+    } else if (name == "uiux") {
+      setUiuxKeyword(value);
+      searchMahasiswa(value)
+        .then((data) => {
+          setMahasiswas(data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+      setActiveUIUX(true);
+    } else if (name == "teamName") {
+      setFormData({
+        ...formData,
+        nama_tim: value,
+      });
+    }
   };
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const handleClick = (name: string, id: number, fullName: string) => {
+    if (name == "pm") {
+      setActivePM(false);
+      setFormData({
+        ...formData,
+        member_pm: id,
+      });
+      setPmKeyword(fullName);
+      setMahasiswas([]);
+    } else if (name == "fe") {
+      setActiveFE(false);
+      setFormData({
+        ...formData,
+        member_fe: id,
+      });
+      setFeKeyword(fullName);
+      setMahasiswas([]);
+    } else if (name == "be") {
+      setActiveBE(false);
+      setFormData({
+        ...formData,
+        member_be: id,
+      });
+      setBeKeyword(fullName);
+      setMahasiswas([]);
+    } else if (name == "uiux") {
+      setActiveUIUX(false);
+      setFormData({
+        ...formData,
+        member_ui_ux: id,
+      });
+      setUiuxKeyword(fullName);
+      setMahasiswas([]);
+    }
+  };
+
+  const submitHandler = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const res = await updateTeam(formData, parseInt(teamId));
+      console.log("Berhasil upload:", res);
+      setShowSuccessModal(true);
+    } catch (error) {
+      setShowFailedModal(true);
+      console.error("Gagal upload:", error);
+    }
+  };
+
+  console.log(error);
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
+
+  const closeFailedModal = () => {
+    setShowFailedModal(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
   };
 
   return (
     <>
-      {team &&
-      team.team_member &&
-      team.team_member[3] &&
-      team.team_member[3].member.nama_lengkap ? (
-        <form onSubmit={submitHandler}>
-          <div className="flex flex-col p-20 max-sm:p-4 h-full w-full mb-14">
-            <div className="flex flex-col gap-5">
-              <div className=" flex w-full items-center justify-center">
-                <div className="text-4xl max-sm:text-3xl font-bold text-primary">
-                  Profil Team
-                </div>
+      <form onSubmit={submitHandler}>
+        <div className="flex flex-col p-20 max-sm:p-4 h-full w-full mb-14">
+          <div className="flex flex-col gap-5">
+            <div className=" flex w-full items-center justify-center">
+              <div className="text-4xl max-sm:text-3xl font-bold text-primary">
+                Profil Team
               </div>
-              <div className="w-full mt-8 flex flex-col gap-4 max-sm:gap-0 h-full">
-                <div className=" grid grid-cols-4 gap-4 w-full">
+            </div>
+            <div className="w-full mt-8 flex flex-col gap-4 max-sm:gap-0 h-full">
+              <div className=" grid grid-cols-4 gap-4 w-full">
+                <label
+                  htmlFor="teamName"
+                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                >
+                  Nama Team
+                </label>
+                <input
+                  id="teamName"
+                  name="teamName"
+                  type="text"
+                  value={formData.nama_tim}
+                  onChange={handleChange}
+                  placeholder="Team Name"
+                  className=" placeholder:text-hint py-3 max-sm:py-2 max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
+                />
+              </div>
+              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <p className="flex justify-center text-xl max-sm:text-base text-primary max-sm:col-span-3 max-sm:justify-normal">
+                    Project Manager
+                  </p>
+                </div>
+                <div className="grid grid-cols-4 gap-4 w-full">
                   <label
-                    htmlFor="mahasiswaName"
-                    className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                    Nama Team
+                    htmlFor="projectManager"
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Nama
                   </label>
                   <input
-                    id="mahasiswaName"
+                    id="projectManager"
+                    name="pm"
+                    onChange={handleChange}
+                    value={pmKeyword}
                     type="text"
-                    placeholder="Team Name"
-                    value={team?.nama_tim}
-                    onChange={(event) => {
-                      if (team) {
-                        setTeam({
-                          ...team,
-                          nama_tim: event.target.value,
-                        });
-                      }
-                    }}
-                    className=" placeholder:text-hint py-3 text-primary bg-inputAddProject text-lg max-sm:py-3 max-sm:placeholder:text-sm  border-none rounded-md p-2 w-full col-span-3 focus:ring-0 max-sm:text-sm"
+                    placeholder="Nama Mahasiswa"
+                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
                   />
                 </div>
-                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
-                  <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl max-sm:text-base text-primary max-sm:col-span-3 max-sm:justify-normal">
-                      Project Manager
-                    </p>
-                  </div>
-                  <div className=" grid grid-cols-4 gap-4 w-full">
-                    <label
-                      htmlFor="projectManager"
-                      className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md">
-                      Nama 
-                    </label>
-                    <input
-                      id="projectManager"
-                      type="text"
-                      placeholder="Nama Mahasiswa"
-                      value={team?.team_member[0].member.nama_lengkap}
-                      onChange={(event) => {
-                        if (team) {
-                          setTeam({
-                            ...team,
-
-                            team_member: team.team_member.map(
-                              (member, index) => {
-                                if (index === 0) {
-                                  return {
-                                    ...member,
-
-                                    member: {
-                                      ...member.member,
-
-                                      nama_lengkap: event.target.value,
-                                    },
-                                  };
-                                }
-
-                                return member;
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activePM && pmKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "pm",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
                               }
-                            ),
-                          });
-                        }
-                      }}
-                      className=" placeholder:text-hint  text-primary bg-inputAddProject text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:text-sm"
-                    />
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
-                  <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center max-sm:text-base text-xl text-primary max-sm:col-span-3 max-sm:justify-start">
-                      Front End
-                    </p>
-                  </div>
-                  <div className=" grid grid-cols-4 gap-4 w-full">
-                    <label
-                      htmlFor="frontEnd"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm ">
-                      Nama 
-                    </label>
-                    <input
-                      id="frontEnd"
-                      type="text"
-                      placeholder="Nama Mahasiswa"
-                      value={team?.team_member[1]?.member?.nama_lengkap}
-                      onChange={(event) => {
-                        if (team) {
-                          setTeam({
-                            ...team,
-
-                            team_member: team.team_member.map(
-                              (member, index) => {
-                                if (index === 1) {
-                                  return {
-                                    ...member,
-
-                                    member: {
-                                      ...member.member,
-
-                                      nama_lengkap: event.target.value,
-                                    },
-                                  };
-                                }
-
-                                return member;
+              </div>
+              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <p className="flex justify-center text-xl max-sm:text-base text-primary max-sm:col-span-3 max-sm:justify-start">
+                    Front End
+                  </p>
+                </div>
+                <div className=" grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="frontEnd"
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Nama
+                  </label>
+                  <input
+                    id="frontEnd"
+                    name="fe"
+                    onChange={handleChange}
+                    value={feKeyword}
+                    type="text"
+                    placeholder="Nama Mahasiswa"
+                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeFE && feKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "fe",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
                               }
-                            ),
-                          });
-                        }
-                      }}
-                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:placeholder:text-sm max-sm:text-sm"
-                    />
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
-                  <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl text-primary max-sm:text-base max-sm:col-span-3 max-sm:justify-start">
-                      Back End
-                    </p>
-                  </div>
-                  <div className=" grid grid-cols-4 gap-4 w-full">
-                    <label
-                      htmlFor="backEnd"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm">
-                      Nama
-                    </label>
-                    <input
-                      id="backEnd"
-                      type="text"
-                      placeholder="Nama Mahasiswa"
-                      value={team?.team_member[2]?.member?.nama_lengkap}
-                      onChange={(event) => {
-                        if (team) {
-                          setTeam({
-                            ...team,
-
-                            team_member: team.team_member.map(
-                              (member, index) => {
-                                if (index === 2) {
-                                  return {
-                                    ...member,
-
-                                    member: {
-                                      ...member.member,
-
-                                      nama_lengkap: event.target.value,
-                                    },
-                                  };
-                                }
-
-                                return member;
+              </div>
+              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <p className="flex justify-center text-xl max-sm:text-base max-sm:col-span-3 max-sm:justify-start text-primary">
+                    Back End
+                  </p>
+                </div>
+                <div className=" grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="backEnd"
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Nama
+                  </label>
+                  <input
+                    id="backEnd"
+                    name="be"
+                    type="text"
+                    onChange={handleChange}
+                    value={beKeyword}
+                    placeholder="Nama Mahasiswa"
+                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeBE && beKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "be",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
                               }
-                            ),
-                          });
-                        }
-                      }}
-                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:placeholder:text-smb max-sm:text-sm"
-                    />
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-                <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
-                  <div className="grid grid-cols-4 gap-4 w-full">
-                    <p className="flex justify-center text-xl text-primary max-sm:text-base max-sm:col-span-3 max-sm:justify-start">
-                      UI/UX
-                    </p>
-                  </div>
-                  <div className=" grid grid-cols-4 gap-4 w-full">
-                    <label
-                      htmlFor="uiux"
-                      className="flex justify-center py-3 items-center text-xl text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md max-sm:text-sm">
-                      Nama
-                    </label>
-                    <input
-                      id="uiux"
-                      type="text"
-                      placeholder="Nama Mahasiswa"
-                      value={team?.team_member[3]?.member?.nama_lengkap}
-                      onChange={(event) => {
-                        if (team) {
-                          setTeam({
-                            ...team,
-
-                            team_member: team.team_member.map(
-                              (member, index) => {
-                                if (index === 3) {
-                                  return {
-                                    ...member,
-
-                                    member: {
-                                      ...member.member,
-
-                                      nama_lengkap: event.target.value,
-                                    },
-                                  };
-                                }
-
-                                return member;
+              </div>
+              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <p className="flex justify-center text-xl max-sm:text-base max-sm:col-span-3 max-sm:justify-start text-primary">
+                    UI/UX
+                  </p>
+                </div>
+                <div className=" grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="uiux"
+                    className="flex justify-center py-3 items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Nama
+                  </label>
+                  <input
+                    id="uiux"
+                    name="uiux"
+                    type="text"
+                    onChange={handleChange}
+                    value={uiuxKeyword}
+                    placeholder="Nama Mahasiswa"
+                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                  />
+                </div>
+                <div className="w-full  -mt-3 relative">
+                  <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                    <div className="col-span-1"></div>
+                    <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
+                      {activeUIUX && uiuxKeyword != "" ? (
+                        mahasiswas && mahasiswas.length > 0 ? (
+                          mahasiswas.map((mahasiswa) => (
+                            <div
+                              onClick={() =>
+                                handleClick(
+                                  "uiux",
+                                  mahasiswa.id,
+                                  mahasiswa.nama_lengkap
+                                )
                               }
-                            ),
-                          });
-                        }
-                      }}
-                      className=" placeholder:text-hint text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 max-sm:placeholder:text-smb max-sm:text-sm"
-                    />
+                              key={mahasiswa.id}
+                            >
+                              <SearchResult name={mahasiswa.nama_lengkap} />
+                            </div>
+                          ))
+                        ) : (
+                          <div>
+                            <SearchResult name="No Mahasiswa Found" />
+                          </div>
+                        )
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-4 ml-auto max-sm:mt-6">
-                  <button
-                    type="button"
-                    onClick={toggleModal}
-                    className="bg-primary px-10 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject max-sm:px-4">
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject max-sm:px-4"
-                    onClick={() => router.push(`/team?id=${idTeam}`)}>
-                    Cancel
-                  </button>
-                </div>
+              </div>
+
+              <div className="flex gap-4 ml-auto max-sm:mt-6">
+                <button
+                  type="button"
+                  data-modal-toggle="confirmModal"
+                  data-modal-target="confirmModal"
+                  className="bg-primary px-10 py-2 max-sm:px-4 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+                >
+                  Upload
+                </button>
+                <button
+                  type="button"
+                  className="bg-white px-10 py-2 max-sm:px-4 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+                  onClick={() => router.push("/home")}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* confirm modal */}
-
-          {isModalOpen && (
-            <div
-              tabIndex={-1}
-              className="overflow-y-auto flex bg-black/30 overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full">
-              <div className="relative p-4 w-full max-w-md max-h-full">
-                <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
-                  <button
-                    type="button"
-                    className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                    //close modal
-                    onClick={toggleModal}>
-                    <svg
-                      className="w-3 h-3"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 14">
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                      />
-                    </svg>
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                    <span className="sr-only">Close modal</span>
-                  </button>
-                  <div className="p-4 md:p-5 text-center">
-                    <svg
-                      className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20">
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                      />
-                    </svg>
-                    <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
-                      Are you sure you want to edit this profile? Any updates
-                      made will replace the current profile information.
-                    </h3>
-                    <button
-                      type="submit"
-                      className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                      Yes, Im sure
-                    </button>
-                    <button
-                      onClick={toggleModal}
-                      type="button"
-                      className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      No, cancel
-                    </button>
-                  </div>
-                </div>
+        {/* confirm modal */}
+        <div
+          id="confirmModal"
+          tabIndex={-1}
+          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <button
+                type="button"
+                className="absolute top-3 end-2.5 text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                //close modal
+                data-modal-hide="confirmModal"
+              >
+                <svg
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 14"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                  />
+                </svg>
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+                <span className="sr-only">Close modal</span>
+              </button>
+              <div className="p-4 md:p-5 text-center">
+                <svg
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Are you sure you want to add this profile? Please check all
+                  information before continuing.
+                </h3>
+                <button
+                  data-modal-hide="confirmModal"
+                  type="submit"
+                  className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                >
+                  Yes, Im sure
+                </button>
+                <button
+                  data-modal-hide="confirmModal"
+                  type="button"
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  No, cancel
+                </button>
               </div>
             </div>
-          )}
-        </form>
-      ) : (
-        <div className="bg-black flex w-full h-52">Loading.....</div>
-      )}
+          </div>
+        </div>
+
+        {/* modal success */}
+        <div
+          className={`${
+            showSuccessModal ? "flex" : "hidden"
+          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          onClick={(e) => handleBackdropClick(e, closeSuccessModal)}
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <div className="p-4 md:p-5 text-center">
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  size="6x"
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                />
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Team successfully added!
+                </h3>
+
+                <button
+                  data-modal-hide="successModal"
+                  type="button"
+                  onClick={() => router.push("/home")}
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* modal failed */}
+        <div
+          id="failedModal"
+          tabIndex={-1}
+          className={`${
+            showFailedModal ? "flex" : "hidden"
+          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          onClick={(e) => handleBackdropClick(e, closeFailedModal)}
+        >
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
+              <div className="p-4 md:p-5 text-center">
+                <FontAwesomeIcon
+                  icon={faXmark}
+                  size="6x"
+                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
+                />
+                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
+                  Team failed to upload!
+                </h3>
+
+                <button
+                  onClick={closeFailedModal}
+                  type="button"
+                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </>
   );
 };

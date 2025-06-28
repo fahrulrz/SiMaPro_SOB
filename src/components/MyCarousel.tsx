@@ -4,11 +4,12 @@ import { useEffect } from "react";
 // import { Carousel } from "flowbite";
 import Image from "next/image";
 import { type CarouselOptions } from "flowbite";
+import myImageLoader from "@/lib/loader";
 
 const imageSources = [
-  "https://simapro.web.id/assets/slide1.png",
-  "https://simapro.web.id/assets/slide2.png",
-  "https://simapro.web.id/assets/slide3.png",
+  "/assets/slide1.png",
+  "/assets/slide2.png",
+  "/assets/slide3.png",
   "/assets/logo.png",
 ]; // Sesuaikan src image di sini
 
@@ -94,6 +95,7 @@ const MyCarousel = () => {
             id={`carousel-item-${i + 1}`}
             className="carousel-item w-full h-full">
             <Image
+              loader={myImageLoader}
               src={src}
               alt={`Deskripsi Gambar ${i + 1}`}
               layout="fill"

@@ -1,15 +1,13 @@
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 const Search = () => {
-  const router = useRouter();
   const [keyword, setKeyword] = useState("");
   const pathname = usePathname();
 
   const path = pathname.split("/");
-  console.info("ini adalah info -> ", path);
   let search = "";
 
   if (path[path.length - 1] == "home") {
@@ -34,11 +32,11 @@ const Search = () => {
     e.preventDefault();
     // Arahkan ke halaman pencarian lain dengan query keyword
     if (search === "Search Projects....") {
-      router.push(`/search-results/projects?query=${keyword}`);
+      window.location.href = `/search-results/projects?query=${keyword}`;
     } else if (search === "Search Stakeholder....") {
-      router.push(`/search-results/stakeholder?query=${keyword}`);
+      window.location.href = `/search-results/stakeholder?query=${keyword}`;
     } else if (search === "Search Mahasiswa....") {
-      router.push(`/search-results/mahasiswa?query=${keyword}`);
+      window.location.href = `/search-results/mahasiswa?query=${keyword}`;
     }
   };
 

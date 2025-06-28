@@ -10,6 +10,8 @@ const nextConfig = {
     ];
   },
 
+  output: "standalone",
+
   images: {
     domains: [
       "tse1.mm.bing.net",
@@ -17,14 +19,15 @@ const nextConfig = {
       "tse3.mm.bing.net",
       "cdn.idntimes.com",
       "api.duniagames.co.id",
+      "via.placeholder.com",
+      "localhost",
       "www.tagar.id",
       "i0.wp.com",
       "fastly.picsum.photos",
       "simapro.web.id",
+      "127.0.0.1",
     ],
   },
-  loader: 'custom',
-  loaderFile: './loader.ts',
 };
 
 export default nextConfig;

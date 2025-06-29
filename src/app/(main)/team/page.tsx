@@ -55,14 +55,30 @@ const Team = () => {
 
   const router = useRouter();
   const { user } = useAuth();
-  const [teamId, setTeamId] = useState<string>(" ");
+  const [teamId, setTeamId] = useState<string>("");
 
   useEffect(() => {
-    const teamIdUrl = window
-      ? new URLSearchParams(window.location.search).get("id") || " "
-      : " ";
-    setTeamId(teamIdUrl);
+    const urlId = new URLSearchParams(window.location.search).get("id") || "";
+    setTeamId(urlId);
   }, []);
+
+  useEffect(() => {
+    if (!teamId) return;
+
+    console.log("ini team id url: " + teamId);
+
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`)
+      .then((response) => {
+        setTeam(response.data.data);
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  }, [teamId]);
+
+  console.log("Team ID dari URL:", teamId);
+  console.log("API URL:", `${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`);
 
   // const teamId = useSearchParams().get("id");
 
@@ -75,17 +91,6 @@ const Team = () => {
       Aos.init();
     });
   }
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`)
-      .then((response) => {
-        setTeam(response.data.data);
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  }, [teamId]);
 
   const deleteHandler = async (id: number) => {
     try {
@@ -101,6 +106,17 @@ const Team = () => {
   const clickHandler = (id: number) => {
     router.push(`/mahasiswa/detail-mahasiswa?id=${id}`);
   };
+
+  if (error !== null) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Team Not Found
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div>

@@ -11,7 +11,7 @@
   --hint: #92c7cfa1;
   --border: #538086;
   --mainBackground: #e5e1da;
-  --inputAddProject: #FBF9F1;
+  --inputAddProject: #fbf9f1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,11 +38,36 @@ body {
   }
 }
 
-
 .container {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
-.container::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
+.container::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.animate-zoom-in {
+  animation: zoom-in 0.5s;
+}
+
+.animate-zoom-out {
+  animation: zoom-out 0.5s;
+}
+
+@keyframes zoom-in {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes zoom-out {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.5);
+  }
 }

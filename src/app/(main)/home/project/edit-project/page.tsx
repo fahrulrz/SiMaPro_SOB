@@ -22,6 +22,7 @@ import { searchStakeholder } from "@/lib/Stakeholder";
 import SearchResult from "@/components/SearchResult";
 import { updateProject } from "@/lib/Project";
 import { searchTeam } from "@/lib/Team";
+import Swal from "sweetalert2";
 
 // import "flowbite";
 
@@ -92,6 +93,7 @@ const EditProject: React.FC = () => {
   //   mengambil id dari params url
   const [id, setId] = useState<string>(" ");
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   // membuat variabel untuk menyimpan data project
   const [projects, setProjects] = useState<Project>();
   // const [stakeholder, setStakeholder] = useState<string>();
@@ -101,7 +103,7 @@ const EditProject: React.FC = () => {
   // const successModalRef = useRef<HTMLDivElement | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [update, setUpdate] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  // const [isSuccess, setIsSuccess] = useState(false);
   const [activeStakeholder, setActiveStakeholder] = useState(false);
   const [formData, setFormData] = useState({
     projectName: "",
@@ -113,6 +115,15 @@ const EditProject: React.FC = () => {
     projectCategory: 0,
   });
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
+
+  const [formErrors, setFormErrors] = useState({
+    projectName: "",
+    stakeholder: "",
+    team: "",
+    year: "",
+    description: "",
+    projectCategory: "",
+  });
 
   // Team
   const [activeTeam, setActiveTeam] = useState(false);
@@ -135,6 +146,69 @@ const EditProject: React.FC = () => {
     null,
     null,
   ]);
+
+  // Fungsi untuk validasi form
+  const validateForm = () => {
+    const errors = {
+      projectName: "",
+      stakeholder: "",
+      team: "",
+      year: "",
+      description: "",
+      projectCategory: "",
+    };
+
+    let isValid = true;
+
+    // Validasi Project Name
+    if (!formData.projectName.trim()) {
+      errors.projectName = "*Kolom wajib di isi";
+      isValid = false;
+    }
+
+    // Validasi Stakeholder
+    if (stakeholderKeyword === "") {
+      errors.stakeholder = "*Kolom wajib di isi";
+      isValid = false;
+    }
+
+    // Validasi Team
+    if (teamKeyword === "") {
+      errors.team = "*Kolom wajib di isi";
+      isValid = false;
+    }
+
+    // Validasi Year
+    if (!formData.year || formData.year.toString().trim() === "") {
+      errors.year = "*Kolom wajib di isi";
+      isValid = false;
+    }
+
+    // Validasi Description
+    if (!formData.description.trim()) {
+      errors.description = "*Kolom wajib di isi";
+      isValid = false;
+    }
+
+    // Validasi Project Category
+    if (!formData.projectCategory || formData.projectCategory === 0) {
+      errors.projectCategory = "*Kolom wajib di isi";
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  // Fungsi untuk clear error ketika user mulai mengetik
+  const clearError = (fieldName: string) => {
+    if (formErrors[fieldName as keyof typeof formErrors]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [fieldName]: "",
+      }));
+    }
+  };
 
   useEffect(() => {
     const idUrl = window
@@ -190,6 +264,7 @@ const EditProject: React.FC = () => {
   console.log(error);
 
   const handleSelect = (item: NavigationItem) => {
+    clearError("projectCategory");
     setFormData({ ...formData, projectCategory: item.id });
     setSelectedItem(item);
   };
@@ -244,10 +319,14 @@ const EditProject: React.FC = () => {
     });
   }
 
+  // Update handleChange function untuk clear error
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     const { name, value } = e.target;
+
+    // Clear error untuk field yang sedang diubah
+    clearError(name);
 
     if (name == "stakeholder") {
       setStakeholderKeyword(value);
@@ -317,6 +396,7 @@ const EditProject: React.FC = () => {
 
   const handleClick = (name: string, id: number, fullName: string) => {
     if (name == "stakeholder") {
+      clearError("stakeholder");
       setActiveStakeholder(false);
       setFormData({
         ...formData,
@@ -325,6 +405,7 @@ const EditProject: React.FC = () => {
       setStakeholderKeyword(fullName);
       setStakeholders([]);
     } else if (name == "team") {
+      clearError("team");
       setActiveTeam(false);
       setFormData({
         ...formData,
@@ -340,6 +421,25 @@ const EditProject: React.FC = () => {
   // Menangani submit form
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!validateForm()) {
+      setUpdate(false);
+      if (formErrors.projectName != "") {
+        router.push("#project-name");
+      } else if (formErrors.stakeholder != "") {
+        router.push("#stakeholder");
+      } else if (formErrors.team != "") {
+        router.push("#team");
+      } else if (formErrors.year != "") {
+        router.push("#year");
+      } else if (formErrors.description != "") {
+        router.push("#description");
+      }
+      return;
+    }
+
+    setUpdate(false);
+    setIsLoadingUpload(true);
 
     const data = new FormData();
     data.append("nama_proyek", formData.projectName);
@@ -360,17 +460,48 @@ const EditProject: React.FC = () => {
       }
     }
 
-    console.log("Isi FormData:");
-    console.log(Array.from(data.entries()));
-
     try {
       const res = await updateProject(data, projects?.id as number);
-      setIsSuccess(!isSuccess);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // setIsSuccess(!isSuccess);
+      if (res.status == 200) {
+        setIsLoadingUpload(false);
+        Swal.fire({
+          title: "Update Project Success!",
+          icon: "success",
+          confirmButtonColor: "#1e293b",
+          buttonsStyling: false,
+          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home/project?id=${res.data.project.id}" >OK</a></div>`,
+        });
+      }
       setUpdate(false);
-      console.log("berhasil upload project", res);
     } catch (error) {
+      setIsLoadingUpload(false);
+      // const errorMessage =
+      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+        iconColor: "##f05252",
+        background: "#white",
+        color: "#000000",
+        confirmButtonColor: "#1e293b",
+        buttonsStyling: false,
+        confirmButtonText: `<div class="text-white hover:bg-white hover:border-primary hover:text-primary border-2 bg-primary p-3 px-5 rounded-lg">OK</div>`,
+      });
       console.log("gagal upload project", error);
     }
+  };
+
+  const ErrorMessage = ({ message }: { message: string }) => {
+    if (!message) return null;
+
+    return (
+      <div className="text-red-500 text-sm font-medium mb-2 px-1">
+        {message}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -384,7 +515,13 @@ const EditProject: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error</div>;
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Project Not Found
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -482,106 +619,121 @@ const EditProject: React.FC = () => {
           </div>
           <div className="mt-16 max-sm:mt-4">
             <div className="flex flex-col gap-4 w-full">
-              <div className=" grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="project-name"
-                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Project Name
-                </label>
-                <input
-                  id="project-name"
-                  type="text"
-                  name="projectName"
-                  value={formData.projectName}
-                  onChange={handleChange}
-                  placeholder="Project Name"
-                  className=" placeholder:text-hint max-sm:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
-                />
-              </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  PAD
-                </label>
-                {/* dropdown jenis pad */}
-                <Menu
-                  as="div"
-                  className="relative insline-block text-left w-full col-span-3"
-                >
-                  <Menu.Button
-                    className={`inline-flex w-full items-center gap-x-1.5 rounded-md bg-white max-sm:py-3 hover:bg-gray-50 px-3 py-2 text-lg max-sm:text-sm text-primary shadow-sm`}
-                    // onMouseEnter={() => setIsHovered(true)}
-                    // onMouseLeave={() => setIsHovered(false)}
+              <div className="flex flex-col">
+                <ErrorMessage message={formErrors.projectName} />
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="project-name"
+                    className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
                   >
-                    {selectedItem
-                      ? selectedItem.name
-                      : projects?.categories[0].nama_kategori}
-                    {""}
-                    <ChevronDownIcon className="h-5 w-5 ms-auto me-0 " />
-                  </Menu.Button>
-
-                  <Menu.Items className="absolute left-0 z-10 mt-2 w-full bg-primary rounded-md shadow-lg overflow-hidden">
-                    {navigationItems.map((item) => (
-                      <Menu.Item key={item.id}>
-                        {({ active }) => (
-                          <button
-                            onClick={() => handleSelect(item)}
-                            className={`${
-                              active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}
-                          >
-                            {item.name}
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Items>
-                </Menu>
-                <input
-                  type="hidden"
-                  name="selectedProject"
-                  value={selectedItem ? selectedItem.name : ""}
-                />
+                    Project Name
+                  </label>
+                  <input
+                    id="project-name"
+                    type="text"
+                    name="projectName"
+                    value={formData.projectName}
+                    onChange={handleChange}
+                    placeholder="Project Name"
+                    className={`placeholder:text-hint max-sm:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 ${
+                      formErrors.projectName ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                </div>
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="year"
-                  className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Year
-                </label>
-                <input
-                  id="year"
-                  type="text"
-                  name="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  placeholder="e.g. 2022"
-                  className=" placeholder:text-hint text-primary bg-inputAddProject  focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
-                />
+              <div className="flex flex-col">
+                <ErrorMessage message={formErrors.projectCategory} />
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="selectedProject"
+                    className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    PAD
+                  </label>
+                  <Menu
+                    as="div"
+                    className="relative inline-block text-left w-full col-span-3"
+                  >
+                    <Menu.Button
+                      className={`inline-flex w-full items-center gap-x-1.5 rounded-md bg-white max-sm:py-3 hover:bg-gray-50 px-3 py-2 text-lg max-sm:text-sm text-primary shadow-sm ${
+                        formErrors.projectCategory
+                          ? "border-2 border-red-500"
+                          : ""
+                      }`}
+                    >
+                      {selectedItem
+                        ? selectedItem.name
+                        : projects?.categories[0].nama_kategori}
+                      <ChevronDownIcon className="h-5 w-5 ms-auto me-0" />
+                    </Menu.Button>
+                    <Menu.Items className="absolute left-0 z-10 mt-2 w-full bg-primary rounded-md shadow-lg overflow-hidden">
+                      {navigationItems.map((item) => (
+                        <Menu.Item key={item.id}>
+                          {({ active }) => (
+                            <button
+                              onClick={() => handleSelect(item)}
+                              className={`${
+                                active
+                                  ? "bg-gray-100 text-primary"
+                                  : "text-white"
+                              } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}
+                            >
+                              {item.name}
+                            </button>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Items>
+                  </Menu>
+                </div>
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="stakeholder"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Stakeholder
-                </label>
-                <input
-                  id="stakeholder"
-                  type="text"
-                  name="stakeholder"
-                  value={stakeholderKeyword != "" ? stakeholderKeyword : ""}
-                  placeholder="Stakeholder"
-                  onChange={handleChange}
-                  className=" placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
-                />
+              <div className="flex flex-col">
+                <ErrorMessage message={formErrors.year} />
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="year"
+                    className="flex justify-center items-center text-xl max-sm:py-3 max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Year
+                  </label>
+                  <input
+                    id="year"
+                    type="text"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    placeholder="e.g. 2022"
+                    className={`placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3 ${
+                      formErrors.year ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                </div>
               </div>
-              <div className="w-full  -mt-3 relative">
-                <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+              <div className="flex flex-col">
+                <ErrorMessage message={formErrors.stakeholder} />
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="stakeholder"
+                    className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Stakeholder
+                  </label>
+                  <input
+                    id="stakeholder"
+                    type="text"
+                    name="stakeholder"
+                    value={stakeholderKeyword != "" ? stakeholderKeyword : ""}
+                    placeholder="Stakeholder"
+                    onChange={handleChange}
+                    className={`placeholder:text-hint text-primary bg-inputAddProject focus:ring-primary text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3 ${
+                      formErrors.stakeholder ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                </div>
+              </div>
+              {/* Search Results untuk Stakeholder */}
+              <div className="w-full -mt-3 relative">
+                <div className="grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
                   <div className="col-span-1"></div>
                   <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
                     {activeStakeholder && stakeholderKeyword != "" ? (
@@ -609,25 +761,30 @@ const EditProject: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="group-name"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Name Group
-                </label>
-                <input
-                  id="group-name"
-                  type="text"
-                  value={formData.team}
-                  name="team"
-                  onChange={handleChange}
-                  placeholder="Team Name"
-                  className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
-                />
+              <div className="flex flex-col">
+                <ErrorMessage message={formErrors.team} />
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="group-name"
+                    className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Name Group
+                  </label>
+                  <input
+                    id="group-name"
+                    type="text"
+                    value={teamKeyword != "" ? teamKeyword : ""}
+                    name="team"
+                    onChange={handleChange}
+                    placeholder="Team Name"
+                    className={`placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3 ${
+                      formErrors.team ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                </div>
               </div>
               <div className="w-full -mt-3 relative">
-                <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
+                <div className="grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
                   <div className="col-span-1"></div>
                   <div className="text-primary bg-inputAddProject text-lg border-none rounded-md w-full col-span-3 focus:ring-0">
                     {activeTeam && teamKeyword != "" ? (
@@ -651,39 +808,48 @@ const EditProject: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="link_proyek"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Project Link
-                </label>
-                <input
-                  id="link_proyek"
-                  type="text"
-                  value={formData.link_proyek}
-                  name="link_proyek"
-                  onChange={handleChange}
-                  placeholder="Project Link"
-                  className=" placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
-                />
+
+              <div className="flex flex-col">
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="link_proyek"
+                    className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Project Link
+                  </label>
+                  <input
+                    id="link_proyek"
+                    type="text"
+                    value={formData.link_proyek}
+                    name="link_proyek"
+                    onChange={handleChange}
+                    placeholder="Project Link (Optional)"
+                    className={`placeholder:text-hint focus:ring-primary text-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3`}
+                  />
+                </div>
               </div>
-              <div className=" grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="description"
-                  className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  rows={10}
-                  value={formData.description}
-                  onChange={handleChange}
-                  name="description"
-                  className=" placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3"
-                  placeholder="Add your project description here"
-                />
+
+              <div className="flex flex-col">
+                <ErrorMessage message={formErrors.description} />
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="description"
+                    className="flex justify-center items-center max-sm:py-3 text-xl max-sm:text-sm text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    rows={10}
+                    value={formData.description}
+                    onChange={handleChange}
+                    name="description"
+                    className={`placeholder:text-hint text-primary focus:ring-primary bg-inputAddProject text-lg max-sm:text-sm border-none rounded-md p-2 w-full col-span-3 ${
+                      formErrors.description ? "border-2 border-red-500" : ""
+                    }`}
+                    placeholder="Add your project description here"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -692,13 +858,13 @@ const EditProject: React.FC = () => {
             <button
               type="button"
               onClick={handleUpdate}
-              className="bg-primary px-10 py-2 hover:bg-red-500 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+              className="bg-primary px-10 py-2 hover:border-white border-2 border-primary text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
             >
               Update
             </button>
             <button
               type="button"
-              className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+              className="bg-white px-10 py-2 text-primary font-medium rounded-md shadow-lg hover:border-primary border-2 border-white"
               onClick={() => router.push(`/home/project?id=${id}`)}
             >
               Cancel
@@ -766,9 +932,9 @@ const EditProject: React.FC = () => {
                     <button
                       type="submit"
                       onClick={submitHandler}
-                      className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                      className="text-primary bg-white hover:bg-gray-100 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                     >
-                      Yes, It&apos;m sure
+                      Yes, I&apos;m sure
                     </button>
                     <button
                       onClick={handleUpdate}
@@ -783,8 +949,44 @@ const EditProject: React.FC = () => {
             </div>
           )}
 
+          <div
+            className={`${
+              isLoadingUpload
+                ? "flex animate-zoom-in"
+                : "hidden animate-zoom-out"
+            } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          >
+            <div className="p-10 md:p-14 text-center bg-primary gap-8 flex flex-col justify-center items-center rounded-lg">
+              <div className="p-4 md:p-5 text-center flex justify-center">
+                <svg
+                  className="mr-3 size-5 w-12 h-12 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="mb-5 font-normal text-white text-xl dark:text-gray-400">
+                Uploading project...
+              </h3>
+            </div>
+          </div>
+
           {/* modal success */}
-          {isSuccess && (
+          {/* {isSuccess && (
             <div
               id="successModal"
               tabIndex={-1}
@@ -812,7 +1014,7 @@ const EditProject: React.FC = () => {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         </form>
       </div>
     </div>

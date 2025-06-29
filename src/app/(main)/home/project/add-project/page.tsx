@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
+// import Swal from "sweetalert2";
+
 import Image from "next/image";
 
 import "aos/dist/aos.css";
@@ -21,17 +23,31 @@ import { searchStakeholder, Stakeholder } from "@/lib/Stakeholder";
 import SearchResult from "@/components/SearchResult";
 import Team from "@/app/(main)/team/page";
 import { searchTeam } from "@/lib/Team";
+import Swal from "sweetalert2";
 
 interface NavigationItem {
   id: number;
   name: string;
 }
 
+interface ValidationErrors {
+  projectName?: string;
+  projectCategory?: string;
+  year?: string;
+  stakeholder?: string;
+  team?: string;
+  description?: string;
+  images?: string;
+}
+
 const AddProject: React.FC = () => {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<NavigationItem | null>(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showFailedModal, setShowFailedModal] = useState(false);
+
+  // const [showSuccessModal, setShowSuccessModal] = useState(false);
+  // const [showFailedModal, setShowFailedModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [activeStakeholder, setActiveStakeholder] = useState(false);
   const [stakeholderKeyword, setStakeholderKeyword] = useState<string>("");
   const [stakeholders, setStakeholders] = useState<Stakeholder[]>();
@@ -44,6 +60,9 @@ const AddProject: React.FC = () => {
 
   // Id store
   const [id, setId] = useState<string>("");
+
+  // Validation errors state
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   const [formData, setFormData] = useState({
     projectName: "",
@@ -74,6 +93,48 @@ const AddProject: React.FC = () => {
   const handleSelect = (item: NavigationItem) => {
     setFormData({ ...formData, projectCategory: item.id });
     setSelectedItem(item);
+    // Clear error when field is filled
+    if (errors.projectCategory) {
+      setErrors({ ...errors, projectCategory: undefined });
+    }
+  };
+
+  // Validation function
+  const validateForm = (): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    if (!formData.projectName.trim()) {
+      newErrors.projectName = "*Kolom wajib di isi";
+    }
+
+    if (!formData.projectCategory || formData.projectCategory === 0) {
+      newErrors.projectCategory = "*Kolom wajib di isi";
+    }
+
+    if (!formData.year || formData.year === 0) {
+      newErrors.year = "*Kolom wajib di isi";
+    }
+
+    if (!formData.stakeholder || formData.stakeholder === 0) {
+      newErrors.stakeholder = "*Kolom wajib di isi";
+    }
+
+    if (!formData.team || formData.team === 0) {
+      newErrors.team = "*Kolom wajib di isi";
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = "*Kolom wajib di isi";
+    }
+
+    // Check if at least one image is uploaded
+    const hasImage = selectedFiles.some((file) => file !== null);
+    if (!hasImage) {
+      newErrors.images = "*Minimal satu gambar wajib di upload";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   useEffect(() => {
@@ -84,24 +145,23 @@ const AddProject: React.FC = () => {
       }
     };
     initializeFlowbite();
-    if (showFailedModal) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "15px";
-    }
-    if (showSuccessModal) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "15px";
-    } else {
-      document.body.style.overflow = "unset";
-      document.body.style.paddingRight = "0px";
-    }
+    // if (showFailedModal) {
+    //   document.body.style.overflow = "hidden";
+    //   document.body.style.paddingRight = "15px";
+    // }
+    // if (showSuccessModal) {
+    //   document.body.style.overflow = "hidden";
+    //   document.body.style.paddingRight = "15px";
+    // } else {
+    //   document.body.style.overflow = "unset";
+    //   document.body.style.paddingRight = "0px";
+    // }
 
     return () => {
       document.body.style.overflow = "unset";
       document.body.style.paddingRight = "0px";
-      console.log("dipanggil terus");
     };
-  }, [showFailedModal, showSuccessModal]);
+  }, []);
 
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -125,6 +185,11 @@ const AddProject: React.FC = () => {
 
         setSelectedFiles(newSelectedFiles);
         setFileUrls(newFileUrls);
+
+        // Clear image error when file is uploaded
+        if (errors.images) {
+          setErrors({ ...errors, images: undefined });
+        }
       }
     };
 
@@ -201,6 +266,11 @@ const AddProject: React.FC = () => {
         ...formData,
         [name]: value,
       });
+
+      // Clear error when field is being filled
+      if (errors[name as keyof ValidationErrors]) {
+        setErrors({ ...errors, [name]: undefined });
+      }
     }
   };
 
@@ -213,6 +283,10 @@ const AddProject: React.FC = () => {
       });
       setStakeholderKeyword(fullName);
       setStakeholders([]);
+      // Clear error when stakeholder is selected
+      if (errors.stakeholder) {
+        setErrors({ ...errors, stakeholder: undefined });
+      }
     } else if (name == "team") {
       setActiveTeam(false);
       setFormData({
@@ -221,14 +295,39 @@ const AddProject: React.FC = () => {
       });
       setTeamKeyword(fullName);
       setTeams([]);
+      // Clear error when team is selected
+      if (errors.team) {
+        setErrors({ ...errors, team: undefined });
+      }
     }
   };
-
-  // Aos.init();
 
   // Menangani submit form
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      if (errors.images != "") {
+        router.push("#images");
+      } else if (errors.projectName != "") {
+        router.push("#project-name");
+      } else if (errors.stakeholder != "") {
+        router.push("#stakeholder");
+      } else if (errors.team != "") {
+        router.push("#team");
+      } else if (errors.year != "") {
+        router.push("#year");
+      } else if (errors.description != "") {
+        router.push("#description");
+      } else if (errors.projectCategory != "") {
+        router.push("#project-category");
+      }
+      return;
+    }
+
+    setIsLoading(true);
+
     const data = new FormData();
     data.append("nama_proyek", formData.projectName);
     data.append("stakeholder_id", formData.stakeholder.toString());
@@ -249,27 +348,51 @@ const AddProject: React.FC = () => {
 
     try {
       const res = await submitProject(data);
-      setShowSuccessModal(true);
-      setId(res.data.project.id.toString());
+      if (res.status === 201) {
+        // setShowSuccessModal(true);
+        setIsLoading(false);
+        setId(res.data.project.id.toString());
+        Swal.fire({
+          title: "Upload Project Success!",
+          icon: "success",
+          confirmButtonColor: "#1e293b",
+          buttonsStyling: false,
+          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home/project?id=${res.data.project.id}" >OK</a></div>`,
+        });
+      }
     } catch (error) {
-      setShowFailedModal(true);
+      // setShowFailedModal(true);
+      setIsLoading(false);
+      // const errorMessage =
+      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+        iconColor: "##f05252",
+        background: "#white",
+        color: "#000000",
+        confirmButtonColor: "#1e293b",
+        buttonsStyling: false,
+        confirmButtonText: `<div class="text-white hover:bg-white hover:border-primary hover:text-primary border-2 bg-primary p-3 px-5 rounded-lg">OK</div>`,
+      });
       console.log("gagal upload project", error);
     }
   };
 
-  const closeSuccessModal = () => {
-    setShowSuccessModal(false);
-  };
+  // const closeSuccessModal = () => {
+  //   setShowSuccessModal(false);
+  // };
 
-  const closeFailedModal = () => {
-    setShowFailedModal(false);
-  };
+  // const closeFailedModal = () => {
+  //   setShowFailedModal(false);
+  // };
 
-  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
-    if (e.target === e.currentTarget) {
-      closeModal();
-    }
-  };
+  // const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
+  //   if (e.target === e.currentTarget) {
+  //     closeModal();
+  //   }
+  // };
 
   return (
     <div>
@@ -279,7 +402,13 @@ const AddProject: React.FC = () => {
           method="post"
           className="flex flex-col gap-4 h-full px-10 max-sm:px-2"
         >
+          {/* Image Upload Section */}
           <div className="flex flex-col gap-4 h-[48rem] max-sm:h-80">
+            {errors.images && (
+              <div className="text-red-500 text-sm font-medium mb-2">
+                {errors.images}
+              </div>
+            )}
             <div
               data-aos="zoom-in"
               data-aos-duration="800"
@@ -291,7 +420,6 @@ const AddProject: React.FC = () => {
               >
                 {fileUrls[0] ? (
                   <div className="absolute flex w-full h-full">
-                    sss
                     <Image
                       loader={myImageLoader}
                       src={fileUrls[0]}
@@ -351,101 +479,135 @@ const AddProject: React.FC = () => {
               ))}
             </div>
           </div>
+
           <div className="mt-16 max-sm:mt-8">
             <div className="flex flex-col gap-4 max-sm:gap-2 w-full">
-              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="project-name"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Project Name
-                </label>
-                <input
-                  id="project-name"
-                  type="text"
-                  name="projectName"
-                  onChange={handleChange}
-                  placeholder="Project Name"
-                  className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
-                />
-              </div>
-              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="selectedProject"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  PAD
-                </label>
-                {/* dropdown jenis pad */}
-                <Menu
-                  as="div"
-                  className="relative insline-block text-left w-full col-span-3"
-                >
-                  <Menu.Button
-                    className={`inline-flex w-full h-full items-center gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 max-sm:py-3 text-lg max-sm:text-sm ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm`}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
+              {/* Project Name */}
+              <div className="flex flex-col">
+                {errors.projectName && (
+                  <div className="text-red-500 text-sm font-medium mb-1">
+                    {errors.projectName}
+                  </div>
+                )}
+                <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="project-name"
+                    className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
                   >
-                    {selectedItem ? selectedItem.name : "Select Project"}{" "}
-                    <ChevronDownIcon className="h-5 w-5 ms-auto me-0" />
-                  </Menu.Button>
+                    Project Name
+                  </label>
+                  <input
+                    id="project-name"
+                    type="text"
+                    name="projectName"
+                    onChange={handleChange}
+                    placeholder="Project Name"
+                    className={`placeholder:text-hint max-sm:placeholder:text-sm text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 ${errors.projectName ? "border-red-500 border-2" : ""}`}
+                  />
+                </div>
+              </div>
 
-                  <Menu.Items className="absolute left-0 z-10 mt-2 w-full bg-primary rounded-md shadow-lg overflow-hidden">
-                    {navigationItems.map((item) => (
-                      <Menu.Item key={item.id}>
-                        {({ active }) => (
-                          <button
-                            onClick={() => handleSelect(item)}
-                            className={`${
-                              active ? "bg-gray-100 text-primary" : "text-white"
-                            } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}
-                          >
-                            {item.name}
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Items>
-                </Menu>
-                <input
-                  type="hidden"
-                  name="selectedProject"
-                  value={selectedItem ? selectedItem.name : ""}
-                />
+              {/* PAD Dropdown */}
+              <div className="flex flex-col">
+                {errors.projectCategory && (
+                  <div className="text-red-500 text-sm font-medium mb-1">
+                    {errors.projectCategory}
+                  </div>
+                )}
+                <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="selectedProject"
+                    className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    PAD
+                  </label>
+                  {/* dropdown jenis pad */}
+                  <Menu
+                    as="div"
+                    className="relative insline-block text-left w-full col-span-3"
+                  >
+                    <Menu.Button
+                      className={`inline-flex w-full h-full items-center gap-x-1.5 rounded-md ${selectedItem ? "bg-white" : "bg-primary"}  hover:bg-gray-50 px-3 py-2 max-sm:py-3 text-lg max-sm:text-sm ${isHovered ? "text-primary" : `${selectedItem ? "text-primary" : "text-white"}`} shadow-sm ${errors.projectCategory ? "border-red-500 border-2" : ""}`}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      {selectedItem ? selectedItem.name : "Select Project"}{" "}
+                      <ChevronDownIcon className="h-5 w-5 ms-auto me-0" />
+                    </Menu.Button>
+
+                    <Menu.Items className="absolute left-0 z-10 mt-2 w-full bg-primary rounded-md shadow-lg overflow-hidden">
+                      {navigationItems.map((item) => (
+                        <Menu.Item key={item.id}>
+                          {({ active }) => (
+                            <button
+                              onClick={() => handleSelect(item)}
+                              className={`${
+                                active
+                                  ? "bg-gray-100 text-primary"
+                                  : "text-white"
+                              } block w-full text-left px-4 py-2 text-lg max-sm:text-sm`}
+                            >
+                              {item.name}
+                            </button>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Items>
+                  </Menu>
+                </div>
               </div>
-              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="year"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Year
-                </label>
-                <input
-                  id="year"
-                  type="text"
-                  onChange={handleChange}
-                  name="year"
-                  placeholder="e.g. 2022"
-                  className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject  focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
-                />
+
+              {/* Year */}
+              <div className="flex flex-col">
+                {errors.year && (
+                  <div className="text-red-500 text-sm font-medium mb-1">
+                    {errors.year}
+                  </div>
+                )}
+                <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="year"
+                    className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Year
+                  </label>
+                  <input
+                    id="year"
+                    type="number"
+                    onChange={handleChange}
+                    name="year"
+                    placeholder="e.g. 2022"
+                    className={`placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject  focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3 ${errors.year ? "border-red-500 border-2" : ""}`}
+                  />
+                </div>
               </div>
-              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="stakeholder"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Stakeholder
-                </label>
-                <input
-                  id="stakeholder"
-                  type="text"
-                  name="stakeholder"
-                  value={stakeholderKeyword}
-                  onChange={handleChange}
-                  placeholder="Stakeholder"
-                  className=" placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3"
-                />
+
+              {/* Stakeholder */}
+              <div className="flex flex-col">
+                {errors.stakeholder && (
+                  <div className="text-red-500 text-sm font-medium mb-1">
+                    {errors.stakeholder}
+                  </div>
+                )}
+                <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="stakeholder"
+                    className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Stakeholder
+                  </label>
+                  <input
+                    id="stakeholder"
+                    type="text"
+                    name="stakeholder"
+                    value={stakeholderKeyword}
+                    onChange={handleChange}
+                    placeholder="Stakeholder"
+                    className={`placeholder:text-hint max-sm:placeholder:text-base text-primary bg-inputAddProject focus:ring-primary text-lg border-none rounded-md p-2 w-full col-span-3 ${errors.stakeholder ? "border-red-500 border-2" : ""}`}
+                  />
+                </div>
               </div>
+
               <div className="w-full -mt-3 relative">
                 <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
                   <div className="col-span-1"></div>
@@ -475,23 +637,33 @@ const AddProject: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="group-name"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Group Name
-                </label>
-                <input
-                  id="group-name"
-                  type="text"
-                  placeholder="Team Name"
-                  value={teamKeyword}
-                  onChange={handleChange}
-                  name="team"
-                  className=" placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
-                />
+
+              {/* Team */}
+              <div className="flex flex-col">
+                {errors.team && (
+                  <div className="text-red-500 text-sm font-medium mb-1">
+                    {errors.team}
+                  </div>
+                )}
+                <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="group-name"
+                    className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Group Name
+                  </label>
+                  <input
+                    id="group-name"
+                    type="text"
+                    placeholder="Team Name"
+                    value={teamKeyword}
+                    onChange={handleChange}
+                    name="team"
+                    className={`placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 ${errors.team ? "border-red-500 border-2" : ""}`}
+                  />
+                </div>
               </div>
+
               <div className="w-full -mt-3 relative">
                 <div className=" grid grid-cols-4 gap-4 bg-red-400 absolute top-0 left-0 w-full h-full">
                   <div className="col-span-1"></div>
@@ -517,37 +689,50 @@ const AddProject: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="project-link"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Project Link
-                </label>
-                <input
-                  id="project-link"
-                  type="text"
-                  placeholder="Project Link"
-                  onChange={handleChange}
-                  name="link_proyek"
-                  className=" placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
-                />
+
+              {/* Project Link */}
+              <div className="flex flex-col">
+                <div className="grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="project-link"
+                    className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Project Link
+                  </label>
+                  <input
+                    id="project-link"
+                    type="text"
+                    placeholder="Project Link (Optional)"
+                    onChange={handleChange}
+                    name="link_proyek"
+                    className={`placeholder:text-hint max-sm:placeholder:text-base focus:ring-primary text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3`}
+                  />
+                </div>
               </div>
-              <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
-                <label
-                  htmlFor="description"
-                  className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  rows={8}
-                  onChange={handleChange}
-                  name="description"
-                  className=" placeholder:text-hint max-sm:placeholder:text-base text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3"
-                  placeholder="Add your project description here"
-                />
+
+              {/* Description */}
+              <div className="flex flex-col">
+                {errors.description && (
+                  <div className="text-red-500 text-sm font-medium mb-1">
+                    {errors.description}
+                  </div>
+                )}
+                <div className=" grid grid-cols-4 gap-4 max-sm:gap-2 w-full">
+                  <label
+                    htmlFor="description"
+                    className="flex justify-center items-center text-xl max-sm:text-base text-primary font-medium w-full h-fit py-2 bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    rows={8}
+                    onChange={handleChange}
+                    name="description"
+                    className={`placeholder:text-hint max-sm:placeholder:text-base text-primary focus:ring-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 ${errors.description ? "border-red-500 border-2" : ""}`}
+                    placeholder="Add your project description here"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -557,13 +742,13 @@ const AddProject: React.FC = () => {
               type="button"
               data-modal-toggle="defaultModal"
               data-modal-target="defaultModal"
-              className="bg-primary px-10 max-sm:px-5 py-2 text-white font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+              className="bg-primary px-10 max-sm:px-5 py-2 text-white font-medium rounded-md shadow-lg hover:bg-white hover:text-primary border border-primary hover:border-primary"
             >
               Submit
             </button>
             <button
               type="button"
-              className="bg-white px-10 max-sm:px-5 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-hoverBtnAddProject"
+              className="bg-white px-10 max-sm:px-5 py-2 text-primary font-medium rounded-md shadow-lg hover:bg-primary hover:text-white border border-primary hover:border-white"
               onClick={() => router.push("/home")}
             >
               Cancel
@@ -632,14 +817,14 @@ const AddProject: React.FC = () => {
                     data-modal-hide="defaultModal"
                     type="submit"
                     onClick={submitHandler}
-                    className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                    className="text-primary bg-white hover:bg-gray-100 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
                     Yes, Im sure
                   </button>
                   <button
                     data-modal-hide="defaultModal"
                     type="button"
-                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
                     No, cancel
                   </button>
@@ -648,8 +833,42 @@ const AddProject: React.FC = () => {
             </div>
           </div>
 
-          {/* modal success */}
           <div
+            className={`${
+              isLoading ? "flex animate-zoom-in" : "hidden animate-zoom-out"
+            } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+          >
+            <div className="p-10 md:p-14 text-center bg-primary gap-8 flex flex-col justify-center items-center rounded-lg">
+              <div className="p-4 md:p-5 text-center flex justify-center">
+                <svg
+                  className="mr-3 size-5 w-12 h-12 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="mb-5 font-normal text-white text-xl dark:text-gray-400">
+                Uploading project...
+              </h3>
+            </div>
+          </div>
+
+          {/* modal success */}
+          {/* <div
             className={`${
               showSuccessModal ? "flex" : "hidden"
             } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
@@ -678,9 +897,9 @@ const AddProject: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          {/* modal failed */}
+          {/* modal failed
           <div
             id="failedModal"
             tabIndex={-1}
@@ -711,7 +930,7 @@ const AddProject: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

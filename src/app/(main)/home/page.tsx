@@ -204,7 +204,7 @@ export default function Dashboard() {
             <Carousel />
           </div>
 
-          <div className="flex flex-col w-full h-fit px-8 max-sm:px-4 mt-10 bg-red-500">
+          <div className="flex flex-col w-full h-fit px-8 max-sm:px-4 mt-10">
             <div className="flex h-20 w-full gap-6 max-sm:h-10 ps-12 max-sm:flex-col max-sm:ps-0 max-sm:relative">
               {/* dropdown filter pad */}
               <div
@@ -228,8 +228,8 @@ export default function Dashboard() {
                       className="relative inline-flex w-full text-left cursor-pointer"
                     >
                       <div
-                        data-aos="fade-up"
-                        data-aos-duration="700"
+                        // data-aos="fade-up"
+                        // data-aos-duration="700"
                         className="flex w-full flex-col"
                       >
                         <div
@@ -304,8 +304,8 @@ export default function Dashboard() {
                       className="relative inline-flex w-full text-left cursor-pointer"
                     >
                       <div
-                        data-aos="fade-up"
-                        data-aos-duration="800"
+                        // data-aos="fade-up"
+                        // data-aos-duration="800"
                         className="flex w-full"
                       >
                         <div
@@ -549,7 +549,7 @@ export default function Dashboard() {
                   ref={menuRefPad}
                   className="relative inline-block w-44 text-left cursor-pointer"
                 >
-                  <div data-aos="fade-up" data-aos-duration="700">
+                  <div>
                     <div
                       className="inline-flex w-full hover:bg-white hover:text-primary h-10 items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-base text-white tracking-wide font-bold shadow-sm  transition ease-in-out duration-300"
                       onClick={toggleFilterPad}

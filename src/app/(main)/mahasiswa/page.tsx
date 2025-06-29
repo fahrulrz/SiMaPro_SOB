@@ -58,6 +58,16 @@ const Mahasiswa = () => {
     );
   }
 
+  if (mahasiswa.length === 0) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Data Mahasiswa Kosong
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="h-full w-screen overflow-hidden">
@@ -66,7 +76,8 @@ const Mahasiswa = () => {
             <div
               key={mahasiswa.id}
               onClick={() => clickHandler(mahasiswa.id)}
-              className={`bg-[#FBF9F1] h-[36rem] max-sm:h-80 flex flex-col justify-center items-center cursor-pointer hover:scale-110 hover:shadow-lg z-10 hover:z-30 transition duration-300 ease-in-out`}>
+              className={`bg-[#FBF9F1] h-[36rem] max-sm:h-80 flex flex-col justify-center items-center cursor-pointer hover:scale-110 hover:shadow-lg z-10 hover:z-30 transition duration-300 ease-in-out`}
+            >
               {mahasiswa.foto ? (
                 <div className="flex flex-col w-full h-full justify-center items-center mb-10">
                   <div className="flex w-full h-full p-8">

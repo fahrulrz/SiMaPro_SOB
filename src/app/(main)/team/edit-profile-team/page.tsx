@@ -8,10 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const EditProfileTeam = () => {
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showFailedModal, setShowFailedModal] = useState(false);
+  // const [showSuccessModal, setShowSuccessModal] = useState(false);
+  // const [showFailedModal, setShowFailedModal] = useState(false);
 
   const [pmKeyword, setPmKeyword] = useState("");
   const [feKeyword, setFeKeyword] = useState("");
@@ -25,6 +26,8 @@ const EditProfileTeam = () => {
 
   const [mahasiswas, setMahasiswas] = useState<Mahasiswa[]>([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState<TeamRequest>({
     nama_tim: "",
     member_pm: 0,
@@ -32,6 +35,15 @@ const EditProfileTeam = () => {
     member_be: 0,
     member_ui_ux: 0,
     _method: "put",
+  });
+
+  // State untuk tracking error validasi
+  const [validationErrors, setValidationErrors] = useState({
+    nama_tim: false,
+    member_pm: false,
+    member_fe: false,
+    member_be: false,
+    member_ui_ux: false,
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -79,30 +91,55 @@ const EditProfileTeam = () => {
 
     initializeFlowbite();
 
-    if (showFailedModal) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "15px";
-    }
-    if (showSuccessModal) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "15px";
-    } else {
-      document.body.style.overflow = "unset";
-      document.body.style.paddingRight = "0px";
-    }
+    // if (showFailedModal) {
+    //   document.body.style.overflow = "hidden";
+    //   document.body.style.paddingRight = "15px";
+    // }
+    // if (showSuccessModal) {
+    //   document.body.style.overflow = "hidden";
+    //   document.body.style.paddingRight = "15px";
+    // } else {
+    //   document.body.style.overflow = "unset";
+    //   document.body.style.paddingRight = "0px";
+    // }
 
     return () => {
       document.body.style.overflow = "unset";
       document.body.style.paddingRight = "0px";
       console.log("dipanggil terus");
     };
-  }, [showFailedModal, showSuccessModal]);
+  }, []);
+
+  // Fungsi untuk validasi form
+  const validateForm = () => {
+    const errors = {
+      nama_tim: !formData.nama_tim.trim(),
+      member_pm: formData.member_pm === 0 || !pmKeyword.trim(),
+      member_fe: formData.member_fe === 0 || !feKeyword.trim(),
+      member_be: formData.member_be === 0 || !beKeyword.trim(),
+      member_ui_ux: formData.member_ui_ux === 0 || !uiuxKeyword.trim(),
+    };
+
+    setValidationErrors(errors);
+
+    // Return true jika tidak ada error
+    return !Object.values(errors).some((error) => error);
+  };
+
+  // Fungsi untuk clear error ketika user mulai mengetik
+  const clearValidationError = (field: string) => {
+    setValidationErrors((prev) => ({
+      ...prev,
+      [field]: false,
+    }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (name == "pm") {
       setPmKeyword(value);
+      clearValidationError("member_pm"); // Clear error ketika user mengetik
       searchMahasiswa(value)
         .then((data) => {
           setMahasiswas(data);
@@ -113,6 +150,7 @@ const EditProfileTeam = () => {
       setActivePM(true);
     } else if (name == "fe") {
       setFeKeyword(value);
+      clearValidationError("member_fe"); // Clear error ketika user mengetik
       searchMahasiswa(value)
         .then((data) => {
           setMahasiswas(data);
@@ -123,6 +161,7 @@ const EditProfileTeam = () => {
       setActiveFE(true);
     } else if (name == "be") {
       setBeKeyword(value);
+      clearValidationError("member_be"); // Clear error ketika user mengetik
       searchMahasiswa(value)
         .then((data) => {
           setMahasiswas(data);
@@ -133,6 +172,7 @@ const EditProfileTeam = () => {
       setActiveBE(true);
     } else if (name == "uiux") {
       setUiuxKeyword(value);
+      clearValidationError("member_ui_ux"); // Clear error ketika user mengetik
       searchMahasiswa(value)
         .then((data) => {
           setMahasiswas(data);
@@ -146,6 +186,7 @@ const EditProfileTeam = () => {
         ...formData,
         nama_tim: value,
       });
+      clearValidationError("nama_tim"); // Clear error ketika user mengetik
     }
   };
 
@@ -158,6 +199,7 @@ const EditProfileTeam = () => {
       });
       setPmKeyword(fullName);
       setMahasiswas([]);
+      clearValidationError("member_pm"); // Clear error ketika user memilih
     } else if (name == "fe") {
       setActiveFE(false);
       setFormData({
@@ -166,6 +208,7 @@ const EditProfileTeam = () => {
       });
       setFeKeyword(fullName);
       setMahasiswas([]);
+      clearValidationError("member_fe"); // Clear error ketika user memilih
     } else if (name == "be") {
       setActiveBE(false);
       setFormData({
@@ -174,6 +217,7 @@ const EditProfileTeam = () => {
       });
       setBeKeyword(fullName);
       setMahasiswas([]);
+      clearValidationError("member_be"); // Clear error ketika user memilih
     } else if (name == "uiux") {
       setActiveUIUX(false);
       setFormData({
@@ -182,37 +226,70 @@ const EditProfileTeam = () => {
       });
       setUiuxKeyword(fullName);
       setMahasiswas([]);
+      clearValidationError("member_ui_ux"); // Clear error ketika user memilih
     }
   };
 
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (!validateForm()) {
+      if (validationErrors.nama_tim) {
+        router.push("#teamName");
+      } else if (validationErrors.member_pm) {
+        router.push("#pm");
+      } else if (validationErrors.member_fe) {
+        router.push("#fe");
+      } else if (validationErrors.member_be) {
+        router.push("#be");
+      } else if (validationErrors.member_ui_ux) {
+        router.push("#uiux");
+      }
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
       const res = await updateTeam(formData, parseInt(teamId));
+      if (res.status === 200) {
+        setIsLoading(false);
+        Swal.fire({
+          title: "Update Team Success!",
+          icon: "success",
+          confirmButtonColor: "#1e293b",
+          buttonsStyling: false,
+          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" >OK</a></div>`,
+        });
+      }
       console.log("Berhasil upload:", res);
-      setShowSuccessModal(true);
     } catch (error) {
-      setShowFailedModal(true);
+      // const errorMessage =
+      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+        iconColor: "##f05252",
+        background: "#white",
+        color: "#000000",
+        confirmButtonColor: "#1e293b",
+        buttonsStyling: false,
+        confirmButtonText: `<div class="text-white hover:bg-white hover:border-primary hover:text-primary border-2 bg-primary p-3 px-5 rounded-lg">OK</div>`,
+      });
       console.error("Gagal upload:", error);
     }
   };
 
-  console.log(error);
-
-  const closeSuccessModal = () => {
-    setShowSuccessModal(false);
-  };
-
-  const closeFailedModal = () => {
-    setShowFailedModal(false);
-  };
-
-  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
-    if (e.target === e.currentTarget) {
-      closeModal();
-    }
-  };
+  if (error) {
+    return (
+      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen ">
+        <div className="text-4xl text-primary font-bold animate-pulse">
+          Team Not Found
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -225,29 +302,47 @@ const EditProfileTeam = () => {
               </div>
             </div>
             <div className="w-full mt-8 flex flex-col gap-4 max-sm:gap-0 h-full">
-              <div className=" grid grid-cols-4 gap-4 w-full">
-                <label
-                  htmlFor="teamName"
-                  className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
-                >
-                  Nama Team
-                </label>
-                <input
-                  id="teamName"
-                  name="teamName"
-                  type="text"
-                  value={formData.nama_tim}
-                  onChange={handleChange}
-                  placeholder="Team Name"
-                  className=" placeholder:text-hint py-3 max-sm:py-2 max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0"
-                />
+              {/* Team Name Section */}
+              <div className="flex flex-col">
+                {validationErrors.nama_tim && (
+                  <div className="text-red-500 text-sm mb-1 ml-1">
+                    *Kolom wajib diisi
+                  </div>
+                )}
+                <div className=" grid grid-cols-4 gap-4 w-full">
+                  <label
+                    htmlFor="teamName"
+                    className="flex justify-center items-center text-xl max-sm:text-sm text-primary font-medium w-full bg-inputAddProject col-span-1 rounded-md"
+                  >
+                    Nama Team
+                  </label>
+                  <input
+                    id="teamName"
+                    name="teamName"
+                    type="text"
+                    value={formData.nama_tim}
+                    onChange={handleChange}
+                    placeholder="Team Name"
+                    className={`placeholder:text-hint py-3 max-sm:py-2 max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none rounded-md p-2 w-full col-span-3 focus:ring-0 ${
+                      validationErrors.nama_tim ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                </div>
               </div>
-              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+
+              {/* Project Manager Section */}
+              <div className="mt-6 flex flex-col gap-2 max-sm:gap-1">
                 <div className="grid grid-cols-4 gap-4 w-full">
                   <p className="flex justify-center text-xl max-sm:text-base text-primary max-sm:col-span-3 max-sm:justify-normal">
                     Project Manager
                   </p>
+                  {validationErrors.member_pm && (
+                    <div className="text-red-500 text-sm mb-1 ml-1">
+                      *Kolom wajib diisi
+                    </div>
+                  )}
                 </div>
+
                 <div className="grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="projectManager"
@@ -262,7 +357,11 @@ const EditProfileTeam = () => {
                     value={pmKeyword}
                     type="text"
                     placeholder="Nama Mahasiswa"
-                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                    className={`placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 ${
+                      validationErrors.member_pm
+                        ? "border-2 border-red-500"
+                        : ""
+                    }`}
                   />
                 </div>
                 <div className="w-full  -mt-3 relative">
@@ -295,12 +394,20 @@ const EditProfileTeam = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+
+              {/* Front End Section */}
+              <div className="mt-6 flex flex-col gap-2 max-sm:gap-1">
                 <div className="grid grid-cols-4 gap-4 w-full">
                   <p className="flex justify-center text-xl max-sm:text-base text-primary max-sm:col-span-3 max-sm:justify-start">
                     Front End
                   </p>
+                  {validationErrors.member_fe && (
+                    <div className="text-red-500 text-sm mb-1 ml-1">
+                      *Kolom wajib diisi
+                    </div>
+                  )}
                 </div>
+
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="frontEnd"
@@ -315,7 +422,11 @@ const EditProfileTeam = () => {
                     value={feKeyword}
                     type="text"
                     placeholder="Nama Mahasiswa"
-                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                    className={`placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 ${
+                      validationErrors.member_fe
+                        ? "border-2 border-red-500"
+                        : ""
+                    }`}
                   />
                 </div>
                 <div className="w-full  -mt-3 relative">
@@ -348,12 +459,20 @@ const EditProfileTeam = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+
+              {/* Back End Section */}
+              <div className="mt-6 flex flex-col gap-2 max-sm:gap-1">
                 <div className="grid grid-cols-4 gap-4 w-full">
                   <p className="flex justify-center text-xl max-sm:text-base max-sm:col-span-3 max-sm:justify-start text-primary">
                     Back End
                   </p>
+                  {validationErrors.member_be && (
+                    <div className="text-red-500 text-sm mb-1 ml-1">
+                      *Kolom wajib diisi
+                    </div>
+                  )}
                 </div>
+
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="backEnd"
@@ -368,7 +487,11 @@ const EditProfileTeam = () => {
                     onChange={handleChange}
                     value={beKeyword}
                     placeholder="Nama Mahasiswa"
-                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                    className={`placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 ${
+                      validationErrors.member_be
+                        ? "border-2 border-red-500"
+                        : ""
+                    }`}
                   />
                 </div>
                 <div className="w-full  -mt-3 relative">
@@ -401,12 +524,20 @@ const EditProfileTeam = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 flex flex-col gap-4 max-sm:gap-1">
+
+              {/* UI/UX Section */}
+              <div className="mt-6 flex flex-col gap-2 max-sm:gap-1">
                 <div className="grid grid-cols-4 gap-4 w-full">
                   <p className="flex justify-center text-xl max-sm:text-base max-sm:col-span-3 max-sm:justify-start text-primary">
                     UI/UX
                   </p>
+                  {validationErrors.member_ui_ux && (
+                    <div className="text-red-500 text-sm mb-1 ml-1">
+                      *Kolom wajib diisi
+                    </div>
+                  )}
                 </div>
+
                 <div className=" grid grid-cols-4 gap-4 w-full">
                   <label
                     htmlFor="uiux"
@@ -421,7 +552,11 @@ const EditProfileTeam = () => {
                     onChange={handleChange}
                     value={uiuxKeyword}
                     placeholder="Nama Mahasiswa"
-                    className=" placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3"
+                    className={`placeholder:text-hint max-sm:placeholder:text-sm text-primary bg-inputAddProject text-lg border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full col-span-3 ${
+                      validationErrors.member_ui_ux
+                        ? "border-2 border-red-500"
+                        : ""
+                    }`}
                   />
                 </div>
                 <div className="w-full  -mt-3 relative">
@@ -537,7 +672,7 @@ const EditProfileTeam = () => {
                 <button
                   data-modal-hide="confirmModal"
                   type="submit"
-                  className="text-primary bg-white hover:bg-slate-800 focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                  className="text-primary bg-white hover:border-2 hover:border-white focus:ring-2 focus:outline-none focus:ring-white/30 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                 >
                   Yes, Im sure
                 </button>
@@ -553,68 +688,37 @@ const EditProfileTeam = () => {
           </div>
         </div>
 
-        {/* modal success */}
         <div
           className={`${
-            showSuccessModal ? "flex" : "hidden"
+            isLoading ? "flex animate-zoom-in" : "hidden animate-zoom-out"
           } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
-          onClick={(e) => handleBackdropClick(e, closeSuccessModal)}
         >
-          <div className="relative p-4 w-full max-w-md max-h-full">
-            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
-              <div className="p-4 md:p-5 text-center">
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  size="6x"
-                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
-                />
-                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
-                  Team successfully added!
-                </h3>
-
-                <button
-                  data-modal-hide="successModal"
-                  type="button"
-                  onClick={() => router.push("/home")}
-                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                  Close
-                </button>
-              </div>
+          <div className="p-10 md:p-14 text-center bg-primary gap-8 flex flex-col justify-center items-center rounded-lg">
+            <div className="p-4 md:p-5 text-center flex justify-center">
+              <svg
+                className="mr-3 size-5 w-12 h-12 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
             </div>
-          </div>
-        </div>
-
-        {/* modal failed */}
-        <div
-          id="failedModal"
-          tabIndex={-1}
-          className={`${
-            showFailedModal ? "flex" : "hidden"
-          } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
-          onClick={(e) => handleBackdropClick(e, closeFailedModal)}
-        >
-          <div className="relative p-4 w-full max-w-md max-h-full">
-            <div className="relative bg-primary rounded-lg shadow dark:bg-gray-700">
-              <div className="p-4 md:p-5 text-center">
-                <FontAwesomeIcon
-                  icon={faXmark}
-                  size="6x"
-                  className="mx-auto mb-4 text-white w-12 h-12 dark:text-gray-200"
-                />
-                <h3 className="mb-5 text-lg font-normal text-white dark:text-gray-400">
-                  Team failed to upload!
-                </h3>
-
-                <button
-                  onClick={closeFailedModal}
-                  type="button"
-                  className="py-2.5 px-5 ms-3 text-sm font-medium text-primary focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
+            <h3 className="mb-5 font-normal text-white text-xl dark:text-gray-400">
+              Uploading team...
+            </h3>
           </div>
         </div>
       </form>

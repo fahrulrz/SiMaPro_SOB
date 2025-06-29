@@ -74,7 +74,7 @@ const Stakeholder = () => {
             <div
               key={stakeholder.id}
               onClick={() => clickHandler(stakeholder.id)}
-              className="bg-[#FBF9F1] cursor-pointer h-[36rem] max-sm:h-80 flex flex-col justify-center items-center hover:scale-110 duration-300 ease-in-out transition">
+              className="bg-[#FBF9F1] cursor-pointer h-[36rem] p-2 max-sm:h-80 flex flex-col justify-center items-center hover:scale-110 duration-300 ease-in-out transition">
               {stakeholder.foto ? (
                 <div className="flex flex-col w-full h-full justify-center items-center mb-10">
                   <div className="flex w-full h-full p-8">
@@ -91,7 +91,7 @@ const Stakeholder = () => {
                       />
                     </div>
                   </div>
-                  <h1 className="text-primary font-bold text-xl mb-10 max-sm:mb-0">
+                  <h1 className="text-primary flex text-center font-bold text-xl mb-10 max-sm:mb-0">
                     {stakeholder.nama}
                   </h1>
                 </div>

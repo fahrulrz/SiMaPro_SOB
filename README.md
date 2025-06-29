@@ -1,6 +1,8 @@
+<div align="center">
+
 # SIMAPRO_SOB
 
-*Empowering Innovation, Accelerating Impact Every Step Forward*
+_Empowering Innovation, Accelerating Impact Every Step Forward_
 
 ![last commit](https://img.shields.io/github/last-commit/fahrulrz/SiMaPro_SOB?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/typescript-98.7%25-blue?style=flat-square)
@@ -14,22 +16,21 @@
 ![Composer](https://img.shields.io/badge/Composer-885630?style=flat-square&logo=composer&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![GNU Bash](https://img.shields.io/badge/GNU%20Bash-4EAA25?style=flat-square&logo=gnubash&logoColor=white)
-
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![XML](https://img.shields.io/badge/XML-FF6600?style=flat-square&logo=xml&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=php&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=flat-square&logo=axios&logoColor=white)
 
----
+</div>
 
 ## Table of Contents
 
 • [Overview](#overview)  
 • [Getting Started](#getting-started)  
-  • [Prerequisites](#prerequisites)  
-  • [Installation](#installation)  
-  • [Usage](#usage)  
+ • [Prerequisites](#prerequisites)  
+ • [Installation](#installation)  
+ • [Usage](#usage)  
 • [Features](#features)  
 • [Technology Stack](#technology-stack)  
 • [Architecture](#architecture)  
@@ -47,6 +48,7 @@
 SiMaPro_SOB is a comprehensive project management web application built with modern technologies and best practices. Designed for efficiency, scalability, and seamless deployment, this application empowers teams to manage projects with precision and collaborate effectively.
 
 **Live Demonstrations:**
+
 - **Beta Version:** [simapro.fahrulhehehe.my.id](https://simapro.fahrulhehehe.my.id)
 - **Production:** [pad.simapro.web.id](https://pad.simapro.web.id)
 
@@ -66,12 +68,14 @@ Ensure you have the following installed on your development machine:
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/fahrulrz/SiMaPro_SOB.git
    cd SiMaPro_SOB
    ```
 
 2. **Environment Configuration**
+
    ```bash
    cp .env.example .env
    # Configure your environment variables in .env file
@@ -87,6 +91,7 @@ Ensure you have the following installed on your development machine:
 ### Usage
 
 **Development Mode:**
+
 ```bash
 npm run dev
 # or
@@ -96,6 +101,7 @@ yarn dev
 Access the application at `http://localhost:3000`
 
 **Production Build:**
+
 ```bash
 npm run build
 npm start
@@ -109,6 +115,7 @@ yarn start
 ## Features
 
 ### Core Capabilities
+
 - **TypeScript Integration** - Full TypeScript support with 98.7% coverage
 - **Modern UI/UX** - Responsive design with Tailwind CSS
 - **Containerization** - Docker support for consistent deployment
@@ -117,6 +124,7 @@ yarn start
 - **Performance Optimized** - Built with Next.js for optimal performance
 
 ### Project Management Tools
+
 - Task tracking and assignment
 - Project timeline visualization
 - Team collaboration features
@@ -127,15 +135,15 @@ yarn start
 
 ## Technology Stack
 
-| Category | Technologies |
-|----------|-------------|
-| **Frontend Framework** | Next.js 14+ with React 18+ |
-| **Language** | TypeScript (98.7% coverage) |
-| **Styling** | Tailwind CSS, PostCSS |
-| **Development Tools** | ESLint, Prettier |
-| **Containerization** | Docker |
-| **Build Tools** | Vite, npm/yarn |
-| **Version Control** | Git, GitHub |
+| Category               | Technologies                |
+| ---------------------- | --------------------------- |
+| **Frontend Framework** | Next.js 14+ with React 18+  |
+| **Language**           | TypeScript (98.7% coverage) |
+| **Styling**            | Tailwind CSS, PostCSS       |
+| **Development Tools**  | ESLint, Prettier            |
+| **Containerization**   | Docker                      |
+| **Build Tools**        | Vite, npm/yarn              |
+| **Version Control**    | Git, GitHub                 |
 
 ---
 
@@ -172,6 +180,7 @@ The application provides a comprehensive RESTful API. For detailed documentation
 - **Postman Collection:** Available in `/docs/postman/`
 
 ### Key Endpoints
+
 - `GET /api/projects` - Retrieve all projects
 - `POST /api/projects` - Create new project
 - `PUT /api/projects/:id` - Update project
@@ -184,6 +193,7 @@ The application provides a comprehensive RESTful API. For detailed documentation
 ### Docker Deployment
 
 **Build and run with Docker:**
+
 ```bash
 # Build the Docker image
 docker build -t simapro-sob .
@@ -193,6 +203,7 @@ docker run -d -p 3000:3000 --name simapro-container simapro-sob
 ```
 
 **Using Docker Compose:**
+
 ```bash
 docker-compose up -d
 ```
@@ -200,6 +211,7 @@ docker-compose up -d
 ### Production Deployment
 
 **Manual Deployment:**
+
 ```bash
 npm run build
 npm run start
@@ -238,6 +250,7 @@ We welcome contributions from the community! Please follow these guidelines:
 7. **Create a Pull Request**
 
 ### Code Standards
+
 - Follow TypeScript best practices
 - Use conventional commit messages
 - Ensure all tests pass
@@ -248,6 +261,7 @@ We welcome contributions from the community! Please follow these guidelines:
 ## Testing
 
 ### Running Tests
+
 ```bash
 # Run all tests
 npm run test
@@ -260,6 +274,7 @@ npm run test:coverage
 ```
 
 ### Quality Assurance
+
 ```bash
 # Lint code
 npm run lint
@@ -275,7 +290,7 @@ npm run type-check
 
 ## License
 
-This project is currently under development and does not have a formal license. For educational and non-commercial use only. 
+This project is currently under development and does not have a formal license. For educational and non-commercial use only.
 
 For commercial licensing inquiries, please contact the maintainer.
 
@@ -292,6 +307,7 @@ For commercial licensing inquiries, please contact the maintainer.
 ### Maintainer
 
 **Muhamad Fahrul Razi**
+
 - LinkedIn: [muhamad-fahrul-razi-6a2706290](https://www.linkedin.com/in/muhamad-fahrul-razi-6a2706290)
 - GitHub: [@fahrulrz](https://github.com/fahrulrz)
 - Email: Contact via GitHub for project-related inquiries
@@ -302,7 +318,7 @@ For commercial licensing inquiries, please contact the maintainer.
 
 Built with 💻 passion and ☕ dedication by the development team.
 
-*"Empowering Innovation, Accelerating Impact Every Step Forward"*
+_"Empowering Innovation, Accelerating Impact Every Step Forward"_
 
 ---
 

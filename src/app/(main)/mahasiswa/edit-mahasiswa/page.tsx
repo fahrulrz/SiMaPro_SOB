@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 // import "flowbite";
 // import "flowbite/dist/flowbite";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { AddMahasiswa, updateMahasiswa } from "@/lib/Mahasiswa";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 // import { Modal } from "flowbite";
 
@@ -185,18 +183,24 @@ const EditMahasiswa = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/mahasiswa/detail-mahasiswa?id=${res.data.data.id}" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/mahasiswa/detail-mahasiswa?id=${res.data.data.id}" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      setIsLoadingUpdate(false);
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+
+      const errorMessage =
+        err?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       toggleModal();
       setIsLoadingUpdate(false);
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",

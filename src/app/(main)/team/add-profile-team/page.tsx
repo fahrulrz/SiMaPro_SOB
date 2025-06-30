@@ -3,8 +3,7 @@
 import SearchResult from "@/components/SearchResult";
 import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
 import { submitTeam, TeamMember } from "@/lib/Team";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -244,18 +243,22 @@ const AddProfileTeam = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // setShowFailedModal(true);
       setIsLoading(false);
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+      const errorMessage =
+        err?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",

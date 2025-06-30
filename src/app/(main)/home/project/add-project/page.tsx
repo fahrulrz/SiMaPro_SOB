@@ -13,9 +13,6 @@ import "aos/dist/aos.css";
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-
 import "@/app/styles/style.css";
 import { submitProject } from "@/lib/Project";
 import myImageLoader from "@/lib/loader";
@@ -24,6 +21,7 @@ import SearchResult from "@/components/SearchResult";
 import Team from "@/app/(main)/team/page";
 import { searchTeam } from "@/lib/Team";
 import Swal from "sweetalert2";
+import { AxiosError } from "axios";
 
 interface NavigationItem {
   id: number;
@@ -57,9 +55,6 @@ const AddProject: React.FC = () => {
   const [activeTeam, setActiveTeam] = useState(false);
   const [teams, setTeams] = useState<Team[]>();
   const [teamKeyword, setTeamKeyword] = useState<string>("");
-
-  // Id store
-  const [id, setId] = useState<string>("");
 
   // Validation errors state
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -166,8 +161,8 @@ const AddProject: React.FC = () => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const navigationItems: NavigationItem[] = [
-    { id: 1, name: "Projek Aplikasi Dasar 1" },
-    { id: 2, name: "Projek Aplikasi Dasar 2" },
+    { id: 1, name: "PAD 1" },
+    { id: 2, name: "PAD 2" },
   ];
 
   // Menangani perubahan file untuk input file tertentu
@@ -351,24 +346,27 @@ const AddProject: React.FC = () => {
       if (res.status === 201) {
         // setShowSuccessModal(true);
         setIsLoading(false);
-        setId(res.data.project.id.toString());
         Swal.fire({
           title: "Upload Project Success!",
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home/project?id=${res.data.project.id}" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home/project?id=${res.data.data.id}" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // setShowFailedModal(true);
       setIsLoading(false);
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+      const errorMessage =
+        err?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",

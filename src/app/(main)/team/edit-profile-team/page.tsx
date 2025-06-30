@@ -3,12 +3,25 @@
 import SearchResult from "@/components/SearchResult";
 import { Mahasiswa, searchMahasiswa } from "@/lib/Mahasiswa";
 import { TeamRequest, updateTeam } from "@/lib/Team";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+
+interface Member {
+  id: number;
+  nama_lengkap: string;
+  NIM: string;
+  foto: string;
+}
+
+interface TeamMember {
+  id: number;
+  role: "pm" | "fe" | "be" | "ui_ux";
+  team_id: number;
+  member_id: number;
+  member: Member;
+}
 
 const EditProfileTeam = () => {
   // const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -47,6 +60,7 @@ const EditProfileTeam = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
+  console.log(error);
 
   const router = useRouter();
 
@@ -63,20 +77,37 @@ const EditProfileTeam = () => {
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/teams/${teamId}`)
       .then((response) => {
-        setPmKeyword(response.data.data.team_member[0].member.nama_lengkap);
-        setFeKeyword(response.data.data.team_member[1].member.nama_lengkap);
-        setBeKeyword(response.data.data.team_member[2].member.nama_lengkap);
-        setUiuxKeyword(response.data.data.team_member[3].member.nama_lengkap);
+        const team = response.data.data;
+
+        // Pastikan team_member itu array
+        if (!Array.isArray(team.team_member)) {
+          console.error("team_member is not an array:", team.team_member);
+          return;
+        }
+
+        const members: TeamMember[] = response.data.data.team_member;
+
+        const pm = members.find((m) => m.role === "pm");
+        const fe = members.find((m) => m.role === "fe");
+        const be = members.find((m) => m.role === "be");
+        const uiux = members.find((m) => m.role === "ui_ux");
+
+        setPmKeyword(pm?.member?.nama_lengkap || "");
+        setFeKeyword(fe?.member?.nama_lengkap || "");
+        setBeKeyword(be?.member?.nama_lengkap || "");
+        setUiuxKeyword(uiux?.member?.nama_lengkap || "");
+
         setFormData({
-          nama_tim: response.data.data.nama_tim,
-          member_pm: response.data.data.team_member[0].member_id,
-          member_be: response.data.data.team_member[2].member_id,
-          member_fe: response.data.data.team_member[1].member_id,
-          member_ui_ux: response.data.data.team_member[3].member_id,
+          nama_tim: team.nama_tim,
+          member_pm: pm?.member_id ?? 0,
+          member_fe: fe?.member_id ?? 0,
+          member_be: be?.member_id ?? 0,
+          member_ui_ux: uiux?.member_id ?? 0,
           _method: "put",
         });
       })
       .catch((error) => {
+        console.error("Gagal ambil data team:", error);
         setError(error);
       });
   }, [teamId]);
@@ -259,17 +290,22 @@ const EditProfileTeam = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" class="h-full w-full flex p-3 px-5 justify-center items-center" >OK</a></div>`,
         });
       }
       console.log("Berhasil upload:", res);
-    } catch (error) {
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+    } catch (error: unknown) {
+      setIsLoading(false);
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+      const errorMessage =
+        err?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",

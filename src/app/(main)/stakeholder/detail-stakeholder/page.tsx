@@ -10,18 +10,17 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Card from "@/components/Card";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { deleteStakeholder, Stakeholder } from "@/lib/Stakeholder";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 const DetailStakeholder = () => {
   const [stakeholder, setStakeholder] = useState<Stakeholder>();
   const [error, setError] = useState(null);
   const { user } = useAuth();
-  const router = useRouter();
+  // const router = useRouter();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,18 +55,22 @@ const DetailStakeholder = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/stakeholder" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/stakeholder" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setIsLoading(false);
       setConfirmDelete(false);
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+      const errorMessage =
+        err?.response?.data?.message || "Gagal delete data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",
@@ -98,7 +101,7 @@ const DetailStakeholder = () => {
               Stakeholder
             </div>
             <div className="flex flex-col mt-10">
-              <div className="flex relative h-[30rem] max-sm:h-96 max-sm:w-80 w-96">
+              <div className="flex relative h-[30rem] max-sm:h-96 max-sm:w-80 w-96 bg-gray-200">
                 <Image
                   src={stakeholder?.foto || ""}
                   alt="Picture of the author"
@@ -281,7 +284,7 @@ const DetailStakeholder = () => {
               </svg>
             </div>
             <h3 className="mb-5 font-normal text-white text-xl dark:text-gray-400">
-              Deleteing...
+              Deleting Stakeholder...
             </h3>
           </div>
         </div>

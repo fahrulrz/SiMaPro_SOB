@@ -22,7 +22,6 @@ export const register = async (
   password: string
 ) => {
   try {
-    console.log("response: test");
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/register`,
       {
@@ -34,7 +33,6 @@ export const register = async (
       }
     );
 
-    console.log("response:", response.status);
 
     if (!response.ok) {
       // Jika respons tidak ok, lempar error
@@ -44,7 +42,6 @@ export const register = async (
     }
 
     const data = await response.json();
-    console.log(data);
     if (data.status === "true") {
       return data.data.messages; // Kembalikan data pengguna jika registrasi berhasil
     } else {

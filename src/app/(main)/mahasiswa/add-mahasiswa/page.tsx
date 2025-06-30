@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { submitMahasiswa } from "@/lib/Mahasiswa";
 import type { AddMahasiswa } from "@/lib/Mahasiswa";
 import Swal from "sweetalert2";
+import { AxiosError } from "axios";
 
 const AddMahasiswa = () => {
   const router = useRouter();
@@ -137,13 +138,19 @@ const AddMahasiswa = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/mahasiswa/detail-mahasiswa?id=${res.data.data.id}" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/mahasiswa/detail-mahasiswa?id=${res.data.data.id}" class="h-full w-full flex p-3 px-5 justify-center items-center" >OK</a></div>`,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsLoadingUpload(false);
+
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+
       const errorMessage =
-        error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+        err?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",

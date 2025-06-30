@@ -31,8 +31,14 @@ interface Project {
   image: Image[];
 }
 
+interface Year {
+  id: number;
+  tahun: string;
+}
+
 export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [years, setYears] = useState<Year[]>([]);
   const [error, setError] = useState(null);
   const { user } = useAuth();
   console.error(error);
@@ -60,6 +66,22 @@ export default function Dashboard() {
       .catch((error) => {
         setError(error);
       });
+
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/year`, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }) // api mengambil semua data tahun
+      .then((response) => {
+        setYears(response.data.data);
+        console.log(response.data.data);
+      })
+      .catch((error) => {
+        setError(error);
+      });
   }, []);
 
   const toggleFilterPad = () => {
@@ -74,6 +96,8 @@ export default function Dashboard() {
   const [checkedFilterYears, setCheckedFilterYears] = useState<string[]>([]);
 
   const handleFilterYearChange = (year: string) => {
+    console.log("Clicked year:", year);
+    console.log("Before:", checkedFilterYears);
     if (checkedFilterYears.includes(year)) {
       setCheckedFilterYears(checkedFilterYears.filter((y) => y !== year));
     } else {
@@ -331,108 +355,27 @@ export default function Dashboard() {
                           <div>
                             <div>
                               <div className="py-1">
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="2020">2020</label>
-                                    <input
-                                      type="checkbox"
-                                      name="2020"
-                                      id="2020"
-                                      value="2020"
-                                      onChange={(e) =>
-                                        handleFilterYearChange(e.target.value)
-                                      }
-                                      checked={checkedFilterYears.includes(
-                                        "2020"
-                                      )}
-                                    />
+                                {years.map((year) => (
+                                  <div key={year.id}>
+                                    <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                      <label htmlFor={year.tahun}>
+                                        {year.tahun}
+                                      </label>
+                                      <input
+                                        type="checkbox"
+                                        name={year.tahun}
+                                        id={year.id.toString()}
+                                        value={year.tahun}
+                                        onChange={(e) =>
+                                          handleFilterYearChange(e.target.value)
+                                        }
+                                        checked={checkedFilterYears.includes(
+                                          year.tahun
+                                        )}
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="2021">2021</label>
-                                    <input
-                                      type="checkbox"
-                                      name="2021"
-                                      id="2021"
-                                      value="2021"
-                                      onChange={(e) =>
-                                        handleFilterYearChange(e.target.value)
-                                      }
-                                      checked={checkedFilterYears.includes(
-                                        "2021"
-                                      )}
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="2022">2022</label>
-                                    <input
-                                      type="checkbox"
-                                      name="2022"
-                                      id="2022"
-                                      value="2022"
-                                      onChange={(e) =>
-                                        handleFilterYearChange(e.target.value)
-                                      }
-                                      checked={checkedFilterYears.includes(
-                                        "2022"
-                                      )}
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="2023">2023</label>
-                                    <input
-                                      type="checkbox"
-                                      name="2023"
-                                      id="2023"
-                                      value="2023"
-                                      onChange={(e) =>
-                                        handleFilterYearChange(e.target.value)
-                                      }
-                                      checked={checkedFilterYears.includes(
-                                        "2023"
-                                      )}
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="2024">2024</label>
-                                    <input
-                                      type="checkbox"
-                                      name="2024"
-                                      id="2024"
-                                      value="2024"
-                                      onChange={(e) =>
-                                        handleFilterYearChange(e.target.value)
-                                      }
-                                      checked={checkedFilterYears.includes(
-                                        "2024"
-                                      )}
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                    <label htmlFor="2025">2025</label>
-                                    <input
-                                      type="checkbox"
-                                      name="2025"
-                                      id="2025"
-                                      value="2025"
-                                      onChange={(e) =>
-                                        handleFilterYearChange(e.target.value)
-                                      }
-                                      checked={checkedFilterYears.includes(
-                                        "2025"
-                                      )}
-                                    />
-                                  </div>
-                                </div>
+                                ))}
                               </div>
                             </div>
                           </div>
@@ -643,96 +586,27 @@ export default function Dashboard() {
                       <div>
                         <form action="#">
                           <div className="py-1">
-                            <div>
-                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="2020">2020</label>
-                                <input
-                                  type="checkbox"
-                                  name="2020"
-                                  id="2020"
-                                  value="2020"
-                                  onChange={(e) =>
-                                    handleFilterYearChange(e.target.value)
-                                  }
-                                  checked={checkedFilterYears.includes("2020")}
-                                />
+                            {years.map((year) => (
+                              <div key={year.id}>
+                                <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                  <label htmlFor={year.tahun}>
+                                    {year.tahun}
+                                  </label>
+                                  <input
+                                    type="checkbox"
+                                    name={year.tahun}
+                                    id={year.tahun.toString()}
+                                    value={year.tahun}
+                                    onChange={(e) =>
+                                      handleFilterYearChange(e.target.value)
+                                    }
+                                    checked={checkedFilterYears.includes(
+                                      year.tahun
+                                    )}
+                                  />
+                                </div>
                               </div>
-                            </div>
-                            <div>
-                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="2021">2021</label>
-                                <input
-                                  type="checkbox"
-                                  name="2021"
-                                  id="2021"
-                                  value="2021"
-                                  onChange={(e) =>
-                                    handleFilterYearChange(e.target.value)
-                                  }
-                                  checked={checkedFilterYears.includes("2021")}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="2022">2022</label>
-                                <input
-                                  type="checkbox"
-                                  name="2022"
-                                  id="2022"
-                                  value={"2022"}
-                                  onChange={(e) =>
-                                    handleFilterYearChange(e.target.value)
-                                  }
-                                  checked={checkedFilterYears.includes("2022")}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="2023">2023</label>
-                                <input
-                                  type="checkbox"
-                                  name="2023"
-                                  id="2023"
-                                  value={"2023"}
-                                  onChange={(e) =>
-                                    handleFilterYearChange(e.target.value)
-                                  }
-                                  checked={checkedFilterYears.includes("2023")}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="2024">2024</label>
-                                <input
-                                  type="checkbox"
-                                  name="2024"
-                                  id="2024"
-                                  value={"2024"}
-                                  onChange={(e) =>
-                                    handleFilterYearChange(e.target.value)
-                                  }
-                                  checked={checkedFilterYears.includes("2024")}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                <label htmlFor="2025">2025</label>
-                                <input
-                                  type="checkbox"
-                                  name="2025"
-                                  id="2025"
-                                  value={"2025"}
-                                  onChange={(e) =>
-                                    handleFilterYearChange(e.target.value)
-                                  }
-                                  checked={checkedFilterYears.includes("2025")}
-                                />
-                              </div>
-                            </div>
+                            ))}
                           </div>
                         </form>
                       </div>

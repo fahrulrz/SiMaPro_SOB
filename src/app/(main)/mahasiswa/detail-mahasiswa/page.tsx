@@ -13,7 +13,7 @@ import Swal from "sweetalert2";
 
 // import gambar from "../../../../../public/assets/photoProfile.png";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import myImageLoader from "@/lib/loader";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,7 +24,7 @@ interface Mahasiswa {
   nama_lengkap: string;
   NIM: string;
   foto: string;
-  project: Project[];
+  projects: Project[];
 }
 
 interface Image {
@@ -47,6 +47,8 @@ const DetailMahasiswa = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMahasiswa, setIsLoadingMahasiswa] = useState(true);
+
+  console.log("project mahasiswa ->", mahasiswa?.projects);
 
   const [id, setId] = useState<string>(" ");
 
@@ -72,7 +74,7 @@ const DetailMahasiswa = () => {
   const hanfleDelete = async (id: number) => {
     setIsLoading(true);
     setConfirmDelete(false);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     try {
       const res = await deleteMahasiswa(id);
       if (res.status === 200) {
@@ -83,18 +85,22 @@ const DetailMahasiswa = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/mahasiswa" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/mahasiswa" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsLoading(false);
-      setConfirmDelete(false);
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+
+      const errorMessage =
+        err?.response?.data?.message || "Gagal delete data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",
@@ -313,7 +319,7 @@ const DetailMahasiswa = () => {
               </svg>
             </div>
             <h3 className="mb-5 font-normal text-white text-xl dark:text-gray-400">
-              Deleteing...
+              Deleting Mahasiswa...
             </h3>
           </div>
         </div>
@@ -323,12 +329,12 @@ const DetailMahasiswa = () => {
             <div className="text-2xl text-primary font-bold">List Project</div>
             <div className="flex h-[80vh] overflow-scroll">
               <div className=" flex flex-col gap-4 w-full overflow-y-scroll max-sm:overflow-y-visible h-full container">
-                {mahasiswa?.project == null ? (
+                {mahasiswa?.projects == null ? (
                   <div className="flex h-full w-full items-center justify-center">
                     <div className="text-4xl text-black">Belum ada projek</div>
                   </div>
-                ) : mahasiswa?.project?.length > 0 ? (
-                  mahasiswa?.project?.map((project) => (
+                ) : mahasiswa?.projects?.length > 0 ? (
+                  mahasiswa?.projects?.map((project) => (
                     <Card
                       key={project.id}
                       id={project.id}

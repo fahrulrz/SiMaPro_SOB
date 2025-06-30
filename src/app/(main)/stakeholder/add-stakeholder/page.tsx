@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { submitStakeholder } from "@/lib/Stakeholder";
-import type { AddStakeholder, Stakeholder } from "@/lib/Stakeholder";
+import type { AddStakeholder } from "@/lib/Stakeholder";
 import Swal from "sweetalert2";
+import { AxiosError } from "axios";
 
 interface NavigationItem {
   id: number;
@@ -39,7 +40,7 @@ const AddStakeholder = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [stakeholder, setStakeholder] = useState<Stakeholder>();
+  // const [stakeholder, setStakeholder] = useState<Stakeholder>();
 
   // State untuk validation errors
   const [errors, setErrors] = useState<ValidationErrors>({
@@ -209,25 +210,29 @@ const AddStakeholder = () => {
       const res = await submitStakeholder(data);
       if (res.status === 201) {
         setIsLoading(false);
-        setStakeholder(res.data.data);
+        // setStakeholder(res.data.data);
         // setShowSuccessModal(true);
         Swal.fire({
           title: "Upload Stakeholder Success!",
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/stakeholder/detail-stakeholder?id=${res.data.data.id}" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/stakeholder/detail-stakeholder?id=${res.data.data.id}" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       toggleModal();
-      // setShowFailedModal(true);
-      // const errorMessage =
-      //   error?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
+      setIsLoading(false);
+      const err = error as AxiosError<{
+        message: string;
+        errors?: Record<string, string[]>;
+      }>;
+      const errorMessage =
+        err?.response?.data?.message || "Gagal upload data. Coba lagi ya.";
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong!",
+        text: errorMessage,
         iconColor: "##f05252",
         background: "#white",
         color: "#000000",
@@ -247,11 +252,11 @@ const AddStakeholder = () => {
   //   setShowFailedModal(false);
   // };
 
-  const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
-    if (e.target === e.currentTarget) {
-      closeModal();
-    }
-  };
+  // const handleBackdropClick = (e: React.MouseEvent, closeModal: () => void) => {
+  //   if (e.target === e.currentTarget) {
+  //     closeModal();
+  //   }
+  // };
 
   return (
     <>
@@ -405,7 +410,7 @@ const AddStakeholder = () => {
                       name="nomor_telepon"
                       type="text"
                       onChange={handleChange}
-                      placeholder="No Telepon"
+                      placeholder="No Telepon ex: 08123456789"
                       className={`placeholder:text-hint text-primary bg-inputAddProject py-3 text-lg max-sm:placeholder:text-sm border-none focus:outline-none focus:ring-0 focus:ring-[var(--border)] rounded-md p-2 w-full ${
                         errors.nomor_telepon ? "border-red-500 border-2" : ""
                       }`}

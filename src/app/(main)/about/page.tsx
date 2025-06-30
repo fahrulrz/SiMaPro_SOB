@@ -42,7 +42,7 @@ const About = () => {
             syafiqabdillahhabib@mail.ugm.ac.id <span className="mx-2">|</span>
             <div
               className="cursor-pointer hover:underline"
-              onClick={() => router.push("#")}
+              onClick={() => router.push("https://www.linkedin.com/in/syafiq-abdillah-habib-041a952b8")}
             >
               LINKED IN
             </div>
@@ -130,7 +130,7 @@ const About = () => {
             rifqirenaldo@mail.ugm.ac.id <span className="mx-2">|</span>
             <div
               className="cursor-pointer hover:underline"
-              onClick={() => router.push("#")}
+              onClick={() => router.push("https://www.linkedin.com/in/rifqi-renaldo-259b49190")}
             >
               LINKED IN
             </div>

@@ -7,10 +7,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getMahasiswa } from "@/lib/Mahasiswa";
 import type { Mahasiswa } from "@/lib/Mahasiswa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Mahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const router = useRouter();
 
@@ -71,7 +75,28 @@ const Mahasiswa = () => {
   return (
     <>
       <div className="h-full w-screen overflow-hidden">
-        <div className="grid grid-cols-4 max-sm:grid-cols-2 p-20 max-sm:p-2 gap-16 max-sm:gap-4">
+        {user?.role == "admin" ? (
+          <div
+            // data-aos="fade-up"
+            // data-aos-duration="1000"
+            className="flex mt-10 px-20"
+          >
+            <a href="mahasiswa/add-mahasiswa" className="flex">
+              <button
+                type="submit"
+                className="w-full h-10 bg-primary ps-4 gap-0 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+              >
+                <FontAwesomeIcon
+                  icon={faFileCirclePlus}
+                  style={{ fontSize: "1rem" }}
+                  className="me-2"
+                />
+                Add Profil Mahasiswa
+              </button>
+            </a>
+          </div>
+        ) : null}
+        <div className="grid grid-cols-4 max-sm:grid-cols-2 px-20 py-10 max-sm:py-6 max-sm:p-2 gap-16 max-sm:gap-4">
           {mahasiswa.map((mahasiswa) => (
             <div
               key={mahasiswa.id}

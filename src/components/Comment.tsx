@@ -3,8 +3,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 
-import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
 interface CommentProps {
   id: number;
@@ -12,6 +12,7 @@ interface CommentProps {
   userId: number;
   userComment: number;
   role: string;
+  onDelete: (id: number) => void;
 }
 
 const Comment: React.FC<CommentProps> = ({
@@ -20,13 +21,30 @@ const Comment: React.FC<CommentProps> = ({
   userId,
   userComment,
   role,
+  onDelete,
 }) => {
   const [isOtherSetting, setIsOtherSetting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  console.log(id);
   const handleOtherSetting = () => {
     setIsOtherSetting(!isOtherSetting);
+  };
+
+  const handleDelete = (id: number) => {
+    axios
+      .delete(`${process.env.NEXT_PUBLIC_API_URL}/comments/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then(() => {
+        onDelete(id);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
@@ -67,27 +85,21 @@ const Comment: React.FC<CommentProps> = ({
             onClick={handleOtherSetting}
             className="flex flex-col ml-auto border-b-2 hover:text-primary cursor-pointer"
           >
-            {role == "admin" && userComment === userId ? (
+            {role == "admin" || userComment === userId ? (
               <FontAwesomeIcon icon={faEllipsisVertical} size="lg" />
             ) : null}
           </div>
         </div>
 
         {isOtherSetting && (
-          <div className="bg-violet-600 flex absolute z-20 top-4 right-2">
+          <div className="bg-violet-600 flex absolute z-20 cursor-pointer top-4 right-2">
             <div className="flex flex-col bg-yellow-500 w-full justify-end">
-              <Link
-                className="bg-primary hidden p-1 px-2 justify-center items-center text-white hover:bg-white hover:text-black"
-                href={`/home`}
-              >
-                Edit
-              </Link>
-              <Link
+              <div
                 className="p-1 px-2 flex justify-center items-center bg-primary text-white hover:bg-white hover:text-black"
-                href={`/mahasiswa`}
+                onClick={() => handleDelete(id)}
               >
                 Delete
-              </Link>
+              </div>
             </div>
           </div>
         )}

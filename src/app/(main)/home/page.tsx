@@ -77,7 +77,6 @@ export default function Dashboard() {
       }) // api mengambil semua data tahun
       .then((response) => {
         setYears(response.data.data);
-        console.log(response.data.data);
       })
       .catch((error) => {
         setError(error);
@@ -96,8 +95,6 @@ export default function Dashboard() {
   const [checkedFilterYears, setCheckedFilterYears] = useState<string[]>([]);
 
   const handleFilterYearChange = (year: string) => {
-    console.log("Clicked year:", year);
-    console.log("Before:", checkedFilterYears);
     if (checkedFilterYears.includes(year)) {
       setCheckedFilterYears(checkedFilterYears.filter((y) => y !== year));
     } else {
@@ -119,12 +116,9 @@ export default function Dashboard() {
   // menggunakan filter dengan api
   const filteredProjects = useCallback(async () => {
     try {
-      console.info("filter berjalan");
       const data = await filterProjects(checkedFilterPads, checkedFilterYears);
-      console.info(data);
       setProjects(data);
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     }
   }, [checkedFilterPads, checkedFilterYears]);
@@ -355,27 +349,35 @@ export default function Dashboard() {
                           <div>
                             <div>
                               <div className="py-1">
-                                {years.map((year) => (
-                                  <div key={year.id}>
-                                    <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                      <label htmlFor={year.tahun}>
-                                        {year.tahun}
-                                      </label>
-                                      <input
-                                        type="checkbox"
-                                        name={year.tahun}
-                                        id={year.id.toString()}
-                                        value={year.tahun}
-                                        onChange={(e) =>
-                                          handleFilterYearChange(e.target.value)
-                                        }
-                                        checked={checkedFilterYears.includes(
-                                          year.tahun
-                                        )}
-                                      />
-                                    </div>
+                                {years.length === 0 ? (
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    Belum ada project
                                   </div>
-                                ))}
+                                ) : (
+                                  years.map((year) => (
+                                    <div key={year.id}>
+                                      <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                        <label htmlFor={year.tahun}>
+                                          {year.tahun}
+                                        </label>
+                                        <input
+                                          type="checkbox"
+                                          name={year.tahun}
+                                          id={year.id.toString()}
+                                          value={year.tahun}
+                                          onChange={(e) =>
+                                            handleFilterYearChange(
+                                              e.target.value
+                                            )
+                                          }
+                                          checked={checkedFilterYears.includes(
+                                            year.tahun
+                                          )}
+                                        />
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
                               </div>
                             </div>
                           </div>
@@ -586,27 +588,33 @@ export default function Dashboard() {
                       <div>
                         <form action="#">
                           <div className="py-1">
-                            {years.map((year) => (
-                              <div key={year.id}>
-                                <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
-                                  <label htmlFor={year.tahun}>
-                                    {year.tahun}
-                                  </label>
-                                  <input
-                                    type="checkbox"
-                                    name={year.tahun}
-                                    id={year.tahun.toString()}
-                                    value={year.tahun}
-                                    onChange={(e) =>
-                                      handleFilterYearChange(e.target.value)
-                                    }
-                                    checked={checkedFilterYears.includes(
-                                      year.tahun
-                                    )}
-                                  />
-                                </div>
+                            {years.length == 0 ? (
+                              <div className="flex px-4 py-2 text-sm text-white cursor-not-allowed justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                Belum ada project
                               </div>
-                            ))}
+                            ) : (
+                              years.map((year) => (
+                                <div key={year.id}>
+                                  <div className="flex px-4 py-2 text-sm text-white justify-between items-center data-[focus]:bg-white data-[focus]:text-primary data-[focus]:forced-color-adjust-none data-[focus]:forced-colors:bg-[Highlight] data-[focus]:forced-colors:text-[HighlightText]">
+                                    <label htmlFor={year.tahun}>
+                                      {year.tahun}
+                                    </label>
+                                    <input
+                                      type="checkbox"
+                                      name={year.tahun}
+                                      id={year.tahun.toString()}
+                                      value={year.tahun}
+                                      onChange={(e) =>
+                                        handleFilterYearChange(e.target.value)
+                                      }
+                                      checked={checkedFilterYears.includes(
+                                        year.tahun
+                                      )}
+                                    />
+                                  </div>
+                                </div>
+                              ))
+                            )}
                           </div>
                         </form>
                       </div>

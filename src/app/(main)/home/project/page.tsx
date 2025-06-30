@@ -155,6 +155,14 @@ const Content = () => {
     }
   };
 
+  const handleDeleteComment = (deletedId: number) => {
+    if (!projects) return;
+    const updatedComments = projects.comments.filter(
+      (comment) => comment.id !== deletedId
+    );
+    setProjects({ ...projects, comments: updatedComments });
+  };
+
   const handleUpdate = () => {
     setUpdate(!update);
   };
@@ -202,7 +210,7 @@ const Content = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary p-3 px-5 rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" >OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
     } catch (error: unknown) {
@@ -240,15 +248,12 @@ const Content = () => {
         if (comments.status === 200) {
           setProjects({
             ...(projects as Project),
-            comments: comments.data.comments,
+            comments: comments.data.data,
           });
-          console.log("isi get comment -> ", comments.data.comments);
         }
       }
-      console.log(res);
-      // setIsHoveredComment(!isHoveredComment);
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
@@ -324,9 +329,10 @@ const Content = () => {
                   key={comment.id}
                   isi_komen={JSON.stringify(comment.isi_komen)}
                   id={comment.id}
-                  userId={comment.user.id}
+                  userId={user?.id || 0}
                   userComment={comment.user.id}
                   role={user?.role || ""}
+                  onDelete={handleDeleteComment}
                 />
               ))}
             </div>
@@ -415,9 +421,10 @@ const Content = () => {
                   key={comment.id}
                   isi_komen={JSON.stringify(comment.isi_komen)}
                   id={comment.id}
-                  userId={comment.user.id}
+                  userId={user?.id || 0}
                   userComment={comment.user.id}
                   role={user?.role || ""}
+                  onDelete={handleDeleteComment}
                 />
               ))}
             </div>

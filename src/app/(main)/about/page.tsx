@@ -64,7 +64,7 @@ const About = () => {
             alinseptianinuraisyah@mail.ugm.ac.id <span className="mx-2">|</span>
             <div
               className="cursor-pointer hover:underline"
-              onClick={() => router.push("#")}
+              onClick={() => router.push("https://www.linkedin.com/in/alin-septiani-nur-aisyah-17a258372?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app")}
             >
               LINKED IN
             </div>

@@ -5,6 +5,7 @@ import { register as registerUser, googleLogin, getUser } from "@/api/auth";
 import { useRouter } from "next/navigation";
 
 interface User {
+  id: number;
   name: string;
   email: string;
   role: string;

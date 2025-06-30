@@ -223,8 +223,6 @@ const EditProject: React.FC = () => {
 
     setIsLoading(true);
 
-    console.log("use effect berjalan lagi");
-
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/${idUrl}`) // api mengambil detail project berdasarkan id
       .then((response) => {
@@ -242,11 +240,11 @@ const EditProject: React.FC = () => {
           description: response.data.data.deskripsi,
           projectCategory: response.data.data.categories[0].id,
         });
-        setFileUrls(
-          Array.from({ length: 5 }).map(
-            (_, i) => images[i]?.link_gambar ?? null
-          )
+        const fileSlots = Array(5).fill(null);
+        const fileUrls = fileSlots.map(
+          (_, i) => images[i]?.link_gambar ?? null
         );
+        setFileUrls(fileUrls);
       })
       .catch((error) => {
         setError(error);
@@ -257,8 +255,6 @@ const EditProject: React.FC = () => {
   const handleUpdate = () => {
     setUpdate(!update);
   };
-
-  console.log(error);
 
   const handleSelect = (item: NavigationItem) => {
     clearError("projectCategory");
@@ -468,7 +464,7 @@ const EditProject: React.FC = () => {
           icon: "success",
           confirmButtonColor: "#1e293b",
           buttonsStyling: false,
-          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home/project?id=${res.data.project.id}" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
+          confirmButtonText: `<div class="text-white bg-primary rounded-lg border-2 border-primary hover:border-slate-800"> <a href="/home/project?id=${res.data.data.id}" class="h-full w-full flex p-3 px-5 justify-center items-center">OK</a></div>`,
         });
       }
       setUpdate(false);
@@ -491,7 +487,6 @@ const EditProject: React.FC = () => {
         buttonsStyling: false,
         confirmButtonText: `<div class="text-white hover:bg-white hover:border-primary hover:text-primary border-2 bg-primary p-3 px-5 rounded-lg">OK</div>`,
       });
-      console.log("gagal upload project", error);
     }
   };
 

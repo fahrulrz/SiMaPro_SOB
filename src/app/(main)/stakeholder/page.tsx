@@ -72,11 +72,34 @@ const Stakeholder = () => {
 
   if (stakeholder.length == 0) {
     return (
-      <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen">
-        <div className="text-4xl text-primary font-bold animate-pulse">
-          Data Stakeholder Kosong
+      <>
+        {user?.role == "admin" ? (
+          <div
+            // data-aos="fade-up"
+            // data-aos-duration="1200"
+            className="flex mt-10 px-20 absolute"
+          >
+            <a href="stakeholder/add-stakeholder" className="flex">
+              <button
+                type="submit"
+                className="w-full h-10 bg-primary ps-4 pe-2 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+              >
+                <FontAwesomeIcon
+                  icon={faFileCirclePlus}
+                  style={{ fontSize: "1rem" }}
+                  className="me-2"
+                />
+                Add Profil Stakeholder
+              </button>
+            </a>
+          </div>
+        ) : null}
+        <div className="flex flex-col gap-12 max-sm:gap-6 transition-all ease-in-out px-20 max-sm:px-4 py-10 h-screen justify-center items-center w-screen">
+          <div className="text-4xl text-primary font-bold animate-pulse">
+            Data Stakeholder Kosong
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -92,7 +115,7 @@ const Stakeholder = () => {
             <a href="stakeholder/add-stakeholder" className="flex">
               <button
                 type="submit"
-                className="w-full h-10 bg-primary ps-4 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
+                className="w-full h-10 bg-primary ps-4 pe-2 shadow-md text-white flex justify-start items-center rounded-[5px] font-bold tracking-wide hover:bg-gray-50 hover:text-primary transition ease-in-out duration-300"
               >
                 <FontAwesomeIcon
                   icon={faFileCirclePlus}
